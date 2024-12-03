@@ -129,7 +129,7 @@ hide: true
 </style>
 
 <div class="navbar">
-   <h1>Penpal Dashboard</h1>
+   <h1>Genre Chatroom Dashboard</h1>
    <button onclick="goHome()">Home</button>
 </div>
 <div class="dashboard">
