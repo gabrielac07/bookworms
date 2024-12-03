@@ -4,9 +4,7 @@ title: CHATROOM
 hide: true
 ---
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Penpal Dashboard</title>
+<title>Genre Chatroom</title>
 <style>
    .navbar {
        width: 100%;
@@ -156,12 +154,12 @@ hide: true
        window.location.href = "{{site.baseurl}}/";
    }
    function addPost() {
-       const postInput = document.getElementById("postInput").value;
+       const postInput = document.getElementById("postInput").value; //input + displays html
        if (postInput) {
-           const newPost = { content: postInput, likes: 0, replies: [] };
-           posts.push(newPost);
-           localStorage.setItem("savedPosts", JSON.stringify(posts));
-           document.getElementById("postInput").value = '';
+           const newPost = { content: postInput, likes: 0, replies: [] }; // new post object
+           posts.push(newPost); // pushes 
+           localStorage.setItem("savedPosts", JSON.stringify(posts)); // local 
+           document.getElementById("postInput").value = ''; //resets
            displayPosts();
        } else {
            alert("Post cannot be empty!");

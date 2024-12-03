@@ -4,7 +4,7 @@ title: Book Reviews
 search_exclude: true
 permalink: rate_and_relate/book_reviews/
 menu: nav/rate_and_relate.html
-author: Soumini, Ahmad, Nikith, Kush
+author: Gabriela, Maryam, Aditi, Katherine, Soumini, Avika
 ---
 <style>
   body {
@@ -318,3 +318,9 @@ author: Soumini, Ahmad, Nikith, Kush
        style="background-color: rgb(135, 206, 250); color: white; padding: 20px 40px; text-align: center; text-decoration: none; border-radius: 5px; font-size: 16px;">
         Click to Post
     </a>
+
+
+<a href="{{site.baseurl}}/navigation/rate_and_relate/book_reviews/genre_chatroom"
+  style="background-color: rgb(135, 206, 250); color: white; padding: 20px 40px; text-align: center; text-decoration: none; border-radius: 5px; font-size: 16px;">
+  hi 
+</a>
