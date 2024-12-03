@@ -17,6 +17,7 @@ plugins:
   - jekyll-remote-theme
 header_pages:
   - navigation/ai.md
+  - navigation/sprint4-bookworms/bookworms.md
   - navigation/shared_interests/home.md
   - navigation/create_and_compete/home.md
   - navigation/voteforthegoat/home.md
