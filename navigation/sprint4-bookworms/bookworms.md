@@ -75,5 +75,5 @@ nextButton.addEventListener('click', () => {
 
 <a href="{{site.baseurl}}/navigation/sprint4-bookworms/genre_chatroom"
   style="background-color: rgb(135, 206, 250); color: white; padding: 20px 40px; text-align: center; text-decoration: none; border-radius: 5px; font-size: 16px;">
-  hi 
+  Genre Chatroom 
 </a>
