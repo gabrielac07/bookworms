@@ -3,7 +3,6 @@ layout: page
 title: User Profile
 permalink: /bookworms_profile/
 ---
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
