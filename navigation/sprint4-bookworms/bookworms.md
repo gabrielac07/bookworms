@@ -86,12 +86,39 @@ permalink: /bookworms/
         <!-- Add more books as needed -->
     </div>
 <br>
-<a href="{{site.baseurl}}/navigation/sprint4-bookworms/genre_chatroom"
-  style="background-color: rgb(135, 206, 250); color: white; padding: 20px 40px; text-align: center; text-decoration: none; border-radius: 5px; font-size: 16px;">
-  Genre Chatroom 
-</a>
 
-<a href="{{site.baseurl}}/navigation/sprint4-bookworms/bookworms_profile"
-  style="background-color: rgb(135, 206, 250); color: white; padding: 20px 40px; text-align: center; text-decoration: none; border-radius: 5px; font-size: 16px;">
-  Edit Profile 
-</a>
+
+<style>
+   .container {
+       display: flex;
+       flex-wrap: wrap;
+       justify-content: space-around;
+       gap: 10px;
+       padding: 5px;
+       max-width: 1200px;
+       margin: 0 auto;
+   }
+   /* Sections for each feature */
+   .section {
+       background-color: #FFC0CB;
+       border-radius: 10px;
+       padding: 20px;
+       width: 800px;
+       text-align: center;
+       box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+   }
+</style>
+
+
+  <div class="container">
+      <div class="section">
+          <h2>Profile</h2>
+          <p>Add to your profile!</p>
+          <button onclick="location.href='{{site.baseurl}}/navigation/sprint4-bookworms/bookworms_profile'">Edit</button>
+      </div>
+      <div class="section">
+          <h2>Genre Chatroom</h2>
+          <p>Explore genres!</p>
+          <button onclick="location.href='{{site.baseurl}}/navigation/sprint4-bookworms/genre_chatroom'">Enter 💬📚</button>
+      </div>
+</div>
