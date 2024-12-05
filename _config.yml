@@ -1,9 +1,9 @@
 title: DNHS Flocker
 description: "Social Media for Del Norte High School"
-owner_name: John Mortensen
-github_username: nighthawkcoders
-github_repo: "flocker_frontend" 
-baseurl: "/flocker_frontend"
+owner_name: Gabriela Connelly
+github_username: gabrielac07
+github_repo: "sprint4_frontend" 
+baseurl: "/sprint4_frontend"
 future: true
 remote_theme: jekyll/minima
 minima:
@@ -18,7 +18,6 @@ plugins:
 header_pages:
   - navigation/ai.md
   - navigation/sprint4-bookworms/bookworms.md
-  - navigation/sprint4-bookworms/bookreview.md
   - navigation/shared_interests/home.md
   - navigation/create_and_compete/home.md
   - navigation/voteforthegoat/home.md
