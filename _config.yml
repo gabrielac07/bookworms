@@ -19,6 +19,7 @@ header_pages:
   - navigation/ai.md
   - navigation/sprint4-bookworms/bookworms.md
   - navigation/sprint4-bookworms/userprofile.md
+  - navigation/sprint4-bookworms/random_book_recommender.md
   - navigation/shared_interests/home.md
   - navigation/create_and_compete/home.md
   - navigation/voteforthegoat/home.md
