@@ -3,22 +3,12 @@ layout: page
 title: The Bookworms!
 permalink: /bookworms/
 ---
+
 <video width="1000" height="400" autoplay loop muted>
-<source src="{{site.baseurl}}/navigation/sprint4-bookworms/images/The Bookworms.mp4" type="video/mp4">
+    <source src="{{site.baseurl}}/navigation/sprint4-bookworms/images/The Bookworms.mp4" type="video/mp4">
 </video>
 
 <style>
-    body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f9;
-        }
-
     .bookshelf {
             display: flex;
             flex-wrap: wrap;
@@ -64,6 +54,7 @@ permalink: /bookworms/
 
 </style>
 
+<center>
  <div class="bookshelf">
         <!-- Book 1 -->
         <div class="book">
@@ -80,10 +71,28 @@ permalink: /bookworms/
         <!-- Book 3 -->
         <div class="book">
             <a href="https://www.amazon.com/Silent-Patient-Alex-Michaelides/dp/125030170X/ref=sr_1_1?crid=18IBEDMN50OZ6&dib=eyJ2IjoiMSJ9.RkvX9My_1hiBU_c8TbqGL5oL8sT6kU8hJumACOENHtLPtOJH3SbOyjvdGge8p6tFe56wLjATsPmZgBUeVGTavFc2n5yIV45Hc8ewjpmeKOBAklmphR3UsudmxQzIHgHSmqbSK3cUdZ-xAPYCBnrFSKGKncHFkx1pI-dmtGPGxj1FzCuhSoJWFQI6uAnc-S6JHIrpnUuUzhQXWaqgnWWfSMZojQFHlEIe_wJMaYbCqdM.bd7EUkToYISzp0C1hmHtCy6PgQqU5XkXI8PdxaVDWYQ&dib_tag=se&keywords=the+silent+patient&qid=1733356672&sprefix=the+silent%2Caps%2C189&sr=8-1" target="_blank">
-                <img src="{site.baseurl}}/navigation/sprint4-bookworms/images/the_silent_patient.jpg" alt="The Silent Patient">
+                <img src="{{site.baseurl}}/navigation/sprint4-bookworms/images/the_silent_patient.jpg" alt="The Silent Patient">
             </a>
         </div>
         <!-- Add more books as needed -->
+        <!-- Book 4 -->
+        <div class="book">
+            <a href="https://www.amazon.com/Mystwick-School-Musicraft-Jessica-Khoury/dp/132862563X" target="_blank">
+                <img src="{{site.baseurl}}/navigation/sprint4-bookworms/images/mystwick.jpg" alt="The Mystwick School of Musicraft">
+            </a>
+        </div>
+        <!-- Book 5 -->
+        <div class="book">
+            <a href="https://www.amazon.com/Harry-Potter-Order-Phoenix-Book/dp/043935806X" target="_blank">
+                <img src="{{site.baseurl}}/navigation/sprint4-bookworms/images/order_of_phoenix.jpg" alt="Harry Potter: Order of the Pheonix">
+            </a>
+        </div>
+         <!-- Book 6 -->
+        <div class="book">
+            <a href="https://www.amazon.com/Good-Girls-Guide-Murder/dp/1984896369" target="_blank">
+                <img src="{{site.baseurl}}/navigation/sprint4-bookworms/images/girl_murder.jpg" alt="A good girl's guide to murder">
+            </a>
+        </div>
     </div>
 <br>
 
