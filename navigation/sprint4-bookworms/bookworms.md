@@ -123,8 +123,8 @@ permalink: /bookworms/
       <div class="section">
           <h2>Profile</h2>
           <p>Add to your profile!</p>
-          <button onclick="location.href='{{site.baseurl}}/navigation/bookworms/login'">Login</button>
-          <button onclick="location.href='{{site.baseurl}}/navigation/sprint4-bookworms/bookworms_profile'">Edit</button>
+          <button onclick="location.href='{{site.baseurl}}/login'">Login</button>
+          <button onclick="location.href='{{site.baseurl}}/bookworms_profile'">Edit</button>
       </div>
       <div class="section">
           <h2>Genre Chatroom</h2>
