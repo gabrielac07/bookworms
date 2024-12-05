@@ -5,7 +5,7 @@ permalink: /random_book_recommender/
 ---
 <style>
     body {
-        background-color: black;
+        background-color: #d6bda3;
         text-align: center;
     }
     .container {
@@ -17,7 +17,7 @@ permalink: /random_book_recommender/
     }
 
     h1 {
-        background: #a8f0ad;
+        background: #6e8a60;
         padding: 50px;
         font-size: 2em;
     }
@@ -118,52 +118,63 @@ permalink: /random_book_recommender/
         </div>
         <div id="book_display" class="book_details" style="display: none;">
             <img id="book_cover" class="book_cover" alt="Book Cover">
-            <h2 id="book-title"></h2>
+            <h2 id="book_title"></h2>
             <h3 id="book_author"></h3>
             <p id="book_summary" class="summary"></p>
-            <button class="start-over" onclick="startOver()">Get a Different Book</button>
+            <button class="start_over" onclick="startOver()">Get a Different Book</button>
         </div>
     </div>
 </body>
 <script>
-    function getRandomBook () {
-        const genre = document.getElementById("genre").value;
-        const query = `${genre}`;
-        //Call the Google Books API
+    //The genreMap object maps the dropdown values (nonfiction, historical_fiction, etc.) to terms recognized by the Google Books API (e.g., "nonfiction", "thriller").
+    const genreMap = {
+        nonfiction: "nonfiction",
+        historical_fiction: "historical fiction",
+        suspense_thriller: "thriller",
+        fantasy: "fantasy",
+        romance: "romance",
+        action: "action",
+        classic: "classics",
+        mystery: "mystery"
+    };
+    function getRandomBook() {
+        const genreKey = document.getElementById("genre").value;
+        const query = genreMap[genreKey] || "fiction"; // Fallback to "fiction" if genre not mapped
+        // Call the Google Books API - UPDATE: Google API does not sort books based on genre so I will have to find a different API
         fetch(`https://www.googleapis.com/books/v1/volumes?q=subject:${query}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.items && data.items. length > 0) {
-                //Pick a random book from the results
-                const randomIndex = Math.floor(Math.random() * data.items.length);
-                const book = data.items[randomIndex];
-                displayBook(book);
-            } else {
-                alert("No books found for this genre. Please try another genre");
-            }
-        })
-        .catch(error => {
-            console.error("Error fetching book data:", error);
-            alert("An error occured while fetching books. Please try again.");
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (data.items && data.items.length > 0) {
+                    // Pick a random book from the results
+                    const randomIndex = Math.floor(Math.random() * data.items.length);
+                    const book = data.items[randomIndex];
+                    displayBook(book);
+                } else {
+                    alert("No books found for this genre. Please try another genre.");
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching book data:", error);
+                alert("An error occurred while fetching books. Please try again.");
+            });
     }
     function displayBook(book) {
         const title = book.volumeInfo.title || "No title available";
         const authors = book.volumeInfo.authors ? book.volumeInfo.authors.join(", ") : "Unknown author";
         const description = book.volumeInfo.description || "No summary available";
         const thumbnail = book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.thumbnail : "";
-        //Show the book details
+        // Show the book details
         document.getElementById("book_cover").src = thumbnail;
         document.getElementById("book_cover").style.display = thumbnail ? "block" : "none";
         document.getElementById("book_title").innerText = title;
         document.getElementById("book_author").innerText = `By: ${authors}`;
         document.getElementById("book_summary").innerText = description;
-        //Hide the genre selection and show the book details
+        // Hide the genre selection and show the book details
         document.getElementById("genre_selection").style.display = "none";
         document.getElementById("book_display").style.display = "block";
     }
     function startOver() {
-        //Reset to the inital view
+        // Reset to the initial view
         document.getElementById("genre_selection").style.display = "block";
         document.getElementById("book_display").style.display = "none";
     }

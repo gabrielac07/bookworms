@@ -1,6 +1,6 @@
 ---
 layout: post
-title: CHATROOM
+title: GENRE CHATROOM
 hide: true
 ---
 
@@ -13,7 +13,7 @@ hide: true
      display: flex;
      justify-content: space-between;
      margin-bottom: 20px;
-     background-color: #333;
+     background-color: #EDE4D9;
      padding: 10px 20px;
      color: white;
  }
@@ -23,7 +23,7 @@ hide: true
  .navbar button {
      padding: 10px;
      font-size: 16px;
-     background-color: #666;
+     background-color: #C3A382;
      border: none;
      color: white;
      cursor: pointer;
@@ -43,14 +43,14 @@ hide: true
      padding: 20px;
      background-color: white;
      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-     border-radius: 8px;
+     border-radius: none;
  }
  .post-container {
      max-height: 400px;
      overflow-y: auto;
      padding: 10px;
      background-color: #fff;
-     border: 1px solid #ddd;
+     border: none;
      border-radius: 8px;
      margin-bottom: 20px;
  }
@@ -60,7 +60,7 @@ hide: true
      margin: 10px 0;
      border-radius: 8px;
      font-size: 1.1em;
-     color: #1569C7;
+     color: #4B4A40;
      position: relative;
  }
  .post-content {
@@ -94,7 +94,7 @@ hide: true
      font-size: 0.8em;
      cursor: pointer;
      border: none;
-     background-color: #4CAF50;
+     background-color: #C3A382;
      color: white;
      border-radius: 8px;
  }
@@ -109,7 +109,7 @@ hide: true
      border: 1px solid #ddd;
  }
  .send-btn {
-     background-color: #4CAF50;
+     background-color: #C3A382;
      color: white;
      border: none;
      padding: 10px;
@@ -123,10 +123,10 @@ hide: true
 
 
 <div class="navbar">
-  <h1>Genre Chatroom Dashboard</h1>
+  <button onclick="location.href='{{site.baseurl}}/'">Home</button>
   <div>
     <input type="text" id="usernameInput" placeholder="Enter your username" style="padding: 5px; font-size: 16px; border-radius: 5px;">
-    <button onclick="setUsername()" style="padding: 5px; font-size: 16px; background-color: #666; border: none; color: white; cursor: pointer;">Set Username</button>
+    <button onclick="setUsername()" style="padding: 5px; font-size: 16px; background-color: #C3A382; border: none; color: white; cursor: pointer;">Set Username</button>
   </div>
 </div>
 <div class="dashboard">
