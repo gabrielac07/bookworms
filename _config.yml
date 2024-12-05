@@ -21,6 +21,7 @@ header_pages:
   - nagigation/sprint4-bookworms/user_profile.md
   - navigation/sprint4-bookworms/random_book_recommender.md
   - navigation/sprint4-bookworms/bookreview.md
+  - navigation/sprint4-bookworms/genre_chatroom.md
   - navigation/shared_interests/home.md
   - navigation/create_and_compete/home.md
   - navigation/voteforthegoat/home.md
