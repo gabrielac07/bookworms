@@ -15,15 +15,21 @@ permalink: /random_book_recommender/
         /*background-color:*/
         border-radius: 8px;
     }
+
     h1 {
         background: #a8f0ad;
         padding: 50px;
         font-size: 2em;
     }
 
-    input {
-        padding: 15px;
+    h2 {
+        margin: 20px;
+        font-size: 1.5em:
     }
+
+    /*input {
+        padding: 15px;
+    }*/
 
     ul {
         list-style-position: inside;
@@ -42,7 +48,8 @@ permalink: /random_book_recommender/
     }
 
     select:focus, button:hover {
-        /*Add smth here*/    
+        background-color: #435457;
+        transition: 0.3s;   
     }
 
     .book_details {
@@ -96,7 +103,7 @@ permalink: /random_book_recommender/
                 </label><br>
                 <input type="text" id="input_genre" name="input_genre"><br>
             </form>-->
-            <p>What genre do you want to read?</p>
+            <h2>What genre do you want to read?</h2>
             <select id="genre">
                 <option value="nonfiction">Nonfiction</option>
                 <option value="historical_fiction">Historical Fiction</option>
@@ -119,5 +126,46 @@ permalink: /random_book_recommender/
     </div>
 </body>
 <script>
+    function getRandomBook () {
+        const genre = document.getElementById("genre").value;
+        const query = `${genre}`;
+        //Call the Google Books API
+        fetch(`https://www.googleapis.com/books/v1/volumes?q=subject:${query}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.items && data.items. length > 0) {
+                //Pick a random book from the results
+                const randomIndex = Math.floor(Math.random() * data.items.length);
+                const book = data.items[randomIndex];
+                displayBook(book);
+            } else {
+                alert("No books found for this genre. Please try another genre");
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching book data:", error);
+            alert("An error occured while fetching books. Please try again.");
+        });
+    }
+    function displayBook(book) {
+        const title = book.volumeInfo.title || "No title available";
+        const authors = book.volumeInfo.authors ? book.volumeInfo.authors.join(", ") : "Unknown author";
+        const description = book.volumeInfo.description || "No summary available";
+        const thumbnail = book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.thumbnail : "";
+        //Show the book details
+        document.getElementById("book_cover").src = thumbnail;
+        document.getElementById("book_cover").style.display = thumbnail ? "block" : "none";
+        document.getElementById("book_title").innerText = title;
+        document.getElementById("book_author").innerText = `By: ${authors}`;
+        document.getElementById("book_summary").innerText = description;
+        //Hide the genre selection and show the book details
+        document.getElementById("genre_selection").style.display = "none";
+        document.getElementById("book_display").style.display = "block";
+    }
+    function startOver() {
+        //Reset to the inital view
+        document.getElementById("genre_selection").style.display = "block";
+        document.getElementById("book_display").style.display = "none";
+    }
 </script>
 </html>
