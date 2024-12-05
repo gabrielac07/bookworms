@@ -293,5 +293,3 @@ permalink: /bookrates/
       localStorage.setItem('likes', JSON.stringify(likesCount));
     }
   </script>
-</html>
-
