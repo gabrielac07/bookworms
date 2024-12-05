@@ -14,33 +14,44 @@ show_reading_time: false
 }
 
 .login-card {
+    background-color: #EDE4D9;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     margin-top: 0; /* remove the top margin */
     width: 45%;
     border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 20px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
     margin-bottom: 20px;
-    overflow-x: auto; /* Enable horizontal scrolling */
+    overflow-x: auto; /* Enable horizontal scrolling */;
 }
 
 .login-card h1 {
     margin-bottom: 20px;
+    color: #4B4A40
 }
 
 .signup-card {
+    background-color: #EDE4D9;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     margin-top: 0; /* remove the top margin */
     width: 45%;
     border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 20px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
     margin-bottom: 20px;
-    overflow-x: auto; /* Enable horizontal scrolling */
+    overflow-x: auto; /* Enable horizontal scrolling */;
 }
 
 .signup-card h1 {
     margin-bottom: 20px;
+    color: #4B4A40
+}
+
+label {
+    color: #4B4A40
+
 }
 
 </style>
