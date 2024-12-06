@@ -1,0 +1,24 @@
+{
+  "name": "sprint4_frontend",
+  "version": "1.0.0",
+  "description": "Nighthawk Pages is a project designed to support students in their Computer Science and Software Engineering education. It offers a wide range of resources including tech talks, code examples, and educational blogs.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "react-scripts start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gabrielac07/sprint4_frontend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gabrielac07/sprint4_frontend/issues"
+  },
+  "homepage": "https://github.com/gabrielac07/sprint4_frontend#readme",
+  "dependencies": {
+    "react-scripts": "^5.0.1"
+  }
+}
