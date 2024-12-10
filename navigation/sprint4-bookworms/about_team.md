@@ -15,7 +15,7 @@ permalink: /bookworms_about/
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #F5F5F5;
+            background-color: #0B3954;
             color: #333;
         }
         .navbar {

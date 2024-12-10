@@ -15,7 +15,7 @@ permalink: /bookworms/
             gap: 20px;
             max-width: 800px;
             padding: 20px;
-            background: #d1ccc0;
+            background: #0B3954;
             border: 2px solid #aaa;
             border-radius: 10px;
             box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
