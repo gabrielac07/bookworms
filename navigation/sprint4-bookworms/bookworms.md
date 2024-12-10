@@ -131,4 +131,8 @@ permalink: /bookworms/
           <p>Explore genres!</p>
           <button onclick="location.href='{{site.baseurl}}/navigation/sprint4-bookworms/genre_chatroom'">Enter 💬📚</button>
       </div>
+      div class="section">
+          <h2>About Us</h2>
+          <button onclick="location.href='{{site.baseurl}}/bookworms_about'">Click Here</button>
+      </div>
 </div>
