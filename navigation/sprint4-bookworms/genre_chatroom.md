@@ -7,6 +7,9 @@ hide: true
 
 <title>Genre Chatroom</title>
 <style>
+body {
+            background-color: #0B3954;
+        }
  .navbar {
      width: 100%;
      max-width: 1200px;

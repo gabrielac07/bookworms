@@ -15,7 +15,7 @@ permalink: /bookworms_about/
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #F5F5F5;
+            background-color: #0B3954;
             color: #333;
         }
         .navbar {
@@ -81,12 +81,10 @@ permalink: /bookworms_about/
     <div id="team-about">
         <!-- Team member data will be dynamically inserted here -->
     </div>
-
     <script>
         // Function to fetch data from the Flask API and display it
         function fetchTeamMember(name) {
             const apiUrl = `http://127.0.0.1:5000/api/${name}`;
-            
             // Fetch data from the Flask API
             fetch(apiUrl)
                 .then(response => {
@@ -115,11 +113,9 @@ permalink: /bookworms_about/
                     console.error('There was a problem with the fetch operation:', error);
                 });
         }
-
         // Fetch data for each team member
         const teamMembers = ['avika', 'gabi', 'katherine', 'soumini', 'aditi', 'maryam'];
         teamMembers.forEach(fetchTeamMember);
-
         // Function to refresh the page
         function refreshPage() {
             document.getElementById('team-about').innerHTML = '';

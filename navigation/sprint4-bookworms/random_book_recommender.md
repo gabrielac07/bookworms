@@ -5,7 +5,7 @@ permalink: /random_book_recommender/
 ---
 <style>
     body {
-        background-color: #d6bda3;
+        background-color: #0B3954;
         text-align: center;
     }
     .container {
@@ -110,7 +110,7 @@ permalink: /random_book_recommender/
                 <option value="suspense_thriller">Suspense/Thriller</option>
                 <option value="fantasy">Fantasy</option>
                 <option value="romance">Romance</option>
-                <option value="action">Action</option>
+                <option value="action">Dystopian</option>
                 <option value="classic">Classics</option>
                 <option value="mystery">Mystery</option>
             </select>
@@ -133,7 +133,7 @@ permalink: /random_book_recommender/
         suspense_thriller: "thriller",
         fantasy: "fantasy",
         romance: "romance",
-        action: "action",
+        dystopian: "dystopian",
         classic: "classics",
         mystery: "mystery"
     };
