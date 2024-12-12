@@ -4,10 +4,6 @@ title: Book Recommender
 permalink: /random_book_recommender/
 ---
 <style>
-    body {
-        background-color: #0B3954;
-        text-align: center;
-    }
     .container {
         max-width: 600px;
         margin: 50px auto;
