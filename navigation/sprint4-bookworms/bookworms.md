@@ -15,7 +15,7 @@ permalink: /bookworms/
             gap: 20px;
             max-width: 800px;
             padding: 20px;
-            background: #0B3954;
+            background: #e6be9a;
             border: 2px solid #aaa;
             border-radius: 10px;
             box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
@@ -55,7 +55,7 @@ permalink: /bookworms/
 </style>
 
 <center>
- <div class="bookshelf">
+ <div class="bookshelf" >
         <!-- Book 1 -->
         <div class="book">
             <a href="https://www.amazon.com/Inheritance-Games-Jennifer-Lynn-Barnes/dp/0759555400/ref=sr_1_1?crid=7OA29KB25F6I&dib=eyJ2IjoiMSJ9.ijm0MUNlI6X9_y8hGS4bkpk0uh0QpR2E8xPtR4bD3V6STC7xFxCUizAtdrkuUopeewP6TY8hyjcomlBhBoe6cFjgCk5NV2LWt5JXHYSvLFJ6PvSA9hpbriTuwTNnO-1URAmSt89g52RT3rEO5HzT9T63tWYZdYs9jiLXxPQDhDZkp1fQ_kZiEaQY3SMQMUomSO2llowVYTCfgKueFEg3B0WjpfjYu8Fcy0_-aQNBfvg.m5R9xAN_rFXByuoXCJjEe3RmUTR-iNyTnQdL8hruR3E&dib_tag=se&keywords=the+inheritance+games&qid=1733356627&sprefix=the+inheritance+game%2Caps%2C210&sr=8-1" target="_blank">
@@ -96,7 +96,6 @@ permalink: /bookworms/
     </div>
 <br>
 
-
 <style>
    .container {
        display: flex;
@@ -106,10 +105,11 @@ permalink: /bookworms/
        padding: 5px;
        max-width: 1200px;
        margin: 0 auto;
+       color: black;
    }
    /* Sections for each feature */
    .section {
-       background-color: #FFC0CB;
+       background-color: #e6be9a;
        border-radius: 10px;
        padding: 20px;
        width: 800px;
@@ -129,9 +129,9 @@ permalink: /bookworms/
       <div class="section">
           <h2>Genre Chatroom</h2>
           <p>Explore genres!</p>
-          <button onclick="location.href='{{site.baseurl}}/navigation/sprint4-bookworms/genre_chatroom'">Enter 💬📚</button>
+          <button onclick="location.href='{{site.baseurl}}/navigation/sprint4-bookworms/genre_chatroom'" >Enter 💬📚</button>
       </div>
-      div class="section">
+      <div class="section">
           <h2>About Us</h2>
           <button onclick="location.href='{{site.baseurl}}/bookworms_about'">Click Here</button>
       </div>
