@@ -5,7 +5,9 @@ hide: true
 ---
 <style>
 .container{
-    background 
+    background: #F9E4BC; 
+    color: #562E19;
+    padding-bottom: 10px; 
 }
 </style>
 
