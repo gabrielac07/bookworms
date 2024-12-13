@@ -11,13 +11,6 @@ permalink: /bookworms_about/
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Team About Page</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #0B3954;
-            color: #333;
-        }
         .navbar {
             width: 100%;
             display: flex;

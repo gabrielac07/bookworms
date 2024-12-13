@@ -9,12 +9,6 @@ permalink: /bookworms/
 </video>
 
 <style>
-    body {
-      background-color: #0B3954;
-      font-family: Arial, sans-serif;
-      text-align: center;
-    } 
-    
     .bookshelf {
             display: flex;
             flex-wrap: wrap;

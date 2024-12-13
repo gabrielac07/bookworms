@@ -8,11 +8,6 @@ permalink: /bookrates/
   <title>Book Reviews</title>
   <style>
     /* Styling for elements */
-    body {
-      background-color: #0B3954;
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
     .book-card {
       background-color: #072536;
       color: #AFC0D5;
