@@ -1,8 +1,8 @@
 ---
 layout: post
-title: Flocker Social Media Site 
+title: Bookworms
 search_exclude: true
-description: Login and explore our social media hub for everything DNHS 
+description: Login and explore our book recommendation and review site
 hide: true
 menu: nav/home.html
 ---
