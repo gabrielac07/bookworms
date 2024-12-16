@@ -53,7 +53,7 @@ permalink: /bookworms/
     }
 
 </style>
-
+<p> View some top picks! 👇🏼
 <center>
  <div class="bookshelf" >
         <!-- Book 1 -->
