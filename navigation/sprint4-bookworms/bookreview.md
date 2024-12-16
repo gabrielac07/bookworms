@@ -145,53 +145,59 @@ permalink: /bookrates/
   let comments = JSON.parse(localStorage.getItem('comments')) || {};
   let likesCount = JSON.parse(localStorage.getItem('likes')) || {};
 
-  // Fetch random book from backend (Flask API)
-  function fetchRandomBook() {
-    fetch('http://127.0.0.1:8887/api/random-book')
-      .then(response => response.json())
-      .then(data => {
-        if (data && data.title) {
-          currentBook = data;
-          const bookTitle = data.title;
-          const bookAuthor = data.author || 'Unknown Author';
-          const coverUrl = data.cover || 'default-image.jpg';
-          displayBookInfo(bookTitle, bookAuthor, coverUrl);
-        } else {
-          alert('No book data found.');
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching book data:', error);
-        alert('Failed to fetch book information.');
-      });
-  }
+// Fetch random book from backend (Flask API)
+function fetchRandomBook() {
+  fetch(`http://172.19.255.157:8887/api/random_book`)
+    .then(response => response.json())
+    .then(data => {
+      if (data && data.title) {
+        currentBook = data;
+        const bookTitle = data.title;
+        const bookAuthor = data.author || 'Unknown Author';
+        const bookGenre = data.genre || 'Unknown Genre';
+        const bookDescription = data.description || 'No description available';
+        const coverUrl = data.image_cover || 'default-image.jpg';
 
-  // Display the book information
-  function displayBookInfo(title, author, coverUrl) {
-    document.getElementById('bookContainer').innerHTML = `
-      <div class="book-card">
-        <h3 class="book-title">${title}</h3>
-        <img src="${coverUrl}" alt="Book Cover" class="book-cover" />
-        <p class="book-author">by ${author}</p>
-        <div id="rating" class="rating-stars">
-          <span onclick="rateBook(1)">★</span>
-          <span onclick="rateBook(2)">★</span>
-          <span onclick="rateBook(3)">★</span>
-          <span onclick="rateBook(4)">★</span>
-          <span onclick="rateBook(5)">★</span>
-        </div>
-        <p>Average Rating: ${bookRatings[title] || 'No Rating'} ★</p>
-        <button onclick="toggleLike()" id="likeButton" class="heart-button">
-          <span id="heart">♡</span> Like (${currentLikes})
-        </button>
-        <h4 class="comments-heading">Comments:</h4>
-        <div id="commentSection" class="comment-section">
-          <textarea id="commentInput" placeholder="Add a comment..."></textarea>
-          <button onclick="addComment()" class="submit-comment">Submit</button>
-          <div id="commentsList"></div>
-        </div>
+        displayBookInfo(bookTitle, bookAuthor, bookGenre, bookDescription, coverUrl);
+      } else {
+        alert('No book data found.');
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching book data:', error);
+      alert('Failed to fetch book information.');
+    });
+}
+
+// Display the book information
+function displayBookInfo(title, author, genre, description, coverUrl) {
+  document.getElementById('bookContainer').innerHTML = `
+    <div class="book-card">
+      <h3 class="book-title">${title}</h3>
+      <img src="${coverUrl}" alt="Book Cover" class="book-cover" />
+      <p class="book-author">by ${author}</p>
+      <p class="book-genre">Genre: ${genre}</p>
+      <p class="book-description">Description: ${description}</p>
+      <div id="rating" class="rating-stars">
+        <span onclick="rateBook(1)">★</span>
+        <span onclick="rateBook(2)">★</span>
+        <span onclick="rateBook(3)">★</span>
+        <span onclick="rateBook(4)">★</span>
+        <span onclick="rateBook(5)">★</span>
       </div>
-    `;
+      <p>Average Rating: ${bookRatings[title] || 'No Rating'} ★</p>
+      <button onclick="toggleLike()" id="likeButton" class="heart-button">
+        <span id="heart">♡</span> Like (${currentLikes})
+      </button>
+      <h4 class="comments-heading">Comments:</h4>
+      <div id="commentSection" class="comment-section">
+        <textarea id="commentInput" placeholder="Add a comment..."></textarea>
+        <button onclick="addComment()" class="submit-comment">Submit</button>
+        <div id="commentsList"></div>
+      </div>
+    </div>
+  `;
+}
 
     displayComments();
   }
@@ -216,7 +222,7 @@ permalink: /bookrates/
           <button onclick="addReply(${index})" class="submit-reply">Submit Reply</button>
         </div>
         <div class="replies">
-          ${comment.replies.map(reply => `
+          ${comment.replies.map(reply => ` 
             <div class="reply-box">
               <strong>${reply.username}</strong>: ${reply.text}
             </div>`).join('')}
@@ -262,9 +268,10 @@ permalink: /bookrates/
   }
 
   function rateBook(rating) {
-    currentRating = rating;
     const bookTitle = currentBook.title;
-    bookRatings[bookTitle] = (bookRatings[bookTitle] + currentRating) / 2;
+    // Update the book rating using a more accurate average calculation
+    bookRatings[bookTitle] = (bookRatings[bookTitle] * currentLikes + rating) / (currentLikes + 1);
+    currentLikes++;
     document.querySelectorAll('.rating-stars span').forEach((star, index) => {
       star.style.color = index < rating ? 'yellow' : 'gray';
     });
