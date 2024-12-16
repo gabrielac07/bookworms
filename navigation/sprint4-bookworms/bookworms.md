@@ -1,6 +1,6 @@
 ---
 layout: page
-title: The Bookworms!
+title: Once Upon A Shelf
 permalink: /bookworms/
 ---
 

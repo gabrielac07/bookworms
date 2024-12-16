@@ -1,6 +1,6 @@
 ---
 layout: post
-title: GENRE CHATROOM
+title: The Scholarly Scribes
 hide: true
 ---
 <style>

@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Rate the Library!
+title: Paperback Pals
 permalink: /bookrates/
 ---
 

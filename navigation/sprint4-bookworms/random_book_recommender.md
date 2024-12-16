@@ -1,6 +1,6 @@
 ---
 layout: page 
-title: Book Recommender
+title: Page Turners
 permalink: /random_book_recommender/
 ---
 <style>
