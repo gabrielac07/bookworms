@@ -200,7 +200,6 @@ function displayBookInfo(title, author, genre, description, coverUrl) {
 }
 
     displayComments();
-  }
 
   // Fetch book data when the page loads
   fetchRandomBook();
