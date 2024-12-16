@@ -57,7 +57,7 @@ permalink: /random_book_recommender/
         margin: 10px auto:
     }
 
-    .summary {
+    .description {
         font-size: 0.9em;
         margin: 10px 0;
     }
@@ -81,24 +81,6 @@ permalink: /random_book_recommender/
     <div class="container">
         <h1>Welcome to your Random Book Recommender!</h1>
         <div id="genre_selection">
-            <!--this is typing an input<form>
-                <label for="input_genre"><strong>What genre do you want to read?</strong>
-                <div>
-                    Choose from a genre from this list:
-                    <ul>
-                        <li>nonfiction</li>
-                        <li>historical fiction</li>
-                        <li>suspense/thriller</li>
-                        <li>fantasy</li>
-                        <li>romance</li>
-                        <li>action</li>
-                        <li>classics</li>
-                        <li>mystery</li>
-                    </ul>
-                </div>
-                </label><br>
-                <input type="text" id="input_genre" name="input_genre"><br>
-            </form>-->
             <h2>What genre do you want to read?</h2>
             <select id="genre">
                 <option value="nonfiction">Nonfiction</option>
@@ -106,7 +88,7 @@ permalink: /random_book_recommender/
                 <option value="suspense_thriller">Suspense/Thriller</option>
                 <option value="fantasy">Fantasy</option>
                 <option value="romance">Romance</option>
-                <option value="action">Dystopian</option>
+                <option value="dystopian">Dystopian</option>
                 <option value="classic">Classics</option>
                 <option value="mystery">Mystery</option>
             </select>
@@ -116,13 +98,67 @@ permalink: /random_book_recommender/
             <img id="book_cover" class="book_cover" alt="Book Cover">
             <h2 id="book_title"></h2>
             <h3 id="book_author"></h3>
-            <p id="book_summary" class="summary"></p>
+            <p id="book_description" class="description"></p>
             <button class="start_over" onclick="startOver()">Get a Different Book</button>
         </div>
     </div>
 </body>
 <script>
-    //The genreMap object maps the dropdown values (nonfiction, historical_fiction, etc.) to terms recognized by the Google Books API (e.g., "nonfiction", "thriller").
+    //The genreMap object maps the dropdown values (nonfiction, historical_fiction, etc.) to terms recognized by the bookdb API (e.g., "Nonfiction", "Suspense/Thriller").
+    const genreMap = {
+        nonfiction: "Nonfiction",
+        historical_fiction: "Historical Fiction",
+        suspense_thriller: "Suspense/Thriller",
+        fantasy: "Fantasy",
+        romance: "Romance",
+        dystopian: "Dystopian",
+        classic: "Classics",
+        mystery: "Mystery"
+    }
+    //
+    function getRandomBook() {
+    //Get the selected genre from the dropdown
+    //const genre = document.getElementById("genre").value;
+    const genreKey = document.getElementById("genre").value;
+    const query = genreMap[genreKey] || "fiction"; // Fallback to "fiction" if genre not mapped
+    //Build the API URL with the selected genre as a query parameter
+    const apiUrl = `http://127.0.0.1:8887/api/random_book?genre=${encodeURIComponent(query)}`;
+    //Fetch data from the backend API
+    fetch(apiUrl) // Flask server endpoint
+        .then((response) => {
+                if (!response.ok) {
+                    throw new Error('No books found for the selected genre.');
+                }
+                return response.json();
+        })
+        .then((book) => {
+            displayBook(book); // Display the book details on the page
+        })
+        .catch((error) => {
+            console.error("Error fetching data:", error);
+            alert("An error occurred while fetching the book. Please try again.");
+        });
+    }
+    function displayBook(book) {
+        const { title, author, description, image_cover } = book;
+        // Update the DOM with book details
+        document.getElementById("book_title").innerText = title;
+        document.getElementById("book_author").innerText = `By: ${author}`;
+        document.getElementById("book_description").innerText = description;
+        //
+        document.getElementById("book_cover").src = image_cover;
+        document.getElementById("book_cover").style.display = image_cover ? "block" : "none";      
+        // Hide the genre selection and show the book details
+        document.getElementById("genre_selection").style.display = "none";
+        document.getElementById("book_display").style.display = "block";
+    }
+    function startOver() {
+        // Reset to the initial view
+        document.getElementById("genre_selection").style.display = "block";
+        document.getElementById("book_display").style.display = "none";
+    }
+</script>
+    <!--    //The genreMap object maps the dropdown values (nonfiction, historical_fiction, etc.) to terms recognized by the Google Books API (e.g., "nonfiction", "thriller").
     const genreMap = {
         nonfiction: "nonfiction",
         historical_fiction: "historical fiction",
@@ -133,7 +169,7 @@ permalink: /random_book_recommender/
         classic: "classics",
         mystery: "mystery"
     };
-    function getRandomBook() {
+        function getRandomBook() {
         const genreKey = document.getElementById("genre").value;
         const query = genreMap[genreKey] || "fiction"; // Fallback to "fiction" if genre not mapped
         // Call the Google Books API - UPDATE: Google API does not sort books based on genre so I will have to find a different API
@@ -164,7 +200,7 @@ permalink: /random_book_recommender/
         document.getElementById("book_cover").style.display = thumbnail ? "block" : "none";
         document.getElementById("book_title").innerText = title;
         document.getElementById("book_author").innerText = `By: ${authors}`;
-        document.getElementById("book_summary").innerText = description;
+        document.getElementById("book_description").innerText = description;
         // Hide the genre selection and show the book details
         document.getElementById("genre_selection").style.display = "none";
         document.getElementById("book_display").style.display = "block";
@@ -173,6 +209,23 @@ permalink: /random_book_recommender/
         // Reset to the initial view
         document.getElementById("genre_selection").style.display = "block";
         document.getElementById("book_display").style.display = "none";
-    }
-</script>
+    }-->
+            <!--this is typing an input in the HTML segment<form>
+                <label for="input_genre"><strong>What genre do you want to read?</strong>
+                <div>
+                    Choose from a genre from this list:
+                    <ul>
+                        <li>nonfiction</li>
+                        <li>historical fiction</li>
+                        <li>suspense/thriller</li>
+                        <li>fantasy</li>
+                        <li>romance</li>
+                        <li>action</li>
+                        <li>classics</li>
+                        <li>mystery</li>
+                    </ul>
+                </div>
+                </label><br>
+                <input type="text" id="input_genre" name="input_genre"><br>
+            </form>-->
 </html>
