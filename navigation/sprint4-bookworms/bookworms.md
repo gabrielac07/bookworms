@@ -8,6 +8,11 @@ permalink: /bookworms/
     <source src="{{site.baseurl}}/navigation/sprint4-bookworms/images/The Bookworms.mp4" type="video/mp4">
 </video>
 
+<center>
+<h3> View some top picks! 👇🏼 </h3>
+</center>
+<br>
+
 <style>
     .bookshelf {
             display: flex;
@@ -53,7 +58,7 @@ permalink: /bookworms/
     }
 
 </style>
-<p> View some top picks! 👇🏼
+
 <center>
  <div class="bookshelf" >
         <!-- Book 1 -->
