@@ -3,7 +3,6 @@ layout: page
 title: Paperback Pals
 permalink: /bookrates/
 ---
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Book Reviews</title>
@@ -126,8 +125,8 @@ permalink: /bookrates/
   <!-- Book content will be dynamically added here -->
 </div>
 
-<script>
-  import { pythonURI, fetchOptions } from "./api/config.js";
+<script type="module">
+  import { pythonURI, fetchOptions } from "/assets/api/config.js";
   
   const bookRatings = {
     "Harry Potter and the Sorcerer's Stone": 4.8,
