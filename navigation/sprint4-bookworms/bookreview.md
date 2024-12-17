@@ -127,8 +127,8 @@ permalink: /bookrates/
 </div>
 
 <script>
-  const username = prompt("Please enter your username:") || "Anonymous";
-
+  import { pythonURI, fetchOptions } from "./api/config.js";
+  
   const bookRatings = {
     "Harry Potter and the Sorcerer's Stone": 4.8,
     "Percy Jackson & the Olympians: The Lightning Thief": 4.3,
@@ -147,7 +147,7 @@ permalink: /bookrates/
 
 // Fetch random book from backend (Flask API)
 function fetchRandomBook() {
-  fetch(`http://172.19.255.157:8887/api/random_book`)
+  fetch(`${PythonURI}/api/random_book`)
     .then(response => response.json())
     .then(data => {
       if (data && data.title) {
