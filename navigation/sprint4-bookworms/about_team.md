@@ -4,116 +4,115 @@ title: Bookworms About Page
 permalink: /bookworms_about/
 ---
 
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team About Page</title>
+    <title>Bookworms Team</title>
     <style>
-        .navbar {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: #EDE4D9;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
         }
-        .navbar h1 {
-            margin: 0;
-            font-size: 24px;
-            color: #4B4A40;
+        h1 {
+            text-align: center;
+            color: #333;
         }
-        .navbar button {
-            padding: 10px;
-            font-size: 16px;
-            background-color: #C3A382;
-            border: none;
-            color: white;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .navbar button:hover {
-            background-color: #444;
-        }
-        #team-about {
-            display: flex;
-            flex-wrap: wrap;
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
-            margin: 20px auto;
-            padding: 20px;
-            max-width: 1200px;
+            justify-content: center;
+        }
+        .card {
             background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .team-member {
-            flex: 1 1 calc(33.333% - 20px);
-            border: 1px solid #ddd;
+            border-radius: 10px;
             padding: 20px;
-            border-radius: 8px;
-            background-color: #fff;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.2s ease;
         }
-        .team-member h2 {
-            margin: 0 0 10px;
-            font-size: 20px;
-            color: #4B4A40;
+        .card:hover {
+            transform: scale(1.05);
         }
-        .team-member p {
-            margin: 5px 0;
+        .card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+        .card h3 {
+            font-size: 24px;
+            color: #333;
+        }
+        .card p {
+            font-size: 14px;
             color: #555;
+            margin-bottom: 10px;
+        }
+        .card .favorite-books {
+            text-align: left;
+            margin-top: 10px;
+        }
+        .card .favorite-books ul {
+            padding-left: 20px;
+            list-style-type: square;
         }
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <h1>Team About Page</h1>
-        <button onclick="refreshPage()">Refresh</button>
+
+    <h1>Meet the Bookworms Team!</h1>
+
+    <div class="container" id="team-container">
+        <!-- Cards will be inserted here dynamically -->
     </div>
-    <div id="team-about">
-        <!-- Team member data will be dynamically inserted here -->
-    </div>
+
     <script>
-        // Function to fetch data from the Flask API and display it
-        function fetchTeamMember(name) {
-            const apiUrl = `http://127.0.0.1:5000/api/${name}`;
-            // Fetch data from the Flask API
-            fetch(apiUrl)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // Assuming the API returns an array with one object
-                    const member = data[0];
-                    // Create HTML content
-                    const memberHTML = `
-                        <div class="team-member">
-                            <h2>${member.FirstName} ${member.LastName}</h2>
-                            <p><strong>Date of Birth:</strong> ${member.DOB}</p>
-                            <p><strong>Residence:</strong> ${member.Residence}</p>
-                            <p><strong>Email:</strong> ${member.Email}</p>
-                            <p><strong>Favorite Books:</strong> ${member.Favorite_Books.join(', ')}</p>
+        // Function to fetch and display team information
+        async function fetchTeamData() {
+            const teamMembers = [
+                'avika', 'gabi', 'katherine', 'soumini', 'aditi', 'maryam'
+            ];
+
+            const container = document.getElementById('team-container');
+
+            // Fetch data for each team member
+            for (let member of teamMembers) {
+                const response = await fetch(`http://127.0.0.1:5001/api/${member}`);
+                const data = await response.json();
+
+                if (data && data.length > 0) {
+                    const memberData = data[0];
+
+                    // Create card element for each member
+                    const card = document.createElement('div');
+                    card.className = 'card';
+
+                    card.innerHTML = `
+                        <img src="https://via.placeholder.com/100" alt="${memberData.FirstName}'s Photo">
+                        <h3>${memberData.FirstName} ${memberData.LastName}</h3>
+                        <p><strong>Date of Birth:</strong> ${memberData.DOB}</p>
+                        <p><strong>Residence:</strong> ${memberData.Residence}</p>
+                        <p><strong>Email:</strong> <a href="mailto:${memberData.Email}">${memberData.Email}</a></p>
+                        <div class="favorite-books">
+                            <strong>Favorite Books:</strong>
+                            <ul>
+                                ${memberData.Favorite_Books.map(book => `<li>${book}</li>`).join('')}
+                            </ul>
                         </div>
                     `;
-                    // Append to the "team-about" container
-                    document.getElementById('team-about').innerHTML += memberHTML;
-                })
-                .catch(error => {
-                    console.error('There was a problem with the fetch operation:', error);
-                });
+
+                    container.appendChild(card);
+                }
+            }
         }
-        // Fetch data for each team member
-        const teamMembers = ['avika', 'gabi', 'katherine', 'soumini', 'aditi', 'maryam'];
-        teamMembers.forEach(fetchTeamMember);
-        // Function to refresh the page
-        function refreshPage() {
-            document.getElementById('team-about').innerHTML = '';
-            teamMembers.forEach(fetchTeamMember);
-        }
+
+        // Fetch team data when the page loads
+        window.onload = fetchTeamData;
     </script>
+
 </body>
 </html>
