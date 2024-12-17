@@ -13,7 +13,7 @@ permalink: /random_book_recommender/
     }
 
     h1 {
-        background: #6e8a60;
+        background: #db6f3d/*#6e8a60*/;
         padding: 50px;
         font-size: 2em;
     }
@@ -38,13 +38,16 @@ permalink: /random_book_recommender/
         padding: 10px 15px;
         font-size: 25px;
         margin: 10px 5px;
-        border: 1px solid; /*add border color*/
+        border: 1px solid;
+        color: white;
+        background-color: #ed976f;
+        /*border-color: white;*/
         border-radius: 4px;
         cursor: pointer;
     }
 
     select:focus, button:hover {
-        background-color: #435457;
+        background-color: #db6f3d/*#72db8e*/;
         transition: 0.3s;   
     }
 
@@ -66,7 +69,7 @@ permalink: /random_book_recommender/
         margin-top: 20px;
         /*background-color:*/
         color: white;
-        border: none:
+        border: none;
         padding: 10px 15px;
         cursor: pointer;
         border-radius: 4px;
@@ -134,18 +137,18 @@ permalink: /random_book_recommender/
         .then((book) => {
             displayBook(book); // Display the book details on the page
         })
-        .catch((error) => {
+        .catch((error) => { // Catch -> handles any error during execution
             console.error("Error fetching data:", error);
             alert("An error occurred while fetching the book. Please try again.");
         });
     }
     function displayBook(book) {
         const { title, author, description, image_cover } = book;
-        // Update the DOM with book details
+        // Update the DOM (Document Object Model) with book details
         document.getElementById("book_title").innerText = title;
         document.getElementById("book_author").innerText = `By: ${author}`;
         document.getElementById("book_description").innerText = description;
-        //
+        // Book cover display
         document.getElementById("book_cover").src = image_cover;
         document.getElementById("book_cover").style.display = image_cover ? "block" : "none";      
         // Hide the genre selection and show the book details
