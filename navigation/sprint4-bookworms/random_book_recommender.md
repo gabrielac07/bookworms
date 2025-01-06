@@ -8,7 +8,7 @@ permalink: /random_book_recommender/
         max-width: 600px;
         margin: 50px auto;
         padding: 20px;
-        /*background-color:*/
+        background-color: #964621;
         border-radius: 8px;
     }
 
@@ -16,6 +16,7 @@ permalink: /random_book_recommender/
         background: #db6f3d/*#6e8a60*/;
         padding: 50px;
         font-size: 2em;
+        text-align: center;
     }
 
     h2 {
@@ -52,12 +53,19 @@ permalink: /random_book_recommender/
     }
 
     .book_details {
-        margin-top: 20px
+        margin-top: 20px;
+        text-align: center;
+        display: flex;
+        align-items: center;
     }
 
     .book_cover {
         max-width: 200px;
-        margin: 10px auto:
+        margin: 10px auto;
+        display: flex;
+        align-items: center;
+        border-width: 8px;
+        border-color: #eda579;
     }
 
     .description {
@@ -98,7 +106,7 @@ permalink: /random_book_recommender/
             <button onclick="getRandomBook()">Get a Book!</button>
         </div>
         <div id="book_display" class="book_details" style="display: none;">
-            <img id="book_cover" class="book_cover" alt="Book Cover">
+            <div class="book_cover"><img id="book_cover" alt="Book Cover"></div>
             <h2 id="book_title"></h2>
             <h3 id="book_author"></h3>
             <p id="book_description" class="description"></p>
@@ -125,7 +133,8 @@ permalink: /random_book_recommender/
     const genreKey = document.getElementById("genre").value;
     const query = genreMap[genreKey] || "fiction"; // Fallback to "fiction" if genre not mapped
     //Build the API URL with the selected genre as a query parameter
-    const apiUrl = `${pythonURI}/api/random_book?genre=${encodeURIComponent(query)}`;
+    //const apiUrl = `${pythonURI}/api/random_book?genre=${encodeURIComponent(query)}`;
+    const apiUrl = `http://127.0.0.1:5002/api/random_book?genre=${encodeURIComponent(query)}`;
     //Fetch data from the backend API
     fetch(apiUrl) // Flask server endpoint
         .then((response) => {
