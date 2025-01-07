@@ -4,11 +4,7 @@ title: Bookworms About Page
 permalink: /bookworms_about/
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bookworms Team</title>
+ <title>Bookworms Team</title>
     <style>
         body {
             font-family: Arial, sans-serif;
