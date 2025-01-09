@@ -8,14 +8,15 @@ permalink: /random_book_recommender/
         max-width: 600px;
         margin: 50px auto;
         padding: 20px;
-        /*background-color:*/
+        background-color: #964621;
         border-radius: 8px;
     }
 
     h1 {
-        background: #6e8a60;
+        background: #db6f3d/*#6e8a60*/;
         padding: 50px;
         font-size: 2em;
+        text-align: center;
     }
 
     h2 {
@@ -38,23 +39,33 @@ permalink: /random_book_recommender/
         padding: 10px 15px;
         font-size: 25px;
         margin: 10px 5px;
-        border: 1px solid; /*add border color*/
+        border: 1px solid;
+        color: white;
+        background-color: #ed976f;
+        /*border-color: white;*/
         border-radius: 4px;
         cursor: pointer;
     }
 
     select:focus, button:hover {
-        background-color: #435457;
+        background-color: #db6f3d/*#72db8e*/;
         transition: 0.3s;   
     }
 
     .book_details {
-        margin-top: 20px
+        margin-top: 20px;
+        text-align: center;
+        display: flex;
+        align-items: center;
     }
 
     .book_cover {
         max-width: 200px;
-        margin: 10px auto:
+        margin: 10px auto;
+        display: flex;
+        align-items: center;
+        border-width: 8px;
+        border-color: #eda579;
     }
 
     .description {
@@ -66,7 +77,7 @@ permalink: /random_book_recommender/
         margin-top: 20px;
         /*background-color:*/
         color: white;
-        border: none:
+        border: none;
         padding: 10px 15px;
         cursor: pointer;
         border-radius: 4px;
@@ -95,7 +106,7 @@ permalink: /random_book_recommender/
             <button onclick="getRandomBook()">Get a Book!</button>
         </div>
         <div id="book_display" class="book_details" style="display: none;">
-            <img id="book_cover" class="book_cover" alt="Book Cover">
+            <div class="book_cover"><img id="book_cover" alt="Book Cover"></div>
             <h2 id="book_title"></h2>
             <h3 id="book_author"></h3>
             <p id="book_description" class="description"></p>
@@ -122,7 +133,8 @@ permalink: /random_book_recommender/
     const genreKey = document.getElementById("genre").value;
     const query = genreMap[genreKey] || "fiction"; // Fallback to "fiction" if genre not mapped
     //Build the API URL with the selected genre as a query parameter
-    const apiUrl = `http://127.0.0.1:8887/api/random_book?genre=${encodeURIComponent(query)}`;
+    //const apiUrl = `${pythonURI}/api/random_book?genre=${encodeURIComponent(query)}`;
+    const apiUrl = `http://127.0.0.1:5002/api/random_book?genre=${encodeURIComponent(query)}`;
     //Fetch data from the backend API
     fetch(apiUrl) // Flask server endpoint
         .then((response) => {
@@ -134,18 +146,18 @@ permalink: /random_book_recommender/
         .then((book) => {
             displayBook(book); // Display the book details on the page
         })
-        .catch((error) => {
+        .catch((error) => { // Catch -> handles any error during execution
             console.error("Error fetching data:", error);
             alert("An error occurred while fetching the book. Please try again.");
         });
     }
     function displayBook(book) {
         const { title, author, description, image_cover } = book;
-        // Update the DOM with book details
+        // Update the DOM (Document Object Model) with book details
         document.getElementById("book_title").innerText = title;
         document.getElementById("book_author").innerText = `By: ${author}`;
         document.getElementById("book_description").innerText = description;
-        //
+        // Book cover display
         document.getElementById("book_cover").src = image_cover;
         document.getElementById("book_cover").style.display = image_cover ? "block" : "none";      
         // Hide the genre selection and show the book details

@@ -3,7 +3,6 @@ layout: page
 title: Paperback Pals
 permalink: /bookrates/
 ---
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Book Reviews</title>
@@ -126,8 +125,8 @@ permalink: /bookrates/
   <!-- Book content will be dynamically added here -->
 </div>
 
-<script>
-  import { pythonURI, fetchOptions } from "./api/config.js";
+<script type="module">
+  import { pythonURI, fetchOptions } from "{{site.baseurl}}/assets/js/api/config.js";
   
   const bookRatings = {
     "Harry Potter and the Sorcerer's Stone": 4.8,
@@ -147,7 +146,7 @@ permalink: /bookrates/
 
 // Fetch random book from backend (Flask API)
 function fetchRandomBook() {
-  fetch(`${PythonURI}/api/random_book`)
+  fetch(`${pythonURI}/api/random_book`)
     .then(response => response.json())
     .then(data => {
       if (data && data.title) {
@@ -206,7 +205,6 @@ function displayBookInfo(title, author, genre, description, coverUrl) {
 
   function displayComments() {
     const commentsList = document.getElementById('commentsList');
-    commentsList.innerHTML = '';
     const bookComments = comments[currentBook.title] || [];
     bookComments.forEach((comment, index) => {
       const commentDiv = document.createElement('div');
