@@ -65,7 +65,7 @@ show_reading_time: false
 
   // Fetch predefined books for the dropdown
   async function fetchPredefinedBooks() {
-    const URL = `${pythonURI}/api/books`; // Backend endpoint to fetch all books
+    const URL = `${pythonURI}/api/wishlist/books`; // Backend endpoint to fetch all books
     try {
       const response = await fetch(URL, fetchOptions);
       if (!response.ok) {
@@ -92,7 +92,7 @@ show_reading_time: false
 
   // Fetch user's wishlist
   async function fetchWishlist() {
-    const URL = `${pythonURI}/api/wishlist/${userId}`; // Backend endpoint for fetching user's wishlist
+    const URL = `${pythonURI}/api/wishlist/`; // Backend endpoint for fetching user's wishlist
     try {
       const response = await fetch(URL, fetchOptions);
       if (!response.ok) {
@@ -118,8 +118,8 @@ show_reading_time: false
 
     document.getElementById('profile-message').textContent = '';
 
-    const URL = `${pythonURI}/api/wishlist/`;
-    const body = { user_id: userId, book_id: parseInt(bookId) };
+    const URL = `${pythonURI}/api/wishlist/`; // Backend endpoint to add book to wishlist
+    const body = { book_id: parseInt(bookId) }; // Pass only `book_id` as per backend requirements
 
     try {
       const response = await fetch(URL, {
@@ -160,6 +160,42 @@ show_reading_time: false
       tableBody.appendChild(tr);
     });
   }
+
+  // Upload and save the profile picture
+  window.saveProfilePicture = async function () {
+    const fileInput = document.getElementById('profilePicture');
+    const file = fileInput.files[0];
+
+    if (!file) {
+      document.getElementById('profile-message').textContent = 'Please select a profile picture.';
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('profile_picture', file);
+    formData.append('user_id', userId);
+
+    const URL = `${pythonURI}/api/users/upload_picture/`; // Backend endpoint to handle profile picture upload
+
+    try {
+      const response = await fetch(URL, {
+        ...fetchOptions,
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upload profile picture');
+      }
+
+      const data = await response.json();
+      document.getElementById('profileImageBox').innerHTML = `<img src="${data.profile_picture_url}" alt="Profile Picture" />`;
+      document.getElementById('profile-message').textContent = 'Profile picture uploaded successfully!';
+    } catch (error) {
+      console.error('Error uploading profile picture:', error.message);
+      document.getElementById('profile-message').textContent = `Error: ${error.message}`;
+    }
+  };
 
   // Initialization
   document.addEventListener('DOMContentLoaded', async function () {
