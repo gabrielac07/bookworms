@@ -134,7 +134,7 @@ permalink: /random_book_recommender/
     const query = genreMap[genreKey] || "fiction"; // Fallback to "fiction" if genre not mapped
     //Build the API URL with the selected genre as a query parameter
     //const apiUrl = `${pythonURI}/api/random_book?genre=${encodeURIComponent(query)}`;
-    const apiUrl = `http://127.0.0.1:5002/api/random_book?genre=${encodeURIComponent(query)}`;
+    const apiUrl = `http://127.0.0.1:8887/api/random_bookrec?genre=${encodeURIComponent(query)}`;
     //Fetch data from the backend API
     fetch(apiUrl) // Flask server endpoint
         .then((response) => {
