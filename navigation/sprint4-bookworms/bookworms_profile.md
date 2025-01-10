@@ -10,6 +10,7 @@ show_reading_time: false
 <div class="profile-container">
   <div class="card">
     <form>
+      <!-- Profile Update Section -->
       <div>
         <label for="newUid">Enter New UID:</label>
         <input type="text" id="newUid" placeholder="New UID">
@@ -45,11 +46,15 @@ show_reading_time: false
           <!-- Wishlist books will be dynamically populated -->
         </tbody>
       </table>
-      <label for="profilePicture" class="file-icon"> Upload Profile Picture <i class="fas fa-upload"></i></label>
+      <!-- Profile Picture Upload -->
+      <label for="profilePicture" class="file-icon">
+        Upload Profile Picture <i class="fas fa-upload"></i>
+      </label>
       <input type="file" id="profilePicture" accept="image/*" onchange="saveProfilePicture()">
       <div class="image-container" id="profileImageBox">
         <!-- Profile picture will be displayed here -->
       </div>
+      <!-- Profile Message -->
       <p id="profile-message" style="color: red;"></p>
     </form>
   </div>
@@ -71,7 +76,9 @@ show_reading_time: false
       if (!response.ok) {
         throw new Error(`Failed to fetch predefined books: ${response.status}`);
       }
-      return await response.json();
+      const books = await response.json();
+      console.log("Predefined books fetched:", books); // Debug log
+      return books;
     } catch (error) {
       console.error('Error fetching predefined books:', error.message);
       return [];
@@ -82,12 +89,19 @@ show_reading_time: false
   function populateBookDropdown(predefinedBooks) {
     const bookDropdown = document.getElementById('bookDropdown');
     bookDropdown.innerHTML = '';
-    predefinedBooks.forEach(book => {
-      const option = document.createElement('option');
-      option.value = book.id; // Assuming `book` has an `id` property
-      option.textContent = `${book.title} by ${book.author}`;
-      bookDropdown.appendChild(option);
-    });
+    if (predefinedBooks.length === 0) {
+      const placeholderOption = document.createElement('option');
+      placeholderOption.textContent = 'No books available';
+      placeholderOption.disabled = true;
+      bookDropdown.appendChild(placeholderOption);
+    } else {
+      predefinedBooks.forEach(book => {
+        const option = document.createElement('option');
+        option.value = book.id; // Assuming `book` has an `id` property
+        option.textContent = `${book.title} by ${book.author}`;
+        bookDropdown.appendChild(option);
+      });
+    }
   }
 
   // Fetch user's wishlist
@@ -98,7 +112,9 @@ show_reading_time: false
       if (!response.ok) {
         throw new Error(`Failed to fetch wishlist: ${response.status}`);
       }
-      return await response.json();
+      const wishlist = await response.json();
+      console.log("Wishlist fetched:", wishlist); // Debug log
+      return wishlist;
     } catch (error) {
       console.error('Error fetching wishlist:', error.message);
       return [];
@@ -147,55 +163,28 @@ show_reading_time: false
   function displayWishlist() {
     const tableBody = document.getElementById('wishlistResult');
     tableBody.innerHTML = '';
-    userWishlist.forEach(book => {
-      const tr = document.createElement('tr');
-      const titleCell = document.createElement('td');
-      const authorCell = document.createElement('td');
+    if (userWishlist.length === 0) {
+      const emptyRow = document.createElement('tr');
+      const emptyCell = document.createElement('td');
+      emptyCell.setAttribute('colspan', 2);
+      emptyCell.textContent = 'No books in the wishlist.';
+      emptyRow.appendChild(emptyCell);
+      tableBody.appendChild(emptyRow);
+    } else {
+      userWishlist.forEach(book => {
+        const tr = document.createElement('tr');
+        const titleCell = document.createElement('td');
+        const authorCell = document.createElement('td');
 
-      titleCell.textContent = book.title;
-      authorCell.textContent = book.author;
+        titleCell.textContent = book.title;
+        authorCell.textContent = book.author;
 
-      tr.appendChild(titleCell);
-      tr.appendChild(authorCell);
-      tableBody.appendChild(tr);
-    });
-  }
-
-  // Upload and save the profile picture
-  window.saveProfilePicture = async function () {
-    const fileInput = document.getElementById('profilePicture');
-    const file = fileInput.files[0];
-
-    if (!file) {
-      document.getElementById('profile-message').textContent = 'Please select a profile picture.';
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('profile_picture', file);
-    formData.append('user_id', userId);
-
-    const URL = `${pythonURI}/api/users/upload_picture/`; // Backend endpoint to handle profile picture upload
-
-    try {
-      const response = await fetch(URL, {
-        ...fetchOptions,
-        method: 'POST',
-        body: formData,
+        tr.appendChild(titleCell);
+        tr.appendChild(authorCell);
+        tableBody.appendChild(tr);
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to upload profile picture');
-      }
-
-      const data = await response.json();
-      document.getElementById('profileImageBox').innerHTML = `<img src="${data.profile_picture_url}" alt="Profile Picture" />`;
-      document.getElementById('profile-message').textContent = 'Profile picture uploaded successfully!';
-    } catch (error) {
-      console.error('Error uploading profile picture:', error.message);
-      document.getElementById('profile-message').textContent = `Error: ${error.message}`;
     }
-  };
+  }
 
   // Initialization
   document.addEventListener('DOMContentLoaded', async function () {
