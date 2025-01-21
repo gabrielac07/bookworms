@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <button class="dropbtn">${data.name}</button>
                         <div class="dropdown-content">
                             <a href="${baseurl}/logout">Logout</a>
-                            <a href="${baseurl}/bookworms/profile">Profile</a>
+                            <a href="${baseurl}/bookworms_profile">Profile</a>
                             <a href="${baseurl}/analytics">Analytics</a>
                         </div>
                     </div>

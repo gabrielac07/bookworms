@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Paperback Pals
+title: Reader Report
 permalink: /bookrates/
 ---
 <meta charset="UTF-8">
