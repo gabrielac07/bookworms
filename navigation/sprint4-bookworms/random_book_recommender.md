@@ -1,6 +1,6 @@
 ---
 layout: page 
-title: Page Turners
+title: Book Roulette
 permalink: /random_book_recommender/
 ---
 <style>

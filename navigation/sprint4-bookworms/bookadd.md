@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Book Suggest
+title: Tailored Tales
 permalink: /bookadd/
 ---
 <style>
