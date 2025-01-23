@@ -150,8 +150,8 @@ permalink: /bookadd/
         <label for="description">Description</label>
         <textarea id="description" name="description" rows="5" placeholder="Enter a brief description" required></textarea>
         <h2>Cover Image</h2>
-        <label for="cover_image_url">Cover Image URL</label>
-        <input type="url" id="cover_image_url" name="cover_image_url" placeholder="Enter image URL" required>
+        <label for="cover_url">Cover Image URL</label>
+        <input type="url" id="cover_url" name="cover_url" placeholder="Enter image URL" required>
         <button type="submit">Add Book</button>
         <button type="reset" class="start_over">Start Over</button>
     </div>
@@ -177,14 +177,14 @@ permalink: /bookadd/
         const author = document.getElementById('author').value;
         const genre = document.getElementById('genre').value;
         const description = document.getElementById('description').value;
-        const coverImageUrl = document.getElementById('cover_image_url').value;
+        const coverImageUrl = document.getElementById('cover_url').value;
 
         const bookData = {
             title: title,
             author: author,
             genre: genre,
             description: description,
-            cover_image_url: coverImageUrl
+            cover_url: coverImageUrl
         };
         //nonfunctional code below
         /*
@@ -274,7 +274,7 @@ permalink: /bookadd/
             <h3>${book.title}</h3>
             <p><strong>Author:</strong> ${book.author}</p>
             <p><strong>Description:</strong> ${book.description}</p>
-            <img src="${book.cover_image_url}" alt="Cover image of ${book.title}">
+            <img src="${book.cover_url}" alt="Cover image of ${book.title}">
         </div>
     `
     )
