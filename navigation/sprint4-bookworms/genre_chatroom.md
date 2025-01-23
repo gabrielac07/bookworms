@@ -1,12 +1,12 @@
 ---
 layout: post
-title: The Scholarly Scribes
+title: Bookworms United
 hide: true
 ---
 <style>
 .container{
-    background: #F9E4BC; 
-    color: #562E19;
+    background: #E8C5A4; 
+    color: #500A0A;
     padding-bottom: 10px; 
 }
 </style>

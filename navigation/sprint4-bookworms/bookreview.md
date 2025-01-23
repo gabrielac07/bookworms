@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Paperback Pals
+title: Reader Report
 permalink: /bookrates/
 ---
 <meta charset="UTF-8">
@@ -10,7 +10,7 @@ permalink: /bookrates/
 <style>
   /* Styling for elements */
   .book-card {
-    background-color: #072536;
+    background-color: #a57e5a;
     color: #AFC0D5;
     padding: 20px;
     max-width: 700px;
@@ -22,11 +22,11 @@ permalink: /bookrates/
   .book-title {
     font-size: 24px;
     margin-bottom: 10px;
-    color: #FFFFFF;
+    color: #E8C5A4;
   }
   .book-author {
     font-size: 18px;
-    color: #D1E1F2;
+    color: #E8C5A4;
   }
   .book-cover {
     width: 400px;
