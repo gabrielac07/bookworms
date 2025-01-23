@@ -62,46 +62,59 @@ show_reading_time: false
 
 <script type="module">
   import { pythonURI, fetchOptions } from '{{site.baseurl}}/assets/js/api/config.js';
+  import { postUpdate } from "{{site.baseurl}}/assets/js/api/profile.js";
 
-  let predefinedBooks = []; // Declare predefinedBooks
-  let userWishlist = []; // Declare userWishlist
+  let predefinedBooks = [];
+  let userWishlist = [];
+  const userId = 1; // Replace with dynamic user ID logic if needed
 
   // Fetch predefined books for the dropdown
   async function fetchPredefinedBooks() {
-    const URL = `${pythonURI}/api/wishlist/books`;
+    const URL = `${pythonURI}/api/wishlist/books`; // Backend endpoint to fetch all books
     try {
       const response = await fetch(URL, fetchOptions);
       if (!response.ok) {
         throw new Error(`Failed to fetch predefined books: ${response.status}`);
       }
-      return await response.json();
+      const books = await response.json();
+      console.log("Predefined books fetched:", books); // Debug log
+      return books;
     } catch (error) {
       console.error('Error fetching predefined books:', error.message);
       return [];
     }
   }
 
-  // Populate the dropdown with predefined books
-  function populateBookDropdown(books) {
-    const dropdown = document.getElementById('bookDropdown');
-    dropdown.innerHTML = '<option value="">Select a book</option>';
-    books.forEach((book) => {
-      const option = document.createElement('option');
-      option.value = book.id;
-      option.textContent = book.title;
-      dropdown.appendChild(option);
-    });
+  // Populate the book dropdown
+  function populateBookDropdown(predefinedBooks) {
+    const bookDropdown = document.getElementById('bookDropdown');
+    bookDropdown.innerHTML = '';
+    if (predefinedBooks.length === 0) {
+      const placeholderOption = document.createElement('option');
+      placeholderOption.textContent = 'No books available';
+      placeholderOption.disabled = true;
+      bookDropdown.appendChild(placeholderOption);
+    } else {
+      predefinedBooks.forEach(book => {
+        const option = document.createElement('option');
+        option.value = book.id; // Assuming `book` has an `id` property
+        option.textContent = `${book.title} by ${book.author}`;
+        bookDropdown.appendChild(option);
+      });
+    }
   }
 
-  // Fetch the wishlist
+  // Fetch user's wishlist
   async function fetchWishlist() {
-    const URL = `${pythonURI}/api/wishlist/`;
+    const URL = `${pythonURI}/api/wishlist/?user_id=${userId}`; // Backend endpoint for fetching user's wishlist
     try {
       const response = await fetch(URL, fetchOptions);
       if (!response.ok) {
         throw new Error(`Failed to fetch wishlist: ${response.status}`);
       }
-      return await response.json();
+      const wishlist = await response.json();
+      console.log("Wishlist fetched:", wishlist); // Debug log
+      return wishlist;
     } catch (error) {
       console.error('Error fetching wishlist:', error.message);
       return [];
@@ -109,22 +122,20 @@ show_reading_time: false
   }
 
   // Add a book to the wishlist
-  async function addBookToWishlist() {
+  window.addBookToWishlist = async function () {
     const dropdown = document.getElementById('bookDropdown');
     const selectedOption = dropdown.options[dropdown.selectedIndex];
     const bookId = selectedOption.value;
-    const userId = 4; // Hardcoded user ID
 
     if (!bookId) {
       document.getElementById('profile-message').textContent = 'Please select a book.';
       return;
     }
 
-    const URL = `${pythonURI}/api/wishlist/`;
-    const body = {
-      book_id: parseInt(bookId), // Ensure it's an integer
-      user_id: userId,          // Include user ID
-    };
+    document.getElementById('profile-message').textContent = '';
+
+    const URL = `${pythonURI}/api/wishlist/`; // Backend endpoint to add book to wishlist
+    const body = { user_id: userId, book_id: parseInt(bookId) }; 
 
     try {
       const response = await fetch(URL, {
@@ -138,43 +149,20 @@ show_reading_time: false
         throw new Error(errorData.error || `Failed to add book to wishlist: ${response.status}`);
       }
 
-      document.getElementById('profile-message').textContent = 'Book added successfully!';
-      userWishlist = await fetchWishlist(); // Refresh the wishlist after adding a book
+      // Refresh wishlist after adding the book
+      userWishlist = await fetchWishlist();
       displayWishlist();
+      document.getElementById('profile-message').textContent = 'Book added successfully!';
     } catch (error) {
       console.error('Error adding book to wishlist:', error.message);
       document.getElementById('profile-message').textContent = `Error: ${error.message}`;
     }
-  }
-
-  // Delete a book from the wishlist
-  async function deleteBookFromWishlist(bookId) {
-    const URL = `${pythonURI}/api/wishlist/${bookId}`;
-    try {
-      const response = await fetch(URL, {
-        ...fetchOptions,
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to delete book: ${response.status}`);
-      }
-
-      document.getElementById('profile-message').textContent = 'Book deleted successfully!';
-      userWishlist = await fetchWishlist(); // Refresh the wishlist after deletion
-      displayWishlist();
-    } catch (error) {
-      console.error('Error deleting book:', error.message);
-      document.getElementById('profile-message').textContent = `Error: ${error.message}`;
-    }
-  }
+  };
 
   // Display the wishlist
   function displayWishlist() {
     const tableBody = document.getElementById('wishlistResult');
     tableBody.innerHTML = '';
-
     if (userWishlist.length === 0) {
       const emptyRow = document.createElement('tr');
       const emptyCell = document.createElement('td');
@@ -183,7 +171,7 @@ show_reading_time: false
       emptyRow.appendChild(emptyCell);
       tableBody.appendChild(emptyRow);
     } else {
-      userWishlist.forEach((book) => {
+      userWishlist.forEach(book => {
         const tr = document.createElement('tr');
         const titleCell = document.createElement('td');
         const authorCell = document.createElement('td');
@@ -192,6 +180,7 @@ show_reading_time: false
         titleCell.textContent = book.title;
         authorCell.textContent = book.author;
 
+        // Create a delete button
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
         deleteButton.className = 'delete-btn';
@@ -206,16 +195,38 @@ show_reading_time: false
     }
   }
 
-  // Attach functions to the global window object
-  window.addBookToWishlist = addBookToWishlist;
-  window.deleteBookFromWishlist = deleteBookFromWishlist;
-
-  // Initialize the page
-  document.addEventListener('DOMContentLoaded', async () => {
+  // Delete a book from the wishlist
+  async function deleteBookFromWishlist(bookId) {
+    const URL = `${pythonURI}/api/wishlist/${bookId}?user_id=${userId}`; // Backend endpoint for deleting a book
     try {
+      const response = await fetch(URL, {
+        ...fetchOptions,
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to delete book: ${response.status}`);
+      }
+
+      // Refresh wishlist after deletion
+      userWishlist = await fetchWishlist();
+      displayWishlist();
+      document.getElementById('profile-message').textContent = 'Book deleted successfully!';
+    } catch (error) {
+      console.error('Error deleting book:', error.message);
+      document.getElementById('profile-message').textContent = `Error: ${error.message}`;
+    }
+  }
+
+  // Initialization
+  document.addEventListener('DOMContentLoaded', async function () {
+    try {
+      // Fetch predefined books and populate the dropdown
       predefinedBooks = await fetchPredefinedBooks();
       populateBookDropdown(predefinedBooks);
 
+      // Fetch and display the user's wishlist
       userWishlist = await fetchWishlist();
       displayWishlist();
     } catch (error) {

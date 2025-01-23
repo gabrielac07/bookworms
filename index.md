@@ -131,7 +131,7 @@ menu: nav/home.html
           <h2>Profile</h2>
           <p>Add to your profile!</p>
           <button onclick="location.href='{{site.baseurl}}/login'">Login</button>
-          <button onclick="location.href='{{site.baseurl}}/bookworms_profile'">Edit</button>
+          <button onclick="location.href='{{site.baseurl}}/profile'">Edit</button>
       </div>
       <div class="section">
           <h2>Genre Chatroom</h2>
