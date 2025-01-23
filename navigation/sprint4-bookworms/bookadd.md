@@ -17,13 +17,18 @@ permalink: /bookadd/
         padding: 50px;
         font-size: 2em;
         text-align: center;
-        color: #000000;
+        color: #4C4C4C;
     }
 
-    h2 {
+    .container > h2 {
         margin: 20px 0 10px;
         font-size: 1.5em;
-        color: #a57e5a !important;
+        color: #4C4C4C !important;
+    }
+
+    h3 {
+        color: #E8C5A4;
+
     }
 
     label {
@@ -31,7 +36,7 @@ permalink: /bookadd/
         margin-bottom: 5px;
         font-weight: bold;
         color: black;
-        color: #000000;
+        color: #0d160b;
     }
 
     input, textarea, select {
@@ -181,6 +186,28 @@ permalink: /bookadd/
             description: description,
             cover_image_url: coverImageUrl
         };
+        //nonfunctional code below
+        try {
+            const response = await fetch(`${pythonURI}/api/library`, {
+                ...fetchOptions,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(bookData)
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to add book to books: ' + response.statusText);
+            }
+
+            const result = await response.json();
+            console.log("Book added to books successfully")
+            document.getElementById('book-form').reset();
+            fetchBooks();  // Refresh book list
+        } catch (error) {
+            console.error('Error adding book to books:', error);
+        };
 
         try {
             const response = await fetch(`${pythonURI}/api/suggest`, {  // Use /api/suggest endpoint
@@ -243,7 +270,7 @@ permalink: /bookadd/
     .map(
         book => `
         <div class="book">
-            <h2>${book.title}</h2>
+            <h3>${book.title}</h3>
             <p><strong>Author:</strong> ${book.author}</p>
             <p><strong>Description:</strong> ${book.description}</p>
             <img src="${book.cover_image_url}" alt="Cover image of ${book.title}">
