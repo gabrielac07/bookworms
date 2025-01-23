@@ -80,7 +80,7 @@ permalink: /bookrates/
 
   // Fetch random book from backend (Flask API)
   function fetchRandomBook() {
-    fetch(`${pythonURI}/api/random_book`)
+    fetch(`${pythonURI}/api/random_bookrec`)
       .then(response => response.json())
       .then(data => {
         if (data && data.title) {
