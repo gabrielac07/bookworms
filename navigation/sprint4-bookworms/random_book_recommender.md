@@ -136,7 +136,17 @@ permalink: /random_book_recommender/
                 </label></p>
                 <p><label>
                     Genre:
-                    <input type="text" name="genre" id="genre" required>
+                    <!--<input type="text" name="genre" id="genre" required>-->
+                    <select name="genre" id="genre" required>
+                        <option value="nonfiction">Nonfiction</option>
+                        <option value="historical_fiction">Historical Fiction</option>
+                        <option value="suspense_thriller">Suspense/Thriller</option>
+                        <option value="fantasy">Fantasy</option>
+                        <option value="romance">Romance</option>
+                        <option value="dystopian">Dystopian</option>
+                        <option value="classic">Classics</option>
+                        <option value="mystery">Mystery</option>
+                    </select>
                 </label></p>
                 <p><label>
                     Description:
