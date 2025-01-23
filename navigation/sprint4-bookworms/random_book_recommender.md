@@ -8,12 +8,12 @@ permalink: /random_book_recommender/
         max-width: 600px;
         margin: 50px auto;
         padding: 20px;
-        background-color: #964621;
+        background-color: #E8C5A4;
         border-radius: 8px;
     }
 
     h1 {
-        background: #db6f3d/*#6e8a60*/;
+        background: #a57e5a/*#6e8a60*/;
         padding: 50px;
         font-size: 2em;
         text-align: center;
@@ -41,14 +41,14 @@ permalink: /random_book_recommender/
         margin: 10px 5px;
         border: 1px solid;
         color: white;
-        background-color: #ed976f;
+        background-color: #a57e5a;
         /*border-color: white;*/
         border-radius: 4px;
         cursor: pointer;
     }
 
     select:focus, button:hover {
-        background-color: #db6f3d/*#72db8e*/;
+        background-color: #500A0A/*#72db8e*/;
         transition: 0.3s;   
     }
 
