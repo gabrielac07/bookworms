@@ -4,6 +4,7 @@ title: Bookworms
 search_exclude: true
 hide: true
 menu: nav/home.html
+show_reading_time: false
 ---
 
 <video width="1000" height="400" autoplay loop muted>

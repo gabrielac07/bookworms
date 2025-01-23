@@ -8,12 +8,12 @@ permalink: /random_book_recommender/
         max-width: 600px;
         margin: 50px auto;
         padding: 20px;
-        background-color: #964621;
+        background-color: #E8C5A4;
         border-radius: 8px;
     }
 
     h1 {
-        background: #db6f3d/*#6e8a60*/;
+        background: #a57e5a/*#6e8a60*/;
         padding: 50px;
         font-size: 2em;
         text-align: center;
@@ -41,14 +41,14 @@ permalink: /random_book_recommender/
         margin: 10px 5px;
         border: 1px solid;
         color: white;
-        background-color: #ed976f;
+        background-color: #a57e5a;
         /*border-color: white;*/
         border-radius: 4px;
         cursor: pointer;
     }
 
     select:focus, button:hover {
-        background-color: #db6f3d/*#72db8e*/;
+        background-color: #500A0A/*#72db8e*/;
         transition: 0.3s;   
     }
 
@@ -113,9 +113,35 @@ permalink: /random_book_recommender/
         </div>
         <!--This section is the display for adding a bookrec-->
         <div id="add_bookrec">
-            <button onclick="addBookRec()">Add a Book Reccomendation!<button>
+            <button onclick="inputBookRec()">Add a Book Reccomendation!<button>
             <div id="input_bookrec" class="bookrec_table" style="display: none;">
             <!--In progress-->
+                <form>
+                    <p><label>
+                        Book Title:
+                        <input type="text" name="name" id="name" required>
+                    </label></p>
+                    <p><label>
+                        Author:
+                        <input type="text" name="uid" id="uid" required>
+                    </label></p>
+                    <p><label>
+                        Genre:
+                        <input type="text" name="password" id="password" required>
+                    </label></p>
+                    <p><label>
+                        Summary:
+                        <input type="text" name="phone_num" id="phone_num"
+                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" 
+                            placeholder="999-999-9999" required> <!--change this-->
+                    <p><label>
+                        Book Cover Image:
+                        <input type="text" name="password" id="password" required>
+                    </label></p>
+                    <p>
+                        <button onclick="addBookRec()">Add Book Reccomentation</button>
+                    </p>
+                </form>
             </div>
         </div>
     </div>
@@ -174,7 +200,17 @@ permalink: /random_book_recommender/
         document.getElementById("genre_selection").style.display = "block";
         document.getElementById("book_display").style.display = "none";
     }
+    //
+    //Section for adding book recs
+    
 </script>
+
+
+
+
+
+
+
     <!--//The genreMap object maps the dropdown values (nonfiction, historical_fiction, etc.) to terms recognized by the Google Books API (e.g., "nonfiction", "thriller").
     const genreMap = {
         nonfiction: "nonfiction",
