@@ -187,6 +187,7 @@ permalink: /bookadd/
             cover_image_url: coverImageUrl
         };
         //nonfunctional code below
+        /*
         try {
             const response = await fetch(`${pythonURI}/api/library`, {
                 ...fetchOptions,
@@ -208,7 +209,7 @@ permalink: /bookadd/
         } catch (error) {
             console.error('Error adding book to books:', error);
         };
-
+        */
         try {
             const response = await fetch(`${pythonURI}/api/suggest`, {  // Use /api/suggest endpoint
                 ...fetchOptions,
