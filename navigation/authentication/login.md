@@ -14,7 +14,7 @@ show_reading_time: false
 }
 
 .login-card {
-    background-color: #EDE4D9;
+    background-color: #E8C5A4;
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -32,7 +32,7 @@ show_reading_time: false
 }
 
 .signup-card {
-    background-color: #EDE4D9;
+    background-color: #E8C5A4;
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
