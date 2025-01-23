@@ -17,6 +17,8 @@ plugins:
   - jekyll-remote-theme
 header_pages:
   - navigation/ai.md
+  - navigation/sprint4-bookworms/bookworms.md
+  - navigation/authentication/profile.md
   - navigation/sprint4-bookworms/random_book_recommender.md
   - navigation/sprint4-bookworms/bookreview.md
   - navigation/sprint4-bookworms/genre_chatroom.md
