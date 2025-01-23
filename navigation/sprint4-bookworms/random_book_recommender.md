@@ -113,9 +113,35 @@ permalink: /random_book_recommender/
         </div>
         <!--This section is the display for adding a bookrec-->
         <div id="add_bookrec">
-            <button onclick="addBookRec()">Add a Book Reccomendation!<button>
+            <button onclick="inputBookRec()">Add a Book Reccomendation!<button>
             <div id="input_bookrec" class="bookrec_table" style="display: none;">
             <!--In progress-->
+                <form>
+                    <p><label>
+                        Book Title:
+                        <input type="text" name="name" id="name" required>
+                    </label></p>
+                    <p><label>
+                        Author:
+                        <input type="text" name="uid" id="uid" required>
+                    </label></p>
+                    <p><label>
+                        Genre:
+                        <input type="text" name="password" id="password" required>
+                    </label></p>
+                    <p><label>
+                        Summary:
+                        <input type="text" name="phone_num" id="phone_num"
+                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" 
+                            placeholder="999-999-9999" required> <!--change this-->
+                    <p><label>
+                        Book Cover Image:
+                        <input type="text" name="password" id="password" required>
+                    </label></p>
+                    <p>
+                        <button onclick="addBookRec()">Add Book Reccomentation</button>
+                    </p>
+                </form>
             </div>
         </div>
     </div>
@@ -174,7 +200,17 @@ permalink: /random_book_recommender/
         document.getElementById("genre_selection").style.display = "block";
         document.getElementById("book_display").style.display = "none";
     }
+    //
+    //Section for adding book recs
+    
 </script>
+
+
+
+
+
+
+
     <!--//The genreMap object maps the dropdown values (nonfiction, historical_fiction, etc.) to terms recognized by the Google Books API (e.g., "nonfiction", "thriller").
     const genreMap = {
         nonfiction: "nonfiction",
