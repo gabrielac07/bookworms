@@ -139,12 +139,12 @@ permalink: /random_book_recommender/
                     <input type="text" name="genre" id="genre" required>
                 </label></p>
                 <p><label>
-                    Summary:
-                    <textarea type="text" name="summary" rows="5" id="summary" required></textarea>
+                    Description:
+                    <textarea type="text" name="description" rows="5" id="description" required></textarea>
                 </label></p>
                 <p><label>
                     Book Cover Image URL:
-                    <input type="url" name="coverImageUrl" id="coverImageUrl" required>
+                    <input type="url" name="cover_image_url" id="cover_image_url" required>
                 </label></p>
                 <p>
                     <button type="button" onclick="addBookRec()">Done</button>
@@ -219,15 +219,15 @@ permalink: /random_book_recommender/
         const title = document.getElementById('title').value;
         const author = document.getElementById('author').value;
         const genre = document.getElementById('genre').value;
-        const summary = document.getElementById('summary').value;
-        const coverImageUrl = document.getElementById('coverImageUrl').value;
+        const description = document.getElementById('description').value;
+        const coverImageUrl = document.getElementById('cover_image_url').value;
     //
-        const bookRec = {
+        const bookRec = { 
             title: title,
             author: author,
             genre: genre,
-            summary: summary,
-            coverImageUrl: coverImageUrl
+            description: description,
+            cover_image_url: coverImageUrl 
         };
     //
         fetch('http://127.0.0.1:8887/api/add_bookrec', {
