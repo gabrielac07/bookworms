@@ -1,6 +1,6 @@
 ---
 layout: page 
-title: Page Turners
+title: Book Roulette
 permalink: /random_book_recommender/
 ---
 <style>
@@ -88,7 +88,6 @@ permalink: /random_book_recommender/
     }
 </style>
 <html>
-<body>
     <div class="container">
         <h1>Welcome to your Random Book Recommender!</h1>
         <div id="genre_selection">
@@ -112,8 +111,14 @@ permalink: /random_book_recommender/
             <p id="book_description" class="description"></p>
             <button class="start_over" onclick="startOver()">Get a Different Book</button>
         </div>
+        <!--This section is the display for adding a bookrec-->
+        <div id="add_bookrec">
+            <button onclick="addBookRec()">Add a Book Reccomendation!<button>
+            <div id="input_bookrec" class="bookrec_table" style="display: none;">
+            <!--In progress-->
+            </div>
+        </div>
     </div>
-</body>
 <script>
     //The genreMap object maps the dropdown values (nonfiction, historical_fiction, etc.) to terms recognized by the bookdb API (e.g., "Nonfiction", "Suspense/Thriller").
     const genreMap = {
@@ -170,7 +175,7 @@ permalink: /random_book_recommender/
         document.getElementById("book_display").style.display = "none";
     }
 </script>
-    <!--    //The genreMap object maps the dropdown values (nonfiction, historical_fiction, etc.) to terms recognized by the Google Books API (e.g., "nonfiction", "thriller").
+    <!--//The genreMap object maps the dropdown values (nonfiction, historical_fiction, etc.) to terms recognized by the Google Books API (e.g., "nonfiction", "thriller").
     const genreMap = {
         nonfiction: "nonfiction",
         historical_fiction: "historical fiction",
