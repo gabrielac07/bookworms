@@ -1,151 +1,157 @@
 ---
-layout: post
-title: Bookworms Shop
-hide: true
+layout: page
+title: Book Store
+permalink: /bookstore/
 ---
 
-<div class="container my-5">
-        <h1 class="text-center">Book Cart Management</h1>
+<style>
+    .cart-container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #f7f7f7;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    .cart-buttons, .cart-inputs {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .btn {
+      background-color: #007bff;
+      color: #fff;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    .btn.clear {
+      background-color: #dc3545;
+    }
+    .input-field {
+      display: block;
+      margin: 10px auto;
+      width: 80%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+  </style>
 
- <div id="cart-container" class="my-4">
-            <h3>Cart Items</h3>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="cart-items">
-                    <!-- Items will be dynamically inserted here -->
-                </tbody>
-            </table>
-            <div id="cart-summary" class="mt-3">
-                <p><strong>Total Items:</strong> <span id="total-items">0</span></p>
-                <p><strong>Total Price:</strong> $<span id="total-price">0.00</span></p>
-                <button class="btn btn-danger" onclick="clearCart()">Clear Cart</button>
-            </div>
-        </div>
+<div class="cart-container">
+  <h2>Your Cart</h2>
+  <div id="cartItems">
+    <!-- Cart items will be dynamically added here -->
+  </div>
 
- <div id="add-item-form" class="my-4">
-            <h3>Add a Book to the Cart</h3>
-            <form onsubmit="addToCart(event)">
-                <div class="mb-3">
-                    <label for="title" class="form-label">Title</label>
-                    <input type="text" class="form-control" id="title" required>
-                </div>
-                <div class="mb-3">
-                    <label for="price" class="form-label">Price</label>
-                    <input type="number" class="form-control" id="price" step="0.01" required>
-                </div>
-                <div class="mb-3">
-                    <label for="quantity" class="form-label">Quantity</label>
-                    <input type="number" class="form-control" id="quantity" required>
-                </div>
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Add to Cart</button>
-            </form>
-        </div>
-    </div>
+  <div class="cart-inputs">
+    <h3>Add a Book to Cart</h3>
+    <input type="number" id="bookId" class="input-field" placeholder="Enter Book ID" />
+    <input type="text" id="bookTitle" class="input-field" placeholder="Enter Book Title" />
+    <input type="number" id="bookPrice" class="input-field" placeholder="Enter Book Price" />
+    <input type="number" id="bookQuantity" class="input-field" placeholder="Enter Quantity" />
+    <input type="text" id="username" class="input-field" placeholder="Enter Your Username" />
+  </div>
+
+  <div class="cart-buttons">
+    <button class="btn" onclick="addToCart()">Add Book to Cart</button>
+    <button class="btn clear" onclick="clearCart()">Clear Cart</button>
+  </div>
+</div>
 
 <script>
-        const apiUrl = '/api/cart';
+  const pythonURI = 'http://127.0.0.1:8887/api'; // Replace with your actual API URL
 
-        // Fetch and display cart items
-        async function fetchCart() {
-            try {
-                const response = await axios.get(apiUrl);
-                const { items, total_items, total_price } = response.data;
+  // Fetch and display cart items
+  function fetchCartItems() {
+    fetch(`${pythonURI}/cart`)
+      .then(response => response.json())
+      .then(data => {
+        const cartItemsContainer = document.getElementById('cartItems');
+        cartItemsContainer.innerHTML = ''; // Clear current items
 
-                // Populate table with items
-                const cartItems = document.getElementById('cart-items');
-                cartItems.innerHTML = '';
-                items.forEach(item => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${item.title}</td>
-                        <td>$${item.price.toFixed(2)}</td>
-                        <td>${item.quantity}</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm" onclick="updateItem(${item.id})">Update</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteItem(${item.id})">Remove</button>
-                        </td>
-                    `;
-                    cartItems.appendChild(row);
-                });
-
-                // Update cart summary
-                document.getElementById('total-items').textContent = total_items;
-                document.getElementById('total-price').textContent = total_price.toFixed(2);
-            } catch (error) {
-                console.error('Error fetching cart:', error);
-            }
+        if (data.items && data.items.length > 0) {
+          data.items.forEach(item => {
+            const cartItemDiv = document.createElement('div');
+            cartItemDiv.classList.add('cart-item');
+            cartItemDiv.innerHTML = `
+              <span>${item.title} (by ${item.author || 'Unknown'})</span>
+              <span>Price: $${item.price} | Quantity: ${item.quantity}</span>
+            `;
+            cartItemsContainer.appendChild(cartItemDiv);
+          });
+        } else {
+          cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
         }
+      })
+      .catch(error => {
+        console.error('Error fetching cart items:', error);
+      });
+  }
 
-        // Add item to cart
-        async function addToCart(event) {
-            event.preventDefault();
-            const title = document.getElementById('title').value;
-            const price = parseFloat(document.getElementById('price').value);
-            const quantity = parseInt(document.getElementById('quantity').value);
-            const username = document.getElementById('_name').value;
+  // Add a book to the cart
+  function addToCart() {
+    const bookId = document.getElementById('bookId').value.trim();
+    const bookTitle = document.getElementById('bookTitle').value.trim();
+    const bookPrice = document.getElementById('bookPrice').value.trim();
+    const bookQuantity = document.getElementById('bookQuantity').value.trim();
+    const username = document.getElementById('username').value.trim();
 
-            try {
-                await axios.post(apiUrl, { title, price, quantity, username });
-                alert('Item added successfully!');
-                fetchCart();
-            } catch (error) {
-                console.error('Error adding to cart:', error);
-                alert('Failed to add item to cart.');
-            }
-        }
+    if (bookId && bookTitle && bookPrice && bookQuantity && username) {
+      const data = {
+        id: bookId,
+        title: bookTitle,
+        price: parseFloat(bookPrice),
+        quantity: parseInt(bookQuantity),
+        username: username
+      };
 
-        // Update item quantity
-        async function updateItem(itemId) {
-            const newQuantity = prompt('Enter new quantity:');
-            if (!newQuantity || newQuantity <= 0) return;
+      fetch(`${pythonURI}/cart`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+        .then(response => response.json())
+        .then(data => {
+          alert(data.message || 'Book added to cart!');
+          fetchCartItems(); // Refresh cart items
+        })
+        .catch(error => {
+          console.error('Error adding book to cart:', error);
+        });
+    } else {
+      alert('Please fill out all fields before adding the book to the cart.');
+    }
+  }
 
-            try {
-                await axios.put(`${apiUrl}/${itemId}`, { quantity: parseInt(newQuantity) });
-                alert('Item updated successfully!');
-                fetchCart();
-            } catch (error) {
-                console.error('Error updating item:', error);
-                alert('Failed to update item.');
-            }
-        }
+  // Clear the cart
+  function clearCart() {
+    fetch(`${pythonURI}/cart`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: document.getElementById('username').value.trim() }) // User-specific clearing
+    })
+      .then(response => response.json())
+      .then(data => {
+        alert(data.message || 'Cart cleared successfully!');
+        fetchCartItems(); // Refresh cart items
+      })
+      .catch(error => {
+        console.error('Error clearing cart:', error);
+      });
+  }
 
-        // Delete an item from the cart
-        async function deleteItem(itemId) {
-            try {
-                await axios.delete(`${apiUrl}/${itemId}`);
-                alert('Item removed successfully!');
-                fetchCart();
-            } catch (error) {
-                console.error('Error removing item:', error);
-                alert('Failed to remove item.');
-            }
-        }
-
-        // Clear the entire cart
-        async function clearCart() {
-            if (!confirm('Are you sure you want to clear the cart?')) return;
-
-            try {
-                await axios.delete(apiUrl);
-                alert('Cart cleared successfully!');
-                fetchCart();
-            } catch (error) {
-                console.error('Error clearing cart:', error);
-                alert('Failed to clear cart.');
-            }
-        }
-
-        // Initial fetch
-        fetchCart();
-    </script>
+  // Fetch cart items on page load
+  fetchCartItems();
+</script>
