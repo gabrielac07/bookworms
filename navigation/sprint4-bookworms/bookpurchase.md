@@ -1,176 +1,157 @@
 ---
 layout: page
 title: Book Store
-permalink: /bookpurchase/
+permalink: /bookstore/
 ---
-<style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        header {
-            background-color: #333;
-            color: white;
-            padding: 1rem 2rem;
-            text-align: center;
-        }
-        .container {
-            max-width: 900px;
-            margin: 2rem auto;
-            background: white;
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .book {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: 1rem 0;
-            padding: 1rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #fafafa;
-        }
-        .book img {
-            height: 100px;
-            margin-right: 1rem;
-        }
-        .book-details {
-            flex: 1;
-        }
-        .book-title {
-            font-size: 1.2rem;
-            margin: 0;
-        }
-        .book-price {
-            margin: 0.5rem 0;
-            font-weight: bold;
-            color: #555;
-        }
-        .cart-controls {
-            display: flex;
-            align-items: center;
-        }
-        .cart-controls button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 0.5rem 0.8rem;
-            margin: 0 0.5rem;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .cart-controls button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-        .quantity {
-            font-weight: bold;
-            margin: 0 0.5rem;
-        }
-    </style>
 
-<header>
-        <h1>Bookstore</h1>
-    </header>
-    <div class="container" id="book-list">
-        <h2>Books</h2>
-        <p>Loading books...</p>
-    </div>
+<style>
+    .cart-container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #f7f7f7;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    .cart-buttons, .cart-inputs {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .btn {
+      background-color: #007bff;
+      color: #fff;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    .btn.clear {
+      background-color: #dc3545;
+    }
+    .input-field {
+      display: block;
+      margin: 10px auto;
+      width: 80%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+  </style>
+
+<div class="cart-container">
+  <h2>Your Cart</h2>
+  <div id="cartItems">
+    <!-- Cart items will be dynamically added here -->
+  </div>
+
+  <div class="cart-inputs">
+    <h3>Add a Book to Cart</h3>
+    <input type="number" id="bookId" class="input-field" placeholder="Enter Book ID" />
+    <input type="text" id="bookTitle" class="input-field" placeholder="Enter Book Title" />
+    <input type="number" id="bookPrice" class="input-field" placeholder="Enter Book Price" />
+    <input type="number" id="bookQuantity" class="input-field" placeholder="Enter Quantity" />
+    <input type="text" id="username" class="input-field" placeholder="Enter Your Username" />
+  </div>
+
+  <div class="cart-buttons">
+    <button class="btn" onclick="addToCart()">Add Book to Cart</button>
+    <button class="btn clear" onclick="clearCart()">Clear Cart</button>
+  </div>
+</div>
 
 <script>
-        // Random price generator
-        function getRandomPrice() {
-            return (Math.random() * 14 + 1).toFixed(2); // Random price between 1 and 15
+  const pythonURI = 'http://127.0.0.1:8887/api'; // Replace with your actual API URL
+
+  // Fetch and display cart items
+  function fetchCartItems() {
+    fetch(`${pythonURI}/cart`)
+      .then(response => response.json())
+      .then(data => {
+        const cartItemsContainer = document.getElementById('cartItems');
+        cartItemsContainer.innerHTML = ''; // Clear current items
+
+        if (data.items && data.items.length > 0) {
+          data.items.forEach(item => {
+            const cartItemDiv = document.createElement('div');
+            cartItemDiv.classList.add('cart-item');
+            cartItemDiv.innerHTML = `
+              <span>${item.title} (by ${item.author || 'Unknown'})</span>
+              <span>Price: $${item.price} | Quantity: ${item.quantity}</span>
+            `;
+            cartItemsContainer.appendChild(cartItemDiv);
+          });
+        } else {
+          cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
         }
+      })
+      .catch(error => {
+        console.error('Error fetching cart items:', error);
+      });
+  }
 
-        // Fetch books and render them
-        async function fetchBooks() {
-            try {
-                const response = await fetch('http://172.19.255.157:8887/api/random_book'); // Change to your backend endpoint
-                const books = await response.json();
+  // Add a book to the cart
+  function addToCart() {
+    const bookId = document.getElementById('bookId').value.trim();
+    const bookTitle = document.getElementById('bookTitle').value.trim();
+    const bookPrice = document.getElementById('bookPrice').value.trim();
+    const bookQuantity = document.getElementById('bookQuantity').value.trim();
+    const username = document.getElementById('username').value.trim();
 
-                const bookList = document.getElementById('book-list');
-                bookList.innerHTML = ''; // Clear loading message
+    if (bookId && bookTitle && bookPrice && bookQuantity && username) {
+      const data = {
+        id: bookId,
+        title: bookTitle,
+        price: parseFloat(bookPrice),
+        quantity: parseInt(bookQuantity),
+        username: username
+      };
 
-                books.forEach(book => {
-                    const price = getRandomPrice(); // Generate a random price
-                    const bookElement = document.createElement('div');
-                    bookElement.className = 'book';
+      fetch(`${pythonURI}/cart`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+        .then(response => response.json())
+        .then(data => {
+          alert(data.message || 'Book added to cart!');
+          fetchCartItems(); // Refresh cart items
+        })
+        .catch(error => {
+          console.error('Error adding book to cart:', error);
+        });
+    } else {
+      alert('Please fill out all fields before adding the book to the cart.');
+    }
+  }
 
-                    bookElement.innerHTML = `
-                        <img src="${book.cover}" alt="${book.title}" />
-                        <div class="book-details">
-                            <h3 class="book-title">${book.title}</h3>
-                            <p class="book-price">$${price}</p>
-                        </div>
-                        <div class="cart-controls">
-                            <button onclick="decreaseQuantity('${book.id}')">-</button>
-                            <span class="quantity" id="quantity-${book.id}">1</span>
-                            <button onclick="increaseQuantity('${book.id}')">+</button>
-                            <button onclick="addToCart('${book.id}', '${book.title}', '${price}', '1')">Add to Cart</button>
-                        </div>
-                    `;
+  // Clear the cart
+  function clearCart() {
+    fetch(`${pythonURI}/cart`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: document.getElementById('username').value.trim() }) // User-specific clearing
+    })
+      .then(response => response.json())
+      .then(data => {
+        alert(data.message || 'Cart cleared successfully!');
+        fetchCartItems(); // Refresh cart items
+      })
+      .catch(error => {
+        console.error('Error clearing cart:', error);
+      });
+  }
 
-                    bookList.appendChild(bookElement);
-                });
-            } catch (error) {
-                console.error('Error fetching books:', error);
-            }
-        }
-
-        // Increase quantity
-        function increaseQuantity(bookId) {
-            const quantityElement = document.getElementById(`quantity-${bookId}`);
-            let quantity = parseInt(quantityElement.textContent);
-            quantityElement.textContent = ++quantity;
-        }
-
-        // Decrease quantity
-        function decreaseQuantity(bookId) {
-            const quantityElement = document.getElementById(`quantity-${bookId}`);
-            let quantity = parseInt(quantityElement.textContent);
-            if (quantity > 1) {
-                quantityElement.textContent = --quantity;
-            }
-        }
-
-        // Add to Cart
-        async function addToCart(bookId, title, price, quantity) {
-            const quantityElement = document.getElementById(`quantity-${bookId}`);
-            const updatedQuantity = parseInt(quantityElement.textContent);
-
-            const data = {
-                id: bookId,
-                title: title,
-                price: parseFloat(price),
-                quantity: updatedQuantity,
-                _name: 'Guest' // Hardcoded username, replace with dynamic value if needed
-            };
-
-            try {
-                const response = await fetch('http://127.0.0.1:8887/api/cart', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                if (response.ok) {
-                    alert('Item added to cart!');
-                } else {
-                    const error = await response.json();
-                    alert(`Error: ${error.message}`);
-                }
-            } catch (error) {
-                console.error('Error adding to cart:', error);
-            }
-        }
-
-        // Initialize
-        fetchBooks();
-    </script>
+  // Fetch cart items on page load
+  fetchCartItems();
+</script>

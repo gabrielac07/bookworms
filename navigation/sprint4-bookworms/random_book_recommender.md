@@ -47,6 +47,15 @@ permalink: /random_book_recommender/
         cursor: pointer;
     }
 
+    input, textarea, {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+
     select:focus, button:hover {
         background-color: #500A0A/*#72db8e*/;
         transition: 0.3s;   
@@ -113,10 +122,44 @@ permalink: /random_book_recommender/
         </div>
         <!--This section is the display for adding a bookrec-->
         <div id="add_bookrec">
-            <button onclick="addBookRec()">Add a Book Reccomendation!<button>
-            <div id="input_bookrec" class="bookrec_table" style="display: none;">
-            <!--In progress-->
-            </div>
+            <button onclick="inputBookRec()">Add a Book Recommendation!</button>
+        </div>
+        <div id="input_bookrec" class="bookrec_table" style="display: none;">
+            <form id="bookRecForm">
+                <p><label>
+                    Book Title:
+                    <input type="text" name="title" id="title" required>
+                </label></p>
+                <p><label>
+                    Author:
+                    <input type="text" name="author" id="author" required>
+                </label></p>
+                <p><label>
+                    Genre:
+                    <!--<input type="text" name="genre" id="genre" required>-->
+                    <select name="genre" id="genre" required>
+                        <option value="nonfiction">Nonfiction</option>
+                        <option value="historical_fiction">Historical Fiction</option>
+                        <option value="suspense_thriller">Suspense/Thriller</option>
+                        <option value="fantasy">Fantasy</option>
+                        <option value="romance">Romance</option>
+                        <option value="dystopian">Dystopian</option>
+                        <option value="classic">Classics</option>
+                        <option value="mystery">Mystery</option>
+                    </select>
+                </label></p>
+                <p><label>
+                    Description:
+                    <textarea type="text" name="description" rows="5" id="description" required></textarea>
+                </label></p>
+                <p><label>
+                    Book Cover Image URL:
+                    <input type="url" name="cover_image_url" id="cover_image_url" required>
+                </label></p>
+                <p>
+                    <button type="button" onclick="addBookRec()">Done</button>
+                </p>
+            </form>
         </div>
     </div>
 <script>
@@ -137,6 +180,7 @@ permalink: /random_book_recommender/
     //const genre = document.getElementById("genre").value;
     const genreKey = document.getElementById("genre").value;
     const query = genreMap[genreKey] || "fiction"; // Fallback to "fiction" if genre not mapped
+    //
     //Build the API URL with the selected genre as a query parameter
     //const apiUrl = `${pythonURI}/api/random_book?genre=${encodeURIComponent(query)}`;
     const apiUrl = `http://127.0.0.1:8887/api/random_bookrec?genre=${encodeURIComponent(query)}`;
@@ -174,7 +218,50 @@ permalink: /random_book_recommender/
         document.getElementById("genre_selection").style.display = "block";
         document.getElementById("book_display").style.display = "none";
     }
+    // Section for displaying form to add a book rec
+    function inputBookRec() {
+        document.getElementById("input_bookrec").style.display = "block";
+        document.getElementById("add_bookrec").style.display = "none";
+    }
+    //
+    // Section for adding book recs
+    function addBookRec() {
+        const title = document.getElementById('title').value;
+        const author = document.getElementById('author').value;
+        const genre = document.getElementById('genre').value;
+        const description = document.getElementById('description').value;
+        const coverImageUrl = document.getElementById('cover_image_url').value;
+    //
+        const bookRec = { 
+            title: title,
+            author: author,
+            genre: genre,
+            description: description,
+            cover_image_url: coverImageUrl 
+        };
+    //
+        fetch('http://127.0.0.1:8887/api/add_bookrec', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bookRec)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Book recommendation added successfully!');
+            } else {
+                alert('Failed to add book recommendation.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while adding the book recommendation.');
+        });
+    }
 </script>
+
     <!--//The genreMap object maps the dropdown values (nonfiction, historical_fiction, etc.) to terms recognized by the Google Books API (e.g., "nonfiction", "thriller").
     const genreMap = {
         nonfiction: "nonfiction",

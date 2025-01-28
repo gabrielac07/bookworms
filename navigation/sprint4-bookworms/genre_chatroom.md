@@ -2,12 +2,28 @@
 layout: post
 title: Bookworms United
 hide: true
+permalink: /test4
 ---
 <style>
 .container{
-    background: #E8C5A4; 
-    color: #500A0A;
+    background: #F9E4BC; 
+    color: #562E19;
     padding-bottom: 10px; 
+}
+.post-item {
+  border: 1px solid #ccc;
+  padding: 16px;
+  margin: 16px 0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.post-item h3 {
+  margin-top: 0;
+}
+
+.post-item button {
+  margin-top: 8px;
 }
 </style>
 
@@ -177,10 +193,7 @@ hide: true
             alert('Error adding post: ' + error.message);
         }
     });
-    /**
-     * Fetch posts based on selected channel
-     * Handle response: Fetch and display posts
-     */
+// Function to fetch and display posts based on channel ID
     async function fetchData(channelId) {
         try {
             const response = await fetch(`${pythonURI}/api/posts/filter`, {
@@ -212,11 +225,12 @@ hide: true
                     <p><strong>Channel:</strong> ${postItem.channel_name}</p>
                     <p><strong>User:</strong> ${postItem.user_name}</p>
                     <p>${postItem.comment}</p>
-                `;
-                detailsDiv.appendChild(postElement);
+                    <button onclick="reactToPost(${postItem.id})    ">React</button>
+            `;
+            detailsDiv.appendChild(postElement);
             });
         } catch (error) {
-            console.error('Error fetching data:', error);
+            console.error('Error fetching posts:', error);
         }
     }
     // Fetch groups when the page loads
