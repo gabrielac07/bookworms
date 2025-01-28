@@ -10,8 +10,8 @@ permalink: /bookrates/
 <style>
   /* Styling for elements */
   .book-card {
-    background-color: #a57e5a;
-    color: #AFC0D5;
+    background-color: #D4AFB9;
+    color: #BC4749;
     padding: 20px;
     max-width: 700px;
     margin: 20px auto;
@@ -22,11 +22,11 @@ permalink: /bookrates/
   .book-title {
     font-size: 24px;
     margin-bottom: 10px;
-    color: #E8C5A4;
+    color: #BC4749;
   }
   .book-author {
     font-size: 18px;
-    color: #E8C5A4;
+    color: #BC4749;
   }
   .book-cover {
     width: 400px;
@@ -39,7 +39,7 @@ permalink: /bookrates/
     margin-top: 20px;
   }
   .comment-section {
-    background-color: #072536;
+    background-color: #BC4749;
     color: white;
     padding: 15px;
     border-radius: 5px;
@@ -49,7 +49,7 @@ permalink: /bookrates/
   .submit-comment {
     display: block;
     margin-top: 10px;
-    background-color: #33ccff;
+    background-color: #C45A5C;
     border: none;
     color: white;
     padding: 8px 12px;
@@ -61,7 +61,7 @@ permalink: /bookrates/
     border-bottom: 1px solid #cce7ff;
     padding: 10px;
     margin-top: 10px;
-    background-color: #0B3954;
+    background-color: #873132;
     border-radius: 5px;
   }
   .comment-text {
