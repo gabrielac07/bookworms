@@ -1,7 +1,7 @@
 ---
 layout: page 
 title: Book Roulette
-permalink: /idk/
+permalink: /emotion/
 ---
 <head>
     <meta charset="UTF-8">
