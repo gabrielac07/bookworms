@@ -2,12 +2,28 @@
 layout: post
 title: Bookworms United
 hide: true
+permalink: /test4
 ---
 <style>
 .container{
-    background: #E8C5A4; 
-    color: #500A0A;
+    background: #F9E4BC; 
+    color: #562E19;
     padding-bottom: 10px; 
+}
+.post-item {
+  border: 1px solid #ccc;
+  padding: 16px;
+  margin: 16px 0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.post-item h3 {
+  margin-top: 0;
+}
+
+.post-item button {
+  margin-top: 8px;
 }
 </style>
 
@@ -80,6 +96,13 @@ hide: true
             console.error('Error fetching groups:', error);
         }
     }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add event listener to the react button
+        document.getElementById('reactButton').addEventListener('click', function() {
+            const postId = this.getAttribute('data-post-id');
+            reactToPost(postId);
+        });
+    });
     /**
      * Fetch channels based on selected group
      * User picks from dropdown
@@ -110,6 +133,52 @@ hide: true
             console.error('Error fetching channels:', error);
         }
     }
+    // Handle Post Reaction
+    async function reactToPost(postId) {
+        const reactionType = prompt("Enter your reaction emoji (e.g., 👍, ❤️):");
+        if (!reactionType) return;
+        try {
+            const response = await fetch(`${pythonURI}/api/reaction`, {
+                ...fetchOptions,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_id: 1, post_id: postId, reaction_type: reactionType }) // Assuming user_id is 1 for simplicity
+            });
+            if (!response.ok) {
+                throw new Error('Failed to add reaction: ' + response.statusText);
+            }
+            const result = await response.json();
+            alert('Reaction added successfully!');
+            // Update the post with the new reaction
+            updatePostReaction(postId, reactionType);
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while adding the reaction.');
+        }
+    }
+    // Update the post with the new reaction
+    function updatePostReaction(postId, reaction) {
+        const postElement = document.querySelector(`[data-post-id="${postId}"]`);
+        if (postElement) {
+            const reactionElement = postElement.querySelector('.reaction');
+            if (reactionElement) {
+                reactionElement.textContent = reaction;
+            } else {
+                const newReactionElement = document.createElement('div');
+                newReactionElement.classList.add('reaction');
+                newReactionElement.textContent = reaction;
+                postElement.appendChild(newReactionElement);
+            }
+        }
+    }
+    // Fetch posts when the page loads
+    document.getElementById('selectionForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const channelId = document.getElementById('channel_id').value;
+        fetchData(channelId);
+    });
     /**
      * Handle group selection change
      * Channel Dropdown refresh to match group_id change
@@ -177,48 +246,53 @@ hide: true
             alert('Error adding post: ' + error.message);
         }
     });
-    /**
-     * Fetch posts based on selected channel
-     * Handle response: Fetch and display posts
-     */
-    async function fetchData(channelId) {
-        try {
-            const response = await fetch(`${pythonURI}/api/posts/filter`, {
-                ...fetchOptions,
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ channel_id: channelId })
-            });
-            if (!response.ok) {
-                throw new Error('Failed to fetch posts: ' + response.statusText);
-            }
-            // Parse the JSON data
-            const postData = await response.json();
-            // Extract posts count
-            const postCount = postData.length || 0;
-            // Update the HTML elements with the data
-            document.getElementById('count').innerHTML = `<h2>Count ${postCount}</h2>`;
-            // Get the details div
-            const detailsDiv = document.getElementById('details');
-            detailsDiv.innerHTML = ''; // Clear previous posts
-            // Iterate over the postData and create HTML elements for each item
-            postData.forEach(postItem => {
-                const postElement = document.createElement('div');
-                postElement.className = 'post-item';
-                postElement.innerHTML = `
-                    <h3>${postItem.title}</h3>
-                    <p><strong>Channel:</strong> ${postItem.channel_name}</p>
-                    <p><strong>User:</strong> ${postItem.user_name}</p>
-                    <p>${postItem.comment}</p>
-                `;
-                detailsDiv.appendChild(postElement);
-            });
-        } catch (error) {
-            console.error('Error fetching data:', error);
+async function fetchData(channelId) {
+    try {
+        const response = await fetch(`${pythonURI}/api/posts/filter`, {
+            ...fetchOptions,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ channel_id: channelId })
+        });
+        if (!response.ok) {
+            throw new Error('Failed to fetch posts: ' + response.statusText);
         }
+        // Parse the JSON data
+        const postData = await response.json();
+        // Extract posts count
+        const postCount = postData.length || 0;
+        // Update the HTML elements with the data
+        document.getElementById('count').innerHTML = `<h2>Count ${postCount}</h2>`;
+        // Get the details div
+        const detailsDiv = document.getElementById('details');
+        detailsDiv.innerHTML = ''; // Clear previous posts
+        // Iterate over the postData and create HTML elements for each item
+        postData.forEach(postItem => {
+            const postElement = document.createElement('div');
+            postElement.className = 'post-item';
+            postElement.innerHTML = `
+                <h3>${postItem.title}</h3>
+                <p><strong>Channel:</strong> ${postItem.channel_name}</p>
+                <p><strong>User:</strong> ${postItem.user_name}</p>
+                <p>${postItem.comment}</p>
+                <button class="react-button" data-post-id="${postItem.id}">React</button>
+            `;
+            detailsDiv.appendChild(postElement);
+        });
+        // Attach event listeners to all react buttons
+        const reactButtons = document.querySelectorAll('.react-button');
+        reactButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const postId = this.getAttribute('data-post-id');
+                reactToPost(postId);
+            });
+        });
+    } catch (error) {
+        console.error('Error fetching posts:', error);
     }
+}
     // Fetch groups when the page loads
     fetchGroups();
 </script>
