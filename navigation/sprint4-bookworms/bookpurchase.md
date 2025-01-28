@@ -4,50 +4,50 @@ title: Book Store
 permalink: /bookstore/
 ---
 
-<style>
-    .cart-container {
-      max-width: 600px;
-      margin: 20px auto;
-      padding: 20px;
-      background-color: #f7f7f7;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    .cart-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px;
-      background-color: #fff;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      margin-bottom: 10px;
-    }
-    .cart-buttons, .cart-inputs {
-      text-align: center;
-      margin-top: 20px;
-    }
-    .btn {
-      background-color: #007bff;
-      color: #fff;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin: 5px;
-    }
-    .btn.clear {
-      background-color: #dc3545;
-    }
-    .input-field {
-      display: block;
-      margin: 10px auto;
-      width: 80%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-  </style>
+<style> 
+  .cart-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #E8C4A4;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  .cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #A57F5A;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  .cart-buttons, .cart-inputs {
+    text-align: center;
+    margin-top: 20px;
+  }
+  .btn {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+  }
+  .btn.clear {
+    background-color: #dc3545;
+  }
+  .input-field {
+    display: block;
+    margin: 10px auto;
+    width: 80%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+</style>
 
 <div class="cart-container">
   <h2>Your Cart</h2>
@@ -59,7 +59,16 @@ permalink: /bookstore/
     <h3>Add a Book to Cart</h3>
     <input type="number" id="bookId" class="input-field" placeholder="Enter Book ID" />
     <input type="text" id="bookTitle" class="input-field" placeholder="Enter Book Title" />
-    <input type="number" id="bookPrice" class="input-field" placeholder="Enter Book Price" />
+    <div>
+      <input
+        type="text"
+        id="bookPrice"
+        class="input-field"
+        placeholder="Price will be generated"
+        readonly
+      />
+      <button class="btn" onclick="generatePrice()">Generate Price</button>
+    </div>
     <input type="number" id="bookQuantity" class="input-field" placeholder="Enter Quantity" />
     <input type="text" id="username" class="input-field" placeholder="Enter Your Username" />
   </div>
@@ -100,6 +109,12 @@ permalink: /bookstore/
       });
   }
 
+  // Generate a random price between 1 and 15
+  function generatePrice() {
+    const randomPrice = (Math.random() * 14 + 1).toFixed(2); // Generate price between 1 and 15
+    document.getElementById('bookPrice').value = randomPrice;
+  }
+
   // Add a book to the cart
   function addToCart() {
     const bookId = document.getElementById('bookId').value.trim();
@@ -110,11 +125,11 @@ permalink: /bookstore/
 
     if (bookId && bookTitle && bookPrice && bookQuantity && username) {
       const data = {
-        id: bookId,
+        id: parseInt(bookId),
         title: bookTitle,
         price: parseFloat(bookPrice),
         quantity: parseInt(bookQuantity),
-        username: username
+        _name: username // Match the backend key
       };
 
       fetch(`${pythonURI}/cart`, {
@@ -138,7 +153,7 @@ permalink: /bookstore/
   // Clear the cart
   function clearCart() {
     fetch(`${pythonURI}/cart`, {
-      method: 'POST',
+      method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: document.getElementById('username').value.trim() }) // User-specific clearing
     })
