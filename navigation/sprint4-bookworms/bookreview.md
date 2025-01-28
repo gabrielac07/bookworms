@@ -80,7 +80,7 @@ permalink: /bookrates/
 
   // Fetch random book from backend (Flask API)
   function fetchRandomBook() {
-    fetch(`${pythonURI}/api/random_bookrec`)
+    fetch(`${pythonURI}/api/random_book`)
       .then(response => response.json())
       .then(data => {
         if (data && data.title) {
@@ -103,54 +103,11 @@ permalink: /bookrates/
       });
   }
 
-  // Add a new comment to the backend
-  function addComment() {
-    const commentInput = document.getElementById('commentInput');
-    const commentText = commentInput.value.trim();
-    const userIdInput = document.getElementById('userIdInput');
-    const userId = userIdInput.value.trim();
-    const bookId = document.getElementById('bookIdInput').value.trim();
-
-    if (commentText && userId && bookId) {
-      const data = {
-        comment_text: commentText,
-        user_id: userId,  // Send the user ID along with the comment text
-        book_id: bookId   // Send the book ID
-      };
-
-      const token = document.cookie.replace(/(?:(?:^|.*;\s*)jwtToken\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-
-      // Construct the API URL dynamically based on currentBook ID
-      const apiUrl = `${pythonURI}/api/comments`;
-
-      fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`  // Sending the token in headers
-        },
-        body: JSON.stringify(data)
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.message === 'Comment added successfully') {
-          fetchComments(); // Fetch updated comments
-        }
-      })
-      .catch(error => {
-        console.error('Error posting comment:', error);
-        alert('Failed to add comment.');
-      });
-    } else {
-      alert('Please enter all fields: book ID, user ID, and comment text.');
-    }
-  }
-
   // Display the book information
-  function displayBookInfo(bookId, title, author, genre, description, cover_url) {
+  function displayBookInfo(id, title, author, genre, description, cover_url) {
     document.getElementById('bookContainer').innerHTML = `
       <div class="book-card">
-        <h3 class="book-title">Book ID: ${bookId} - ${title}</h3>
+        <h3 class="book-title">Book ID: ${id} - ${title}</h3>
         <img src="${cover_url}" alt="Book Cover" class="book-cover" />
         <p class="book-author">by ${author}</p>
         <p class="book-genre">Genre: ${genre}</p>
@@ -158,18 +115,87 @@ permalink: /bookrates/
         <h4 class="comments-heading">Comments:</h4>
         <div id="commentSection" class="comment-section">
           <label for="bookIdInput">Book ID:</label>
-          <input type="number" id="bookIdInput" value="${bookId}" disabled />
+          <input type="number" id="bookIdInput" value="${id}" disabled />
 
           <label for="userIdInput">User ID:</label>
           <input type="number" id="userIdInput" placeholder="Enter your User ID" />
 
           <textarea id="commentInput" placeholder="Add a comment..."></textarea>
-          <button onclick="addComment()" class="submit-comment">Submit</button>
+          <button id="submitCommentBtn" class="submit-comment">Submit</button>
           <div id="commentsList"></div>
         </div>
       </div>
     `;
+
+    // Add event listener for the submit button
+    const submitButton = document.getElementById('submitCommentBtn');
+    submitButton.addEventListener('click', addComment);
   }
+// Add comment function
+function addComment() {
+  const commentInput = document.getElementById('commentInput');
+  const commentText = commentInput.value.trim();
+  const userId = document.getElementById('userIdInput').value.trim();
+
+  if (commentText === '') {
+    alert('Comment cannot be empty.');
+    return;
+  }
+
+  if (!userId) {
+    alert('Please enter a valid User ID.');
+    return;
+  }
+
+  const commentData = {
+    book_id: currentBook.id,
+    user_id: userId,
+    comment_text: commentText
+  };
+
+  // Debug: Log the comment data to verify it's correct
+  console.log('Sending comment data:', commentData);
+
+  fetch(`${pythonURI}/api/comments`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(commentData)
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log('Response data:', data);
+    if (data.success) {
+      // Optionally append the new comment immediately
+      const commentList = document.getElementById('commentsList');
+      
+      const newComment = document.createElement('div');
+      newComment.classList.add('comment');
+      newComment.innerHTML = `
+        <p><strong>User ${userId}:</strong> ${commentText}</p>
+      `;
+      commentList.appendChild(newComment); // Add the new comment to the list
+
+      // Now, call fetchComments() to re-fetch all comments from the backend
+      fetchComments();
+
+      // Clear the input field
+      commentInput.value = '';
+    } else {
+      alert('Successfully added comment! Refresh to check');
+    }
+  })
+  .catch(error => {
+    console.error('Error adding comment:', error);
+    alert('Eheheh Failed to add comment.');
+  });
+}
 
   // Fetch comments from the backend
   function fetchComments() {
