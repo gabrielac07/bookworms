@@ -5,7 +5,7 @@ permalink: /bookadd/
 ---
 <style>
     .container {
-        max-width: 600px;
+        max-width: 800px;
         margin: 50px auto;
         padding: 20px;
         background-color: #E8C5A4;
@@ -57,11 +57,11 @@ permalink: /bookadd/
         padding: 10px 15px;
         font-size: 18px;
         margin: 10px 0;
-        border: none;
         color: white;
         background-color: #a57e5a;
         border-radius: 4px;
         cursor: pointer;
+        border: 1px solid #500A0A;
     }
 
     button:hover {
@@ -76,6 +76,7 @@ permalink: /bookadd/
         padding: 10px 15px;
         cursor: pointer;
         border-radius: 4px;
+        border: 1px solid #500A0A;
     }
 
     .start_over:hover {
@@ -92,14 +93,14 @@ permalink: /bookadd/
     }
 
     .book {
-    background-color: #a57e5a;
-    padding: 15px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    max-width: 200px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    color: #faebd8;
+        background-color: #a57e5a;
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        max-width: 200px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        color: #faebd8;
     }
 
     .book h2 {
@@ -121,10 +122,19 @@ permalink: /bookadd/
         display: block;
         border-radius: 4px;
     }
+
+    .book-options {
+        display: flex; 
+        gap: 0.5em;
+    }
+    .book-options button {
+        width: 75px; 
+        padding: 0.3em;
+    }
 </style>
 
 <div class="container">
-<h1>Add your favorite books here!</h1>
+<h1>Suggest your favorite books here!</h1>
 <form id="book-form">
     <div>
         <h2>Book Title</h2>
@@ -250,6 +260,115 @@ permalink: /bookadd/
 
     fetchRandomBook();
 
+    async function deleteBook(title) {
+        if (confirm(`Are you sure you want to delete "${title}"?`)) {
+            try {
+                const response = await fetch(`${pythonURI}/api/suggest`, {
+                    ...fetchOptions,
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ title }) // Pass title as an object
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to delete book: ' + response.statusText);
+                }
+
+                console.log("Book deleted successfully");
+                alert('Book deleted successfully!');
+                fetchBooks(); // Refresh the book list
+            } catch (error) {
+                console.error('Error deleting book:', error);
+                alert('Error deleting book: ' + error.message);
+            }
+        } else {
+            alert("Deletion canceled");
+        }
+    }
+
+    async function updateBook(title) {
+    // Find the book container based on the title
+    const bookContainer = Array.from(document.querySelectorAll('.book'))
+        .find(book => book.querySelector('h3').innerText === title);
+
+    if (!bookContainer) {
+        alert('Book not found for update.');
+        return;
+    }
+
+    // Extract current book details
+    const currentTitle = bookContainer.querySelector('h3').innerText;
+    const currentAuthor = bookContainer.querySelector('p:nth-child(2)').innerText.split(': ')[1];
+    const currentDescription = bookContainer.querySelector('p:nth-child(3)').innerText.split(': ')[1];
+    const currentGenre = bookContainer.dataset.genre || '';
+    const currentCoverUrl = bookContainer.querySelector('img').src;
+
+    // Replace static fields with editable inputs
+    bookContainer.innerHTML = `
+        <input type="text" id="edit-title" value="${currentTitle}" placeholder="Title">
+        <input type="text" id="edit-author" value="${currentAuthor}" placeholder="Author">
+        <select id="edit-genre">
+            <option value="Classics" ${currentGenre === 'Classics' ? 'selected' : ''}>Classics</option>
+            <option value="Fantasy" ${currentGenre === 'Fantasy' ? 'selected' : ''}>Fantasy</option>
+            <option value="Nonfiction" ${currentGenre === 'Nonfiction' ? 'selected' : ''}>Nonfiction</option>
+            <option value="Historical Fiction" ${currentGenre === 'Historical Fiction' ? 'selected' : ''}>Historical Fiction</option>
+            <option value="Suspense/Thriller" ${currentGenre === 'Suspense/Thriller' ? 'selected' : ''}>Suspense/Thriller</option>
+            <option value="Romance" ${currentGenre === 'Romance' ? 'selected' : ''}>Romance</option>
+            <option value="Dystopian" ${currentGenre === 'Dystopian' ? 'selected' : ''}>Dystopian</option>
+            <option value="Mystery" ${currentGenre === 'Mystery' ? 'selected' : ''}>Mystery</option>
+        </select>
+        <textarea id="edit-description" placeholder="Description">${currentDescription}</textarea>
+        <input type="text" id="edit-cover-url" value="${currentCoverUrl}" placeholder="Cover URL">
+        <button id="save-update">OK</button>
+        <button id="cancel-update">Cancel</button>
+    `;
+
+    // Handle Cancel Button
+    document.getElementById('cancel-update').addEventListener('click', () => {
+        fetchBooks(); // Reload the book list to cancel editing
+    });
+
+    document.getElementById('save-update').addEventListener('click', async () => {
+        const updatedTitle = document.getElementById('edit-title').value;
+        const updatedAuthor = document.getElementById('edit-author').value;
+        const updatedGenre = document.getElementById('edit-genre').value;
+        const updatedDescription = document.getElementById('edit-description').value;
+        const updatedCoverUrl = document.getElementById('edit-cover-url').value;
+
+        const updatedBookData = {
+            title: title,
+            author: updatedAuthor,
+            genre: updatedGenre,
+            description: updatedDescription,
+            cover_url: updatedCoverUrl
+        };
+
+        try {
+            const response = await fetch(`${pythonURI}/api/suggest`, {
+                ...fetchOptions,
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedBookData)
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update book: ' + response.statusText);
+            }
+
+            console.log('Book updated successfully');
+            alert('Book updated successfully!');
+            fetchBooks(); // Refresh the book list
+        } catch (error) {
+            console.error('Error updating book:', error);
+            alert('Error updating book: ' + error.message);
+        }
+    });
+}
+
     // create list at bottom
     async function fetchBooks() {
         try {
@@ -273,17 +392,36 @@ permalink: /bookadd/
         <div class="book">
             <h3>${book.title}</h3>
             <p><strong>Author:</strong> ${book.author}</p>
+            <p><strong>Genre:</strong> ${book.genre}</p>
             <p><strong>Description:</strong> ${book.description}</p>
             <img src="${book.cover_url}" alt="Cover image of ${book.title}">
+            <div class="book-options">
+                <button class="updateButton" data-title="${book.title}">Update</button>
+                <button class="deleteButton" data-title="${book.title}">Delete</button>
+            </div>
         </div>
     `
     )
     .join('');
+        
+        document.querySelectorAll('.updateButton').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const title = event.target.dataset.title; // Get the title from data attribute
+                updateBook(title);
+            });
+        });
+        document.querySelectorAll('.deleteButton').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const title = event.target.dataset.title; 
+                deleteBook(title);
+            });
+        });
 
     } catch (error) {
         console.error('Error fetching books:', error);
     }
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchBooks();
