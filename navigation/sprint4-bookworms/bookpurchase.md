@@ -9,7 +9,7 @@ permalink: /bookstore/
     max-width: 600px;
     margin: 20px auto;
     padding: 20px;
-    background-color: #f7f7f7;
+    background-color: #E8C4A4;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
@@ -18,7 +18,7 @@ permalink: /bookstore/
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    background-color: #fff;
+    background-color: #A57F5A;
     border: 1px solid #ddd;
     border-radius: 4px;
     margin-bottom: 10px;
