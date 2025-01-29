@@ -256,12 +256,16 @@ permalink: /bookrates/
 function displayComments(comments) {
   const commentsList = document.getElementById('commentsList');
   commentsList.innerHTML = ''; // Clear previous comments
+
   comments.forEach(comment => {
     const commentDiv = document.createElement('div');
     commentDiv.classList.add('comment-box');
     commentDiv.innerHTML = `
-      <div class="comment-text">
-        <strong>User ${comment.user_id}</strong><br>${comment.comment_text}
+      <div class="comment-text" id="comment-${comment.id}">
+        <strong>User ${comment.user_id}</strong><br>
+        <span class="comment-text-display" data-comment-id="${comment.id}">${comment.comment_text}</span>
+        <!-- Pencil icon to update the comment -->
+        <button class="update-comment" data-comment-id="${comment.id}">📝</button>
         <!-- Trash can button to delete the comment -->
         <button class="delete-comment" data-comment-id="${comment.id}">🗑️</button>
       </div>
@@ -277,7 +281,69 @@ function displayComments(comments) {
       deleteComment(commentId);
     });
   });
+
+  // Add event listeners to the pencil icon buttons for updating comments
+  const updateButtons = document.querySelectorAll('.update-comment');
+  updateButtons.forEach(button => {
+    button.addEventListener('click', (event) => {
+      const commentId = event.target.getAttribute('data-comment-id');
+      turnCommentIntoEditable(commentId);
+    });
+  });
 }
+
+// Turn comment into editable field when the pencil icon is clicked
+function turnCommentIntoEditable(commentId) {
+  const commentElement = document.getElementById(`comment-${commentId}`);
+  const commentText = commentElement.querySelector('.comment-text-display');
+  const currentText = commentText.textContent;
+
+  // Replace the text with an input field containing the current comment text
+  commentText.innerHTML = `
+    <input type="text" class="edit-comment-input" value="${currentText}">
+    <button class="save-comment" data-comment-id="${commentId}">Save</button>
+  `;
+
+  // Add event listener for the save button
+  const saveButton = commentElement.querySelector('.save-comment');
+  saveButton.addEventListener('click', () => {
+    const newCommentText = commentElement.querySelector('.edit-comment-input').value;
+    if (newCommentText.trim() === '') {
+      alert("Comment cannot be empty.");
+      return;
+    }
+    updateComment(commentId, newCommentText);
+  });
+}
+
+// Update comment function
+function updateComment(commentId, updatedText) {
+  const updatedData = {
+    comment_text: updatedText
+  };
+
+  fetch(`${pythonURI}/api/comments/${commentId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(updatedData)
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.comment_text) {
+      alert('Comment updated successfully!');
+      fetchComments(); // Refresh the comments list
+    } else {
+      alert('Failed to update comment.');
+    }
+  })
+  .catch(error => {
+    console.error('Error updating comment:', error);
+    alert('Failed to update comment.');
+  });
+}
+
 
 // Delete comment function
 function deleteComment(commentId) {
