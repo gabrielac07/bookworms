@@ -67,7 +67,22 @@ permalink: /bookrates/
   .comment-text {
     color: white;
   }
+  .search-bar {
+    width: 100%;
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #C45A5C;
+    color: #BC4749;
+  }
 </style>
+
+<div class="search-container">
+  <input type="number" id="bookIdSearch" class="search-bar" placeholder="Enter Book ID to Search" />
+  <button id="searchButton" class="submit-comment">Search</button>
+</div>
 
 <div id="bookContainer">
   <!-- Book content will be dynamically added here -->
@@ -95,6 +110,31 @@ permalink: /bookrates/
           fetchComments(); // Fetch comments from backend
         } else {
           alert('No book data found.');
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching book data:', error);
+        alert('Failed to fetch book information.');
+      });
+  }
+
+  // Fetch book by ID
+  function fetchBookById(bookId) {
+    fetch(`${pythonURI}/api/books/${bookId}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data && data.title) {
+          currentBook = data;
+          const bookTitle = data.title;
+          const bookAuthor = data.author || 'Unknown Author';
+          const bookGenre = data.genre || 'Unknown Genre';
+          const bookDescription = data.description || 'No description available';
+          const coverUrl = data.cover_url || 'default-image.jpg';
+
+          displayBookInfo(data.id, bookTitle, bookAuthor, bookGenre, bookDescription, coverUrl);
+          fetchComments(); // Fetch comments from backend
+        } else {
+          alert('Book not found.');
         }
       })
       .catch(error => {
@@ -131,71 +171,69 @@ permalink: /bookrates/
     const submitButton = document.getElementById('submitCommentBtn');
     submitButton.addEventListener('click', addComment);
   }
-// Add comment function
-function addComment() {
-  const commentInput = document.getElementById('commentInput');
-  const commentText = commentInput.value.trim();
-  const userId = document.getElementById('userIdInput').value.trim();
 
-  if (commentText === '') {
-    alert('Comment cannot be empty.');
-    return;
-  }
+  // Add comment function
+  function addComment() {
+    const commentInput = document.getElementById('commentInput');
+    const commentText = commentInput.value.trim();
+    const userId = document.getElementById('userIdInput').value.trim();
 
-  if (!userId) {
-    alert('Please enter a valid User ID.');
-    return;
-  }
-
-  const commentData = {
-    book_id: currentBook.id,
-    user_id: userId,
-    comment_text: commentText
-  };
-
-  // Debug: Log the comment data to verify it's correct
-  console.log('Sending comment data:', commentData);
-
-  fetch(`${pythonURI}/api/comments`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(commentData)
-  })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
+    if (commentText === '') {
+      alert('Comment cannot be empty.');
+      return;
     }
-    return response.json();
-  })
-  .then(data => {
-    console.log('Response data:', data);
-    if (data.success) {
-      // Optionally append the new comment immediately
-      const commentList = document.getElementById('commentsList');
-      
-      const newComment = document.createElement('div');
-      newComment.classList.add('comment');
-      newComment.innerHTML = `
-        <p><strong>User ${userId}:</strong> ${commentText}</p>
-      `;
-      commentList.appendChild(newComment); // Add the new comment to the list
 
-      // Now, call fetchComments() to re-fetch all comments from the backend
-      fetchComments();
-
-      // Clear the input field
-      commentInput.value = '';
-    } else {
-      alert('Successfully added comment! Refresh to check');
+    if (!userId) {
+      alert('Please enter a valid User ID.');
+      return;
     }
-  })
-  .catch(error => {
-    console.error('Error adding comment:', error);
-    alert('Eheheh Failed to add comment.');
-  });
-}
+
+    const commentData = {
+      book_id: currentBook.id,
+      user_id: userId,
+      comment_text: commentText
+    };
+
+    // Debug: Log the comment data to verify it's correct
+    console.log('Sending comment data:', commentData);
+
+    fetch(`${pythonURI}/api/comments`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(commentData)
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Response data:', data);
+      if (data.success) {
+        // Optionally append the new comment immediately without waiting for fetchComments()
+        const commentList = document.getElementById('commentsList');
+        
+        const newComment = document.createElement('div');
+        newComment.classList.add('comment');
+        newComment.innerHTML = `
+          <p><strong>User ${userId}:</strong> ${commentText}</p>
+        `;
+        commentList.appendChild(newComment); // Add the new comment to the list
+
+        // Clear the input field
+        commentInput.value = '';
+      } else {
+        alert('Successfully added comment! Refresh to check');
+      }
+    })
+    .catch(error => {
+      console.error('Error adding comment:', error);
+      alert('Failed to add comment.');
+    });
+  }
 
   // Fetch comments from the backend
   function fetchComments() {
@@ -230,6 +268,19 @@ function addComment() {
     });
   }
 
-  // Fetch book data when the page loads
+  // Search for a book by ID
+  function searchBookById() {
+    const bookId = document.getElementById('bookIdSearch').value;
+    if (bookId) {
+      fetchBookById(bookId);
+    } else {
+      alert('Please enter a valid Book ID.');
+    }
+  }
+
+  // Add event listener to search button
+  document.getElementById('searchButton').addEventListener('click', searchBookById);
+
+  // Fetch random book when page loads
   fetchRandomBook();
 </script>
