@@ -252,21 +252,53 @@ permalink: /bookrates/
       });
   }
 
-  // Display comments fetched from the backend
-  function displayComments(comments) {
-    const commentsList = document.getElementById('commentsList');
-    commentsList.innerHTML = ''; // Clear previous comments
-    comments.forEach(comment => {
-      const commentDiv = document.createElement('div');
-      commentDiv.classList.add('comment-box');
-      commentDiv.innerHTML = `
-        <div class="comment-text">
-          <strong>User ${comment.user_id}</strong><br>${comment.comment_text}
-        </div>
-      `;
-      commentsList.appendChild(commentDiv);
+// Display comments fetched from the backend
+function displayComments(comments) {
+  const commentsList = document.getElementById('commentsList');
+  commentsList.innerHTML = ''; // Clear previous comments
+  comments.forEach(comment => {
+    const commentDiv = document.createElement('div');
+    commentDiv.classList.add('comment-box');
+    commentDiv.innerHTML = `
+      <div class="comment-text">
+        <strong>User ${comment.user_id}</strong><br>${comment.comment_text}
+        <!-- Trash can button to delete the comment -->
+        <button class="delete-comment" data-comment-id="${comment.id}">🗑️</button>
+      </div>
+    `;
+    commentsList.appendChild(commentDiv);
+  });
+
+  // Add event listeners to the trash can buttons
+  const deleteButtons = document.querySelectorAll('.delete-comment');
+  deleteButtons.forEach(button => {
+    button.addEventListener('click', (event) => {
+      const commentId = event.target.getAttribute('data-comment-id');
+      deleteComment(commentId);
     });
-  }
+  });
+}
+
+// Delete comment function
+function deleteComment(commentId) {
+  fetch(`${pythonURI}/api/comments/${commentId}`, {
+    method: 'DELETE'
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.message === 'Comment deleted successfully') {
+      alert('Comment deleted successfully!');
+      fetchComments(); // Refresh the comments list
+    } else {
+      alert('Failed to delete comment.');
+    }
+  })
+  .catch(error => {
+    console.error('Error deleting comment:', error);
+    alert('Failed to delete comment.');
+  });
+}
+
 
   // Search for a book by ID
   function searchBookById() {
