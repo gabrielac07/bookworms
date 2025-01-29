@@ -158,6 +158,7 @@ permalink: /random_book_recommender/
                 </label></p>
                 <p>
                     <button type="button" onclick="addBookRec()">Done</button>
+                    <button type="button" onclick="deleteBookRec()">Delete</button>
                 </p>
             </form>
         </div>
@@ -218,6 +219,8 @@ permalink: /random_book_recommender/
         document.getElementById("genre_selection").style.display = "block";
         document.getElementById("book_display").style.display = "none";
     }
+    //
+    let lastAddedBookId = null; // Store the ID of the last added book
     // Section for displaying form to add a book rec
     function inputBookRec() {
         document.getElementById("input_bookrec").style.display = "block";
@@ -230,14 +233,14 @@ permalink: /random_book_recommender/
         const author = document.getElementById('author').value;
         const genre = document.getElementById('genre').value;
         const description = document.getElementById('description').value;
-        const coverImageUrl = document.getElementById('cover_url').value;
+        const coverUrl = document.getElementById('cover_url').value;
     //
         const bookRec = { 
             title: title,
             author: author,
             genre: genre,
             description: description,
-            cover_url: coverImageUrl 
+            cover_url: coverUrl 
         };
     //
         fetch('http://127.0.0.1:8887/api/add_bookrec', {
@@ -251,8 +254,9 @@ permalink: /random_book_recommender/
         .then(data => {
             if (data.success) {
                 alert('Book recommendation added successfully!');
+                lastAddedBookId = data.id; // Store the ID of the added book
             } else {
-                alert('Book recommendation added.');
+                alert('Failed to add book recommendation.'); //This is suppsoed to be "Failed to add book recommendation"
             }
         })
         .catch(error => {
@@ -260,76 +264,40 @@ permalink: /random_book_recommender/
             alert('An error occurred while adding the book recommendation.');
         });
     }
+    // Section for deleting book recs
+    function deleteBookRec() {
+        if (lastAddedBookId === null) {
+            alert('No book recommendation to delete.');
+            return;
+        }
+        //
+        fetch(`http://127.0.0.1:8887/api/delete_bookrec/${lastAddedBookId}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === 'Book deleted successfully') {
+                alert('Book recommendation deleted successfully!');
+                clearForm();
+            } else {
+                alert('Failed to delete book recommendation.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while deleting the book recommendation.');
+        });
+    }
+    // Function to clear the form
+    function clearForm() {
+        document.getElementById('title').value = '';
+        document.getElementById('author').value = '';
+        document.getElementById('genre').value = '';
+        document.getElementById('description').value = '';
+        document.getElementById('cover_url').value = '';
+        document.getElementById("input_bookrec").style.display = "none";
+        document.getElementById("add_bookrec").style.display = "block";
+        lastAddedBookId = null;
+    }
 </script>
-
-    <!--//The genreMap object maps the dropdown values (nonfiction, historical_fiction, etc.) to terms recognized by the Google Books API (e.g., "nonfiction", "thriller").
-    const genreMap = {
-        nonfiction: "nonfiction",
-        historical_fiction: "historical fiction",
-        suspense_thriller: "thriller",
-        fantasy: "fantasy",
-        romance: "romance",
-        dystopian: "dystopian",
-        classic: "classics",
-        mystery: "mystery"
-    };
-        function getRandomBook() {
-        const genreKey = document.getElementById("genre").value;
-        const query = genreMap[genreKey] || "fiction"; // Fallback to "fiction" if genre not mapped
-        // Call the Google Books API - UPDATE: Google API does not sort books based on genre so I will have to find a different API
-        fetch(`https://www.googleapis.com/books/v1/volumes?q=subject:${query}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.items && data.items.length > 0) {
-                    // Pick a random book from the results
-                    const randomIndex = Math.floor(Math.random() * data.items.length);
-                    const book = data.items[randomIndex];
-                    displayBook(book);
-                } else {
-                    alert("No books found for this genre. Please try another genre.");
-                }
-            })
-            .catch(error => {
-                console.error("Error fetching book data:", error);
-                alert("An error occurred while fetching books. Please try again.");
-            });
-    }
-    function displayBook(book) {
-        const title = book.volumeInfo.title || "No title available";
-        const authors = book.volumeInfo.authors ? book.volumeInfo.authors.join(", ") : "Unknown author";
-        const description = book.volumeInfo.description || "No summary available";
-        const thumbnail = book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.thumbnail : "";
-        // Show the book details
-        document.getElementById("book_cover").src = thumbnail;
-        document.getElementById("book_cover").style.display = thumbnail ? "block" : "none";
-        document.getElementById("book_title").innerText = title;
-        document.getElementById("book_author").innerText = `By: ${authors}`;
-        document.getElementById("book_description").innerText = description;
-        // Hide the genre selection and show the book details
-        document.getElementById("genre_selection").style.display = "none";
-        document.getElementById("book_display").style.display = "block";
-    }
-    function startOver() {
-        // Reset to the initial view
-        document.getElementById("genre_selection").style.display = "block";
-        document.getElementById("book_display").style.display = "none";
-    }-->
-            <!--this is typing an input in the HTML segment<form>
-                <label for="input_genre"><strong>What genre do you want to read?</strong>
-                <div>
-                    Choose from a genre from this list:
-                    <ul>
-                        <li>nonfiction</li>
-                        <li>historical fiction</li>
-                        <li>suspense/thriller</li>
-                        <li>fantasy</li>
-                        <li>romance</li>
-                        <li>action</li>
-                        <li>classics</li>
-                        <li>mystery</li>
-                    </ul>
-                </div>
-                </label><br>
-                <input type="text" id="input_genre" name="input_genre"><br>
-            </form>-->
 </html>
