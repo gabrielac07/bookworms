@@ -196,30 +196,7 @@ permalink: /bookadd/
             description: description,
             cover_url: coverImageUrl
         };
-        //nonfunctional code below
-        /*
-        try {
-            const response = await fetch(`${pythonURI}/api/library`, {
-                ...fetchOptions,
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(bookData)
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to add book to books: ' + response.statusText);
-            }
-
-            const result = await response.json();
-            console.log("Book added to books successfully")
-            document.getElementById('book-form').reset();
-            fetchBooks();  // Refresh book list
-        } catch (error) {
-            console.error('Error adding book to books:', error);
-        };
-        */
+        
         try {
             const response = await fetch(`${pythonURI}/api/suggest`, {  // Use /api/suggest endpoint
                 ...fetchOptions,
