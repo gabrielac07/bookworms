@@ -289,7 +289,6 @@ permalink: /bookadd/
     }
 
     async function updateBook(title) {
-    // Find the book container based on the title
     const bookContainer = Array.from(document.querySelectorAll('.book'))
         .find(book => book.querySelector('h3').innerText === title);
 
@@ -298,10 +297,11 @@ permalink: /bookadd/
         return;
     }
 
-    // Extract current book details
     const currentTitle = bookContainer.querySelector('h3').innerText;
     const currentAuthor = bookContainer.querySelector('p:nth-child(2)').innerText.split(': ')[1];
-    const currentDescription = bookContainer.querySelector('p:nth-child(3)').innerText.split(': ')[1];
+    const descriptionElement = Array.from(bookContainer.querySelectorAll('p'))
+        .find(p => p.innerText.startsWith('Description:'));
+    const currentDescription = descriptionElement ? descriptionElement.innerText.replace('Description: ', '') : '';
     const currentGenre = bookContainer.dataset.genre || '';
     const currentCoverUrl = bookContainer.querySelector('img').src;
 
