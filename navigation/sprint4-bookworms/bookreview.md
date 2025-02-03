@@ -95,7 +95,7 @@ permalink: /bookrates/
 
   // Fetch random book from backend (Flask API)
   function fetchRandomBook() {
-    fetch(`${pythonURI}/api/random_book`)
+    fetch(`${pythonURI}/api/random_book`, fetchOptions)
       .then(response => response.json())
       .then(data => {
         if (data && data.title) {
@@ -120,7 +120,7 @@ permalink: /bookrates/
 
   // Fetch book by ID
   function fetchBookById(bookId) {
-    fetch(`${pythonURI}/api/books/${bookId}`)
+    fetch(`${pythonURI}/api/books/${bookId}`, fetchOptions)
       .then(response => response.json())
       .then(data => {
         if (data && data.title) {
@@ -145,7 +145,7 @@ permalink: /bookrates/
 
   // Display the book information
   function displayBookInfo(id, title, author, genre, description, cover_url) {
-    document.getElementById('bookContainer').innerHTML = `
+    document.getElementById('bookContainer').innerHTML = ` 
       <div class="book-card">
         <h3 class="book-title">Book ID: ${id} - ${title}</h3>
         <img src="${cover_url}" alt="Book Cover" class="book-cover" />
@@ -198,11 +198,12 @@ permalink: /bookrates/
     console.log('Sending comment data:', commentData);
 
     fetch(`${pythonURI}/api/comments`, {
+      ...fetchOptions, 
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(commentData)
+      body: JSON.stringify(commentData),
     })
     .then(response => {
       if (!response.ok) {
@@ -237,7 +238,7 @@ permalink: /bookrates/
 
   // Fetch comments from the backend
   function fetchComments() {
-    fetch(`${pythonURI}/api/comments?book_id=${currentBook.id}`)
+    fetch(`${pythonURI}/api/comments?book_id=${currentBook.id}`, fetchOptions)
       .then(response => response.json())
       .then(data => {
         if (data.comments) {
@@ -252,119 +253,120 @@ permalink: /bookrates/
       });
   }
 
-// Display comments fetched from the backend
-function displayComments(comments) {
-  const commentsList = document.getElementById('commentsList');
-  commentsList.innerHTML = ''; // Clear previous comments
+  // Display comments fetched from the backend
+  function displayComments(comments) {
+    const commentsList = document.getElementById('commentsList');
+    commentsList.innerHTML = ''; // Clear previous comments
 
-  comments.forEach(comment => {
-    const commentDiv = document.createElement('div');
-    commentDiv.classList.add('comment-box');
-    commentDiv.innerHTML = `
-      <div class="comment-text" id="comment-${comment.id}">
-        <strong>User ${comment.user_id}</strong><br>
-        <span class="comment-text-display" data-comment-id="${comment.id}">${comment.comment_text}</span>
-        <!-- Pencil icon to update the comment -->
-        <button class="update-comment" data-comment-id="${comment.id}">📝</button>
-        <!-- Trash can button to delete the comment -->
-        <button class="delete-comment" data-comment-id="${comment.id}">🗑️</button>
-      </div>
+    comments.forEach(comment => {
+      const commentDiv = document.createElement('div');
+      commentDiv.classList.add('comment-box');
+      commentDiv.innerHTML = `
+        <div class="comment-text" id="comment-${comment.id}">
+          <strong>User ${comment.user_id}</strong><br>
+          <span class="comment-text-display" data-comment-id="${comment.id}">${comment.comment_text}</span>
+          <!-- Pencil icon to update the comment -->
+          <button class="update-comment" data-comment-id="${comment.id}">📝</button>
+          <!-- Trash can button to delete the comment -->
+          <button class="delete-comment" data-comment-id="${comment.id}">🗑️</button>
+        </div>
+      `;
+      commentsList.appendChild(commentDiv);
+    });
+
+    // Add event listeners to the trash can buttons
+    const deleteButtons = document.querySelectorAll('.delete-comment');
+    deleteButtons.forEach(button => {
+      button.addEventListener('click', (event) => {
+        const commentId = event.target.getAttribute('data-comment-id');
+        deleteComment(commentId);
+      });
+    });
+
+    // Add event listeners to the pencil icon buttons for updating comments
+    const updateButtons = document.querySelectorAll('.update-comment');
+    updateButtons.forEach(button => {
+      button.addEventListener('click', (event) => {
+        const commentId = event.target.getAttribute('data-comment-id');
+        turnCommentIntoEditable(commentId);
+      });
+    });
+  }
+
+  // Turn comment into editable field when the pencil icon is clicked
+  function turnCommentIntoEditable(commentId) {
+    const commentElement = document.getElementById(`comment-${commentId}`);
+    const commentText = commentElement.querySelector('.comment-text-display');
+    const currentText = commentText.textContent;
+
+    // Replace the text with an input field containing the current comment text
+    commentText.innerHTML = `
+      <input type="text" class="edit-comment-input" value="${currentText}">
+      <button class="save-comment" data-comment-id="${commentId}">Save</button>
     `;
-    commentsList.appendChild(commentDiv);
-  });
 
-  // Add event listeners to the trash can buttons
-  const deleteButtons = document.querySelectorAll('.delete-comment');
-  deleteButtons.forEach(button => {
-    button.addEventListener('click', (event) => {
-      const commentId = event.target.getAttribute('data-comment-id');
-      deleteComment(commentId);
+    // Add event listener for the save button
+    const saveButton = commentElement.querySelector('.save-comment');
+    saveButton.addEventListener('click', () => {
+      const newCommentText = commentElement.querySelector('.edit-comment-input').value;
+      if (newCommentText.trim() === '') {
+        alert("Comment cannot be empty.");
+        return;
+      }
+      updateComment(commentId, newCommentText);
     });
-  });
+  }
 
-  // Add event listeners to the pencil icon buttons for updating comments
-  const updateButtons = document.querySelectorAll('.update-comment');
-  updateButtons.forEach(button => {
-    button.addEventListener('click', (event) => {
-      const commentId = event.target.getAttribute('data-comment-id');
-      turnCommentIntoEditable(commentId);
-    });
-  });
-}
+  // Update comment function
+  function updateComment(commentId, updatedText) {
+    const updatedData = {
+      comment_text: updatedText
+    };
 
-// Turn comment into editable field when the pencil icon is clicked
-function turnCommentIntoEditable(commentId) {
-  const commentElement = document.getElementById(`comment-${commentId}`);
-  const commentText = commentElement.querySelector('.comment-text-display');
-  const currentText = commentText.textContent;
-
-  // Replace the text with an input field containing the current comment text
-  commentText.innerHTML = `
-    <input type="text" class="edit-comment-input" value="${currentText}">
-    <button class="save-comment" data-comment-id="${commentId}">Save</button>
-  `;
-
-  // Add event listener for the save button
-  const saveButton = commentElement.querySelector('.save-comment');
-  saveButton.addEventListener('click', () => {
-    const newCommentText = commentElement.querySelector('.edit-comment-input').value;
-    if (newCommentText.trim() === '') {
-      alert("Comment cannot be empty.");
-      return;
-    }
-    updateComment(commentId, newCommentText);
-  });
-}
-
-// Update comment function
-function updateComment(commentId, updatedText) {
-  const updatedData = {
-    comment_text: updatedText
-  };
-
-  fetch(`${pythonURI}/api/comments/${commentId}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(updatedData)
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.comment_text) {
-      alert('Comment updated successfully!');
-      fetchComments(); // Refresh the comments list
-    } else {
+    fetch(`${pythonURI}/api/comments/${commentId}`, {
+      ...fetchOptions,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(updatedData),
+       
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.comment_text) {
+        alert('Comment updated successfully!');
+        fetchComments(); // Refresh the comments list
+      } else {
+        alert('Failed to update comment.');
+      }
+    })
+    .catch(error => {
+      console.error('Error updating comment:', error);
       alert('Failed to update comment.');
-    }
-  })
-  .catch(error => {
-    console.error('Error updating comment:', error);
-    alert('Failed to update comment.');
-  });
-}
+    });
+  }
 
-
-// Delete comment function
-function deleteComment(commentId) {
-  fetch(`${pythonURI}/api/comments/${commentId}`, {
-    method: 'DELETE'
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.message === 'Comment deleted successfully') {
-      alert('Comment deleted successfully!');
-      fetchComments(); // Refresh the comments list
-    } else {
+  // Delete comment function
+  function deleteComment(commentId) {
+    fetch(`${pythonURI}/api/comments/${commentId}`, {
+      ...fetchOptions, 
+      method: 'DELETE',
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.message === 'Comment deleted successfully') {
+        alert('Comment deleted successfully!');
+        fetchComments(); // Refresh the comments list
+      } else {
+        alert('Failed to delete comment.');
+      }
+    })
+    .catch(error => {
+      console.error('Error deleting comment:', error);
       alert('Failed to delete comment.');
-    }
-  })
-  .catch(error => {
-    console.error('Error deleting comment:', error);
-    alert('Failed to delete comment.');
-  });
-}
-
+    });
+  }
 
   // Search for a book by ID
   function searchBookById() {
