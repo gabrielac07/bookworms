@@ -140,7 +140,7 @@ permalink: /emotion/
 </div>
 
 <script>
-    const API_URL = 'http://127.0.0.1:8887/api/emotion'; // Update with your API URL
+    const API_URL = 'http://127.0.0.1:8504/api/emotion'; // Update with your API URL
 
     // Function to add emotion
     document.getElementById('addEmotionForm').addEventListener('submit', async (e) => {
