@@ -4,8 +4,6 @@ title: Book Roulette
 permalink: /emotion/
 ---
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emotion API Frontend</title>
     <style>
         body {
@@ -139,8 +137,9 @@ permalink: /emotion/
     <button id="resetReactionsButton">Reset Reactions</button>
 </div>
 
-<script>
-    const API_URL = 'http://127.0.0.1:8887/api/emotion'; // Update with your API URL
+<script type="module">
+    import { pythonURI, fetchOptions } from '{{ site.baseurl }}/assets/js/api/config.js';
+    // const API_URL = 'http://127.0.0.1:8504/api/emotion'; // Update with your API URL
 
     // Function to add emotion
     document.getElementById('addEmotionForm').addEventListener('submit', async (e) => {
@@ -151,14 +150,14 @@ permalink: /emotion/
         const reactionType = document.getElementById('addReactionType').value;
 
         try {
-            const response = await fetch(API_URL, {
+             const response = await fetch(`${pythonURI}/api/emotion`, {
+                ...fetchOptions,
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ user_id: userId, title_id: titleId, author_id: authorId, reaction_type: reactionType }),
             });
-
             const result = await response.json();
             if (!response.ok) throw new Error(result.error || 'Failed to add emotion.');
 
@@ -215,7 +214,7 @@ permalink: /emotion/
         const titleId = document.getElementById('getTitleId').value;
 
         try {
-            const response = await fetch(`${API_URL}/${titleId}`);
+             const response = await fetch(`${pythonURI}/api/emotion/${titleId}`);
             const result = await response.json();
             const titleResultsDiv = document.getElementById('titleResults');
 
@@ -239,7 +238,7 @@ permalink: /emotion/
         const userId = document.getElementById('getUserId').value;
 
         try {
-            const response = await fetch(`${API_URL}/user/${userId}`);
+            const response = await fetch(`${pythonURI}/api/emotion/user/${userId}`);
             const result = await response.json();
             const userResultsDiv = document.getElementById('userResults');
 
@@ -266,14 +265,14 @@ permalink: /emotion/
         const authorId = document.getElementById('updateAuthorIdUpdate').value;
 
         try {
-            const response = await fetch(`${API_URL}/update`, {
+            const response = await fetch(`${pythonURI}/api/emotion/update`, {
+                ...fetchOptions,
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ user_id: userId, title_id: titleId, reaction_type: reactionType, author_id: authorId }),
             });
-
             const result = await response.json();
             if (!response.ok) throw new Error(result.error || 'Failed to update emotion.');
 
@@ -289,14 +288,14 @@ permalink: /emotion/
         const titleId = document.getElementById('deleteTitleId').value;
 
         try {
-            const response = await fetch(`${API_URL}/delete`, {
+            const response = await fetch(`${pythonURI}/api/emotion/delete`, {
+                ...fetchOptions,
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ user_id: userId, title_id: titleId }),
             });
-
             const result = await response.json();
             if (!response.ok) throw new Error(result.error || 'Failed to delete emotion.');
 
@@ -311,7 +310,8 @@ permalink: /emotion/
         const userId = document.getElementById('resetUserId').value;
 
         try {
-            const response = await fetch(`${API_URL}/reset_reactions/${userId}`, {
+            const response = await fetch(`${pythonURI}/api/emotion/reset_reactions/${userId}`, {
+                ...fetchOptions,
                 method: 'DELETE',
             });
 
