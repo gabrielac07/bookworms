@@ -80,7 +80,7 @@ permalink: /bookstore/
 </div>
 
 <script>
-  const pythonURI = 'http://127.0.0.1:8887/api'; // Replace with your actual API URL
+  const pythonURI = 'http://127.0.0.1:8504/api'; // Replace with your actual API URL
 
   // Fetch and display cart items
   function fetchCartItems() {

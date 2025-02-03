@@ -184,7 +184,7 @@ permalink: /random_book_recommender/
     //
     //Build the API URL with the selected genre as a query parameter
     //const apiUrl = `${pythonURI}/api/random_book?genre=${encodeURIComponent(query)}`;
-    const apiUrl = `http://127.0.0.1:8887/api/random_bookrec?genre=${encodeURIComponent(query)}`;
+    const apiUrl = `http://127.0.0.1:8504/api/random_bookrec?genre=${encodeURIComponent(query)}`;
     //Fetch data from the backend API
     fetch(apiUrl) // Flask server endpoint
         .then((response) => {
@@ -243,7 +243,7 @@ permalink: /random_book_recommender/
             cover_url: coverUrl 
         };
     //
-        fetch('http://127.0.0.1:8887/api/add_bookrec', {
+        fetch('http://127.0.0.1:8504/api/add_bookrec', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -271,7 +271,7 @@ permalink: /random_book_recommender/
             return;
         }
         //
-        fetch(`http://127.0.0.1:8887/api/delete_bookrec/${lastAddedBookId}`, {
+        fetch(`http://127.0.0.1:8504/api/delete_bookrec/${lastAddedBookId}`, {
             method: 'DELETE'
         })
         .then(response => response.json())
