@@ -11,9 +11,9 @@ permalink: /deployment
 ### Subdomain
 
 ```yml
-Server: https://bookworms_backend.nighthawkcodingsociety.com/
+Server: https://bookworms.stu.nighthawkcodingsociety.com/
 Domain: nighthawkcodingsociety.com
-Subdomain: bookworms_backend
+Subdomain: bookworms
 ```
 
 ### Port (Backend)
@@ -32,7 +32,7 @@ Updated main.py  to use new port number
 Updated Dockerfile in backend to use new port number
 
 ```yml
-FROM docker.io/python:3.11
+FROM docker.io/python:3.12.5
 
 WORKDIR /
 
@@ -62,7 +62,7 @@ Updated docker-compose.yml
 version: '3'
   services:
     web:
-      image: bookworms_backend
+      image: bookworms
       build: .
       env_file:
               - .env
@@ -80,7 +80,7 @@ Changed port numbers
 server {
     listen 80;
     listen [::]:80;
-    server_name bookworms_backend.nighthawkcodingsociety.com ; # Change server name to the one on R53
+    server_name bookworms.stu.nighthawkcodingsociety.com ; # Change server name to the one on R53
     # Configure CORS Headers
     location / {
         proxy_pass http://localhost:8504; # Change port to port on docker
@@ -112,7 +112,7 @@ if (location.hostname === "localhost") {
 } else if (location.hostname === "127.0.0.1") {
         pythonURI = "http://127.0.0.1:8504";
 } else {
-        pythonURI =  "https://bookworms_backend.nighthawkcodingsociety.com";
+        pythonURI =  "https://bookworms.stu.nighthawkcodingsociety.com";
 }
 ```
 
@@ -140,7 +140,7 @@ AWS EC2 terminal > `docker ps` > find port (ours is 8504)
 
 ### On localhost setup Docker files using VSCode
 
-1. VSCode > bookworms_backend > ensure `Dockerfile` and `docker-compose.yml` match port discovered with `docker ps`
+1. VSCode > bookworms > ensure `Dockerfile` and `docker-compose.yml` match port discovered with `docker ps`
 
 2. Use `cd` to enter correct repo. Test `docker-compose up` or sudo docker-compose up
   - DO NOT type -d
@@ -175,7 +175,7 @@ AWS Route 53 > set up DNS subdomain
 servserver {
         listen 80;
         listen [::]:80;
-        server_name bookworms_backend.nighthawkcodingsociety.com;
+        server_name bookworms.stu.nighthawkcodingsociety.com;
 
         location / {
                 proxy_pass http://localhost:8504;
