@@ -1,18 +1,16 @@
 ---
 layout: page 
-title: Book Roulette
-permalink: /emotion/
+title: Reaction
+permalink: /reaction/
 ---
-<head>
-    <title>Emotion API Frontend</title>
-    <style>
+<style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
         }
-        h1 {
+        /* h1 {
             color: #333;
-        }
+        } */
         form {
             margin-bottom: 20px;
         }
@@ -30,20 +28,16 @@ permalink: /emotion/
             border: 1px solid #ccc;
             border-radius: 5px;
         }
-    </style>
-</head>
-<body>
-
-<h1>Emotion API Frontend</h1>
+</style>
 
 <!-- User ID (hidden for now) -->
 <input type="hidden" id="userId" value="1"> <!-- Example user ID; replace with dynamic value -->
 
 <!-- Add Emotion Form -->
-<h2>Add Emotion</h2>
+<h2>Share your reaction!</h2>
 <form id="addEmotionForm">
-    <input type="text" placeholder="Title ID" id="addTitleId" required>
-    <input type="text" placeholder="Author ID" id="addAuthorId" required>
+    <input type="text" placeholder="Title" id="addTitleId" required>
+    <input type="text" placeholder="Author" id="addAuthorId" required>
     <select id="addReactionType" required>
         <option value="">Select Reaction</option>
         <option value="🎉">🎉 Celebration</option>
@@ -82,7 +76,7 @@ permalink: /emotion/
 <!-- Get Reactions for Title -->
 <div id="titleOptions" style="display: none;">
     <h3>Get Reactions for Title</h3>
-    <input type="text" placeholder="Title ID" id="getTitleId">
+    <input type="text" placeholder="Title" id="getTitleId">
     <button id="getReactionsForTitleButton">Get Reactions</button>
     <div id="titleResults" class="results"></div>
 </div>
@@ -99,7 +93,7 @@ permalink: /emotion/
 <div id="updateOptions" style="display: none;">
     <h3>Update Emotion</h3>
     <input type="number" placeholder="User ID" id="updateUserId" value="1" required>
-    <input type="text" placeholder="Title ID" id="updateTitleId" required>
+    <input type="text" placeholder="Title" id="updateTitleId" required>
     <select id="updateReactionType" required>
         <option value="">Select New Reaction</option>
         <option value="🎉">🎉 Celebration</option>
@@ -118,7 +112,7 @@ permalink: /emotion/
         <option value="🍀">🍀 Lucky</option>
         <option value="🌈">🌈 Rainbow</option>
     </select>
-    <input type="text" placeholder="Author ID" id="updateAuthorIdUpdate" required>
+    <input type="text" placeholder="Author" id="updateAuthorIdUpdate" required>
     <button id="updateEmotionButton">Update Emotion</button>
 </div>
 
@@ -126,7 +120,7 @@ permalink: /emotion/
 <div id="deleteOptions" style="display: none;">
     <h3>Delete Emotion</h3>
     <input type="number" placeholder="User ID" id="deleteUserId" value="1" required>
-    <input type="text" placeholder="Title ID" id="deleteTitleId" required>
+    <input type="text" placeholder="Title" id="deleteTitleId" required>
     <button id="deleteEmotionButton">Delete Emotion</button>
 </div>
 
@@ -246,7 +240,7 @@ permalink: /emotion/
             if (response.ok) {
                 result.emotions.forEach(emotion => {
                     const emotionItem = document.createElement('div');
-                    emotionItem.innerHTML = `Title ID: ${emotion.title_id}, Reaction: ${emotion.reaction_type}`;
+                    emotionItem.innerHTML = `Title: ${emotion.title_id}, Reaction: ${emotion.reaction_type}`;
                     userResultsDiv.appendChild(emotionItem);
                 });
             } else {
@@ -324,5 +318,3 @@ permalink: /emotion/
         }
     });
 </script>
-
-</body>
