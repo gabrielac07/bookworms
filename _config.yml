@@ -2,8 +2,8 @@ title: Bookworms
 description: "Social Media for Del Norte High School"
 owner_name: Gabriela Connelly
 github_username: gabrielac07
-github_repo: "sprint4_frontend" 
-baseurl: "/sprint4_frontend"
+github_repo: "bookworms" 
+baseurl: "/bookworms"
 future: true
 remote_theme: jekyll/minima
 minima:

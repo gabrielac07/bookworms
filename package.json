@@ -1,5 +1,5 @@
 {
-  "name": "sprint4_frontend",
+  "name": "bookworms",
   "version": "1.0.0",
   "description": "Nighthawk Pages is a project designed to support students in their Computer Science and Software Engineering education. It offers a wide range of resources including tech talks, code examples, and educational blogs.",
   "main": "index.js",
@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gabrielac07/sprint4_frontend.git"
+    "url": "git+https://github.com/gabrielac07/bookworms.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/gabrielac07/sprint4_frontend/issues"
+    "url": "https://github.com/gabrielac07/bookworms/issues"
   },
-  "homepage": "https://github.com/gabrielac07/sprint4_frontend#readme",
+  "homepage": "https://github.com/gabrielac07/bookworms#readme",
   "dependencies": {
     "react-scripts": "^5.0.1"
   }

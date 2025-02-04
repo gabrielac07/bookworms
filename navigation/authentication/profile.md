@@ -385,7 +385,7 @@ document.getElementById('submitProfileChanges').addEventListener('click', async 
   }
 
   alert("Profile changes submitted successfully!");
-  window.location.href = '/sprint4_frontend/login';
+  window.location.href = '/bookworms/login';
 });
 
 // Call and initializeProfileSetup when DOM content is loaded
