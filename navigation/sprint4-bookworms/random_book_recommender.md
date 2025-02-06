@@ -201,7 +201,6 @@ permalink: /random_book_recommender/
             alert("An error occurred while fetching the book. Please try again.");
         });
     }
-
     function displayBook(book) {
         const { title, author, description, image_cover } = book;
         // Update the DOM (Document Object Model) with book details
@@ -215,7 +214,6 @@ permalink: /random_book_recommender/
         document.getElementById("genre_selection").style.display = "none";
         document.getElementById("book_display").style.display = "block";
     }
-
     function startOver() {
         // Reset to the initial view
         document.getElementById("genre_selection").style.display = "block";
