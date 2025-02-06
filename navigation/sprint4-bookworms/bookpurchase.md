@@ -79,12 +79,12 @@ permalink: /bookstore/
   </div>
 </div>
 
-<script>
-  const pythonURI = 'http://127.0.0.1:8504/api'; // Replace with your actual API URL
+<script type="module">
+  import { pythonURI, fetchOptions } from "{{site.baseurl}}/assets/js/api/config.js" 
 
   // Fetch and display cart items
   function fetchCartItems() {
-    fetch(`${pythonURI}/cart`)
+    fetch(`${pythonURI}/api/cart`)
       .then(response => response.json())
       .then(data => {
         const cartItemsContainer = document.getElementById('cartItems');
@@ -132,7 +132,8 @@ permalink: /bookstore/
         _name: username // Match the backend key
       };
 
-      fetch(`${pythonURI}/cart`, {
+      fetch(`${pythonURI}/api/cart`, {
+        ...fetchOptions,
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -152,7 +153,8 @@ permalink: /bookstore/
 
   // Clear the cart
   function clearCart() {
-    fetch(`${pythonURI}/cart`, {
+    fetch(`${pythonURI}/api/cart`, {
+      ...fetchOptions,
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: document.getElementById('username').value.trim() }) // User-specific clearing
