@@ -164,7 +164,12 @@ permalink: /random_book_recommender/
         </div>
     </div>
 <script>
-    //The genreMap object maps the dropdown values (nonfiction, historical_fiction, etc.) to terms recognized by the bookdb API (e.g., "Nonfiction", "Suspense/Thriller").
+    const pythonURI = 'http://127.0.0.1:8504'; // Replace with your actual Python backend URI
+    const fetchOptions = {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
     const genreMap = {
         nonfiction: "Nonfiction",
         historical_fiction: "Historical Fiction",
@@ -174,67 +179,51 @@ permalink: /random_book_recommender/
         dystopian: "Dystopian",
         classic: "Classics",
         mystery: "Mystery"
-    }
-    //
+    };
     function getRandomBook() {
-    //Get the selected genre from the dropdown
-    //const genre = document.getElementById("genre").value;
-    const genreKey = document.getElementById("genre").value;
-    const query = genreMap[genreKey] || "fiction"; // Fallback to "fiction" if genre not mapped
-    //
-    //Build the API URL with the selected genre as a query parameter
-    //const apiUrl = `${pythonURI}/api/random_book?genre=${encodeURIComponent(query)}`;
-    const apiUrl = `http://127.0.0.1:8504/api/random_bookrec?genre=${encodeURIComponent(query)}`;
-    //Fetch data from the backend API
-    fetch(apiUrl) // Flask server endpoint
-        .then((response) => {
+        const genreKey = document.getElementById("genre").value;
+        const query = genreMap[genreKey] || "fiction"; // Fallback to "fiction" if genre not mapped
+        const apiUrl = `${pythonURI}/api/random_bookrec?genre=${encodeURIComponent(query)}`;
+        fetch(apiUrl, fetchOptions)
+            .then((response) => {
                 if (!response.ok) {
                     throw new Error('No books found for the selected genre.');
                 }
                 return response.json();
-        })
-        .then((book) => {
-            displayBook(book); // Display the book details on the page
-        })
-        .catch((error) => { // Catch -> handles any error during execution
-            console.error("Error fetching data:", error);
-            alert("An error occurred while fetching the book. Please try again.");
-        });
+            })
+            .then((book) => {
+                displayBook(book); // Display the book details on the page
+            })
+            .catch((error) => {
+                console.error("Error fetching data:", error);
+                alert("An error occurred while fetching the book. Please try again.");
+            });
     }
     function displayBook(book) {
         const { title, author, description, image_cover } = book;
-        // Update the DOM (Document Object Model) with book details
         document.getElementById("book_title").innerText = title;
         document.getElementById("book_author").innerText = `By: ${author}`;
         document.getElementById("book_description").innerText = description;
-        // Book cover display
         document.getElementById("book_cover").src = image_cover;
-        document.getElementById("book_cover").style.display = image_cover ? "block" : "none";      
-        // Hide the genre selection and show the book details
+        document.getElementById("book_cover").style.display = image_cover ? "block" : "none";
         document.getElementById("genre_selection").style.display = "none";
         document.getElementById("book_display").style.display = "block";
     }
     function startOver() {
-        // Reset to the initial view
         document.getElementById("genre_selection").style.display = "block";
         document.getElementById("book_display").style.display = "none";
     }
-    //
-    let lastAddedBookId = null; // Store the ID of the last added book
-    // Section for displaying form to add a book rec
+    let lastAddedBookId = null;
     function inputBookRec() {
         document.getElementById("input_bookrec").style.display = "block";
         document.getElementById("add_bookrec").style.display = "none";
     }
-    //
-    // Section for adding book recs
     function addBookRec() {
         const title = document.getElementById('title').value;
         const author = document.getElementById('author').value;
         const genre = document.getElementById('genre').value;
         const description = document.getElementById('description').value;
         const coverUrl = document.getElementById('cover_url').value;
-    //
         const bookRec = { 
             title: title,
             author: author,
@@ -242,21 +231,18 @@ permalink: /random_book_recommender/
             description: description,
             cover_url: coverUrl 
         };
-    //
-        fetch('http://127.0.0.1:8504/api/add_bookrec', {
+        fetch(`${pythonURI}/api/add_bookrec`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            ...fetchOptions,
             body: JSON.stringify(bookRec)
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
                 alert('Book recommendation added successfully!');
-                lastAddedBookId = data.id; // Store the ID of the added book
+                lastAddedBookId = data.id;
             } else {
-                alert('Failed to add book recommendation.'); //This is suppsoed to be "Failed to add book recommendation"
+                alert('Failed to add book recommendation.');
             }
         })
         .catch(error => {
@@ -264,15 +250,14 @@ permalink: /random_book_recommender/
             alert('An error occurred while adding the book recommendation.');
         });
     }
-    // Section for deleting book recs
     function deleteBookRec() {
         if (lastAddedBookId === null) {
             alert('No book recommendation to delete.');
             return;
         }
-        //
-        fetch(`http://127.0.0.1:8504/api/delete_bookrec/${lastAddedBookId}`, {
-            method: 'DELETE'
+        fetch(`${pythonURI}/api/delete_bookrec/${lastAddedBookId}`, {
+            method: 'DELETE',
+            ...fetchOptions
         })
         .then(response => response.json())
         .then(data => {
@@ -288,7 +273,6 @@ permalink: /random_book_recommender/
             alert('An error occurred while deleting the book recommendation.');
         });
     }
-    // Function to clear the form
     function clearForm() {
         document.getElementById('title').value = '';
         document.getElementById('author').value = '';
