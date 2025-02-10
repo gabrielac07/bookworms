@@ -2,7 +2,7 @@
 layout: post
 title: Bookworms United
 hide: true
-permalink: /test4
+permalink: /genre_chatroom
 ---
 <style>
 .container {

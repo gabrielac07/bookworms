@@ -137,7 +137,7 @@ show_reading_time: false
       <div class="section">
           <h2>Genre Chatroom</h2>
           <p>Explore genres!</p>
-          <button onclick="location.href='{{site.baseurl}}/navigation/sprint4-bookworms/genre_chatroom'" >Enter 💬📚</button>
+          <button onclick="location.href='{{site.baseurl}}/genre_chatroom'" >Enter 💬📚</button>
       </div>
       <div class="section">
           <h2>About Us</h2>

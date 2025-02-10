@@ -8,9 +8,6 @@ permalink: /reaction/
             font-family: Arial, sans-serif;
             margin: 20px;
         }
-        /* h1 {
-            color: #333;
-        } */
         form {
             margin-bottom: 20px;
         }
