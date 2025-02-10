@@ -111,14 +111,14 @@ permalink: /random_book_recommender/
                 <option value="classic">Classics</option>
                 <option value="mystery">Mystery</option>
             </select>
-            <button onclick="getRandomBook()">Get a Book!</button>
+            <button id="getRandomBookButton" onclick="getRandomBook()">Get a Book!</button>
         </div>
         <div id="book_display" class="book_details" style="display: none;">
             <div class="book_cover"><img id="book_cover" alt="Book Cover"></div>
             <h2 id="book_title"></h2>
             <h3 id="book_author"></h3>
             <p id="book_description" class="description"></p>
-            <button class="start_over" onclick="startOver()">Get a Different Book</button>
+            <button class="start_over" id="startOver" onclick="startOver()">Get a Different Book</button>
         </div>
         <!--This section is the display for adding a bookrec-->
         <div id="add_bookrec">
@@ -157,19 +157,17 @@ permalink: /random_book_recommender/
                     <input type="url" name="cover_url" id="cover_url" required>
                 </label></p>
                 <p>
-                    <button type="button" onclick="addBookRec()">Done</button>
-                    <button type="button" onclick="deleteBookRec()">Delete</button>
+                    <button type="button" id="addBookRecButton" onclick="addBookRec()">Done</button>
+                    <button type="button" id="deleteBookRecButton" onclick="deleteBookRec()">Delete</button>
                 </p>
             </form>
         </div>
     </div>
-<script>
-    const pythonURI = 'http://127.0.0.1:8504'; // Replace with your actual Python backend URI
-    const fetchOptions = {
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
+
+<script type="module">
+    import {pythonURI, fetchOptions} from '{{site.baseurl}}/assets/js/api/config.js';
+    //The genreMap object maps the dropdown values (nonfiction, historical_fiction, etc.) to terms recognized by the bookdb API (e.g., "Nonfiction", "Suspense/Thriller").
+
     const genreMap = {
         nonfiction: "Nonfiction",
         historical_fiction: "Historical Fiction",
@@ -181,11 +179,19 @@ permalink: /random_book_recommender/
         mystery: "Mystery"
     };
     function getRandomBook() {
-        const genreKey = document.getElementById("genre").value;
-        const query = genreMap[genreKey] || "fiction"; // Fallback to "fiction" if genre not mapped
-        const apiUrl = `${pythonURI}/api/random_bookrec?genre=${encodeURIComponent(query)}`;
-        fetch(apiUrl, fetchOptions)
-            .then((response) => {
+
+    //Get the selected genre from the dropdown
+    //const genre = document.getElementById("genre").value;
+    const genreKey = document.getElementById("genre").value;
+    const query = genreMap[genreKey] || "Nonfiction"; // Fallback to "fiction" if genre not mapped
+    //
+    //Build the API URL with the selected genre as a query parameter
+    //const apiUrl = `${pythonURI}/api/random_book?genre=${encodeURIComponent(query)}`;
+    const apiUrl = `${pythonURI}/api/random_bookrec?genre=${encodeURIComponent(query)}`;
+    //Fetch data from the backend API
+    fetch(apiUrl, fetchOptions) // Flask server endpoint
+        .then((response) => {
+
                 if (!response.ok) {
                     throw new Error('No books found for the selected genre.');
                 }
@@ -231,9 +237,15 @@ permalink: /random_book_recommender/
             description: description,
             cover_url: coverUrl 
         };
+
+    //
         fetch(`${pythonURI}/api/add_bookrec`, {
-            method: 'POST',
             ...fetchOptions,
+            method: 'POST',
+            //headers: {
+                //'Content-Type': 'application/json'
+            //},
+
             body: JSON.stringify(bookRec)
         })
         .then(response => response.json())
@@ -255,9 +267,11 @@ permalink: /random_book_recommender/
             alert('No book recommendation to delete.');
             return;
         }
+        //
         fetch(`${pythonURI}/api/delete_bookrec/${lastAddedBookId}`, {
-            method: 'DELETE',
-            ...fetchOptions
+            ...fetchOptions,
+            method: 'DELETE'
+
         })
         .then(response => response.json())
         .then(data => {
@@ -283,5 +297,10 @@ permalink: /random_book_recommender/
         document.getElementById("add_bookrec").style.display = "block";
         lastAddedBookId = null;
     }
+//
+    document.getElementById('getRandomBookButton').addEventListener('click', getRandomBook);
+    document.getElementById('startOver').addEventListener('click', startOver);
+    document.getElementById('addBookRecButton').addEventListener('click', addBookRec);
+    document.getElementById('deleteBookRecButton').addEventListener('click', deleteBookRec);
 </script>
 </html>
