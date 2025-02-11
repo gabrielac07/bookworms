@@ -121,7 +121,7 @@ permalink: /random_book_recommender/
             <button class="start_over" id="startOver" onclick="startOver()">Get a Different Book</button>
         </div>
         <!--This section is the display for adding a bookrec-->
-        <div id="add_bookrec">
+        <div id="addBookRec">
             <button onclick="inputBookRec()">Add a Book Recommendation!</button>
         </div>
         <div id="input_bookrec" class="bookrec_table" style="display: none;">
@@ -300,6 +300,7 @@ permalink: /random_book_recommender/
 //
     document.getElementById('getRandomBookButton').addEventListener('click', getRandomBook);
     document.getElementById('startOver').addEventListener('click', startOver);
+    document.getElementById('addBookRec').addEventListener('click', inputBookRec);
     document.getElementById('addBookRecButton').addEventListener('click', addBookRec);
     document.getElementById('deleteBookRecButton').addEventListener('click', deleteBookRec);
 </script>
