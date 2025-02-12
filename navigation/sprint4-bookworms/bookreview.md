@@ -172,7 +172,24 @@ permalink: /bookrates/
     submitButton.addEventListener('click', addComment);
   }
 
-  // Add comment function
+
+  // Fetch comments from the backend
+  function fetchComments() {
+    fetch(`${pythonURI}/api/comments?book_id=${currentBook.id}`, fetchOptions)
+      .then(response => response.json())
+      .then(data => {
+        if (data.comments) {
+          displayComments(data.comments);
+        } else {
+          console.error('No comments found for this book.');
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching comments:', error);
+        alert('Failed to fetch comments.');
+      });
+  }
+
   function addComment() {
     const commentInput = document.getElementById('commentInput');
     const commentText = commentInput.value.trim();
@@ -188,68 +205,70 @@ permalink: /bookrates/
       return;
     }
 
-    const commentData = {
-      book_id: currentBook.id,
-      user_id: userId,
-      comment_text: commentText
-    };
+    // Fetch username using user_id before submitting the comment
+    fetchUserName(userId).then(username => {
+      const commentData = {
+        book_id: currentBook.id,
+        user_id: userId,
+        comment_text: commentText
+      };
 
-    // Debug: Log the comment data to verify it's correct
-    console.log('Sending comment data:', commentData);
+      // Debug: Log the comment data to verify it's correct
+      console.log('Sending comment data:', commentData);
 
-    fetch(`${pythonURI}/api/comments`, {
-      ...fetchOptions, 
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(commentData),
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log('Response data:', data);
-      if (data.success) {
-        // Optionally append the new comment immediately without waiting for fetchComments()
-        const commentList = document.getElementById('commentsList');
-        
-        const newComment = document.createElement('div');
-        newComment.classList.add('comment');
-        newComment.innerHTML = `
-          <p><strong>User ${userId}:</strong> ${commentText}</p>
-        `;
-        commentList.appendChild(newComment); // Add the new comment to the list
-
-        // Clear the input field
-        commentInput.value = '';
-      } else {
-        alert('Successfully added comment! Refresh to check');
-      }
-    })
-    .catch(error => {
-      console.error('Error adding comment:', error);
-      alert('Failed to add comment.');
-    });
-  }
-
-  // Fetch comments from the backend
-  function fetchComments() {
-    fetch(`${pythonURI}/api/comments?book_id=${currentBook.id}`, fetchOptions)
-      .then(response => response.json())
+      fetch(`${pythonURI}/api/comments`, {
+        ...fetchOptions, 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(commentData),
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
       .then(data => {
-        if (data.comments) {
-          displayComments(data.comments);
+        console.log('Response data:', data);
+        if (data.success) {
+          // Optionally append the new comment immediately without waiting for fetchComments()
+          const commentList = document.getElementById('commentsList');
+          
+          const newComment = document.createElement('div');
+          newComment.classList.add('comment');
+          newComment.innerHTML = `
+            <p><strong>${username}:</strong> ${commentText}</p>
+          `;
+          commentList.appendChild(newComment); // Add the new comment to the list
+
+          // Clear the input field
+          commentInput.value = '';
         } else {
-          alert('No comments found for this book.');
+          alert('Successfully added comment! Refresh to check');
         }
       })
       .catch(error => {
-        console.error('Error fetching comments:', error);
-        alert('Failed to fetch comments.');
+        console.error('Error adding comment:', error);
+        alert('Failed to add comment.');
+      });
+    });
+  }
+
+  function fetchUserName(userId) {
+    return fetch(`${pythonURI}/api/user/${userId}`, fetchOptions)
+      .then(response => response.json())
+      .then(data => {
+        if (data.name) {
+          return data.name;
+        } else {
+          return "Unknown User"; // Default if no name is found
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching user data:', error);
+        return "Unknown User"; // Default if error occurs
       });
   }
 
@@ -259,39 +278,35 @@ permalink: /bookrates/
     commentsList.innerHTML = ''; // Clear previous comments
 
     comments.forEach(comment => {
-      const commentDiv = document.createElement('div');
-      commentDiv.classList.add('comment-box');
-      commentDiv.innerHTML = `
-        <div class="comment-text" id="comment-${comment.id}">
-          <strong>User ${comment.user_id}</strong><br>
-          <span class="comment-text-display" data-comment-id="${comment.id}">${comment.comment_text}</span>
-          <!-- Pencil icon to update the comment -->
-          <button class="update-comment" data-comment-id="${comment.id}">📝</button>
-          <!-- Trash can button to delete the comment -->
-          <button class="delete-comment" data-comment-id="${comment.id}">🗑️</button>
-        </div>
-      `;
-      commentsList.appendChild(commentDiv);
+      fetchUserName(comment.user_id).then(username => {
+        const commentDiv = document.createElement('div');
+        commentDiv.classList.add('comment-box');
+        commentDiv.innerHTML = `
+          <div class="comment-text" id="comment-${comment.id}">
+            <strong>${username}</strong><br>
+            <span class="comment-text-display" data-comment-id="${comment.id}">${comment.comment_text}</span>
+            <!-- Pencil icon to update the comment -->
+            <button class="update-comment" data-comment-id="${comment.id}">📝</button>
+            <!-- Trash can button to delete the comment -->
+            <button class="delete-comment" data-comment-id="${comment.id}">🗑️</button>
+          </div>
+        `;
+        commentsList.appendChild(commentDiv);
+      });
     });
 
-    // Add event listeners to the trash can buttons
-    const deleteButtons = document.querySelectorAll('.delete-comment');
-    deleteButtons.forEach(button => {
-      button.addEventListener('click', (event) => {
+    // Use event delegation for the delete and update buttons
+    commentsList.addEventListener('click', (event) => {
+      if (event.target.classList.contains('delete-comment')) {
         const commentId = event.target.getAttribute('data-comment-id');
         deleteComment(commentId);
-      });
-    });
-
-    // Add event listeners to the pencil icon buttons for updating comments
-    const updateButtons = document.querySelectorAll('.update-comment');
-    updateButtons.forEach(button => {
-      button.addEventListener('click', (event) => {
+      } else if (event.target.classList.contains('update-comment')) {
         const commentId = event.target.getAttribute('data-comment-id');
         turnCommentIntoEditable(commentId);
-      });
-    });
-  }
+      }
+  });
+}
+  
 
   // Turn comment into editable field when the pencil icon is clicked
   function turnCommentIntoEditable(commentId) {
@@ -359,12 +374,12 @@ permalink: /bookrates/
         alert('Comment deleted successfully!');
         fetchComments(); // Refresh the comments list
       } else {
-        alert('Failed to delete comment.');
+        console.error('Failed to delete comment.');
       }
     })
     .catch(error => {
       console.error('Error deleting comment:', error);
-      alert('Failed to delete comment.');
+      console.error('Failed to delete comment.');
     });
   }
 
