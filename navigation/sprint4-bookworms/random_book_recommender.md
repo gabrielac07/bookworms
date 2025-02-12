@@ -47,15 +47,6 @@ permalink: /random_book_recommender/
         cursor: pointer;
     }
 
-    input, textarea, {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 20px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 16px;
-    }
-
     select:focus, button:hover {
         background-color: #500A0A/*#72db8e*/;
         transition: 0.3s;   
@@ -95,6 +86,15 @@ permalink: /random_book_recommender/
     .start_over:hover {
         /*background-color:*/
     }
+
+    input, textarea {
+        width: 75%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
 </style>
 <html>
     <div class="container">
@@ -128,11 +128,11 @@ permalink: /random_book_recommender/
             <form id="bookRecForm">
                 <p><label>
                     Book Title:
-                    <input type="text" name="title" id="title" required>
+                    <input type="text" name="title" id="title" placeholder="Enter Book Title" required>
                 </label></p>
                 <p><label>
                     Author:
-                    <input type="text" name="author" id="author" required>
+                    <input type="text" name="author" id="author" placeholder="Enter Book Author" required>
                 </label></p>
                 <p><label>
                     Genre:
@@ -150,11 +150,11 @@ permalink: /random_book_recommender/
                 </label></p>
                 <p><label>
                     Description:
-                    <textarea type="text" name="description" rows="5" id="description" required></textarea>
+                    <textarea type="text" name="description" rows="5" id="description" placeholder="Enter a short summary of the book" required></textarea>
                 </label></p>
                 <p><label>
                     Book Cover Image URL:
-                    <input type="url" name="cover_url" id="cover_url" required>
+                    <input type="url" name="cover_url" id="cover_url" placeholder="Enter Book Cover Image URL" required>
                 </label></p>
                 <p>
                     <button type="button" id="addBookRecButton" onclick="addBookRec()">Done</button>
