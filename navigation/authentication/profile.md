@@ -500,6 +500,33 @@ async function deleteBookFromWishlist(bookId) {
   }
 }
 
+// Function to update a book in the wishlist
+async function updateBookInWishlist(itemId, newBookId) {
+  const URL = `${pythonURI}/api/wishlist/${itemId}`;
+  const body = {
+    book_id: parseInt(newBookId), // Ensure it's an integer
+  };
+
+  try {
+    const response = await fetch(URL, {
+      ...fetchOptions,
+      method: 'PUT',
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `Failed to update book in wishlist: ${response.status}`);
+    }
+
+    document.getElementById('profile-message').textContent = 'Book updated successfully!';
+    userWishlist = await fetchWishlist(); // Refresh the wishlist after updating a book
+    displayWishlist();
+  } catch (error) {
+    document.getElementById('profile-message').textContent = `Error: ${error.message}`;
+  }
+}
+
 // Display the wishlist
 function displayWishlist() {
   const wishlistContainer = document.getElementById('wishlist');
@@ -525,7 +552,32 @@ function displayWishlist() {
       deleteButton.className = 'delete-btn';
       deleteButton.onclick = () => deleteBookFromWishlist(book.id);
 
+      const updateButton = document.createElement('button');
+      updateButton.textContent = 'Update';
+      updateButton.className = 'update-btn';
+      updateButton.onclick = () => {
+        const dropdown = document.createElement('select');
+        dropdown.innerHTML = '<option value="">Select a new book</option>';
+        predefinedBooks.forEach((predefinedBook) => {
+          const option = document.createElement('option');
+          option.value = predefinedBook.id;
+          option.textContent = predefinedBook.title;
+          dropdown.appendChild(option);
+        });
+
+        dropdown.onchange = () => {
+          const newBookId = dropdown.value;
+          if (newBookId) {
+            updateBookInWishlist(book.id, newBookId);
+          }
+        };
+
+        actionCell.innerHTML = '';
+        actionCell.appendChild(dropdown);
+      };
+
       actionCell.appendChild(deleteButton);
+      actionCell.appendChild(updateButton);
       tr.appendChild(titleCell);
       tr.appendChild(authorCell);
       tr.appendChild(actionCell);
