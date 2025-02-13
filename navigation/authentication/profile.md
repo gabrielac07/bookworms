@@ -565,7 +565,10 @@ function displayWishlist() {
           dropdown.appendChild(option);
         });
 
-        dropdown.onchange = () => {
+        const submitButton = document.createElement('button');
+        submitButton.textContent = 'Submit';
+        submitButton.className = 'submit-btn';
+        submitButton.onclick = () => {
           const newBookId = dropdown.value;
           if (newBookId) {
             updateBookInWishlist(book.id, newBookId);
@@ -574,6 +577,7 @@ function displayWishlist() {
 
         actionCell.innerHTML = '';
         actionCell.appendChild(dropdown);
+        actionCell.appendChild(submitButton);
       };
 
       actionCell.appendChild(deleteButton);
