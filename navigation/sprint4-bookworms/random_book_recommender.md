@@ -224,12 +224,17 @@ permalink: /random_book_recommender/
         document.getElementById("genre_selection").style.display = "block";
         document.getElementById("book_display").style.display = "none";
     }
-    
+
+    //Adding, Updating, Deleting Book Reccomendations Section
+
+    // Function to display the book recommendation input form
     function inputBookRec() {
         document.getElementById("input_bookrec").style.display = "block";
         document.getElementById("add_bookrec").style.display = "none";
     }
-    function addBookRec() { // add a bookrec to the table
+
+    // Function to add a book recommendation
+    function addBookRec() { 
         const title = document.getElementById('title').value;
         const author = document.getElementById('author').value;
         const genre = document.getElementById('genre').value;
@@ -243,14 +248,10 @@ permalink: /random_book_recommender/
             cover_url: coverUrl 
         };
 
-    //
+        // Send a POST request to add the book recommendation
         fetch(`${pythonURI}/api/add_bookrec`, {
             ...fetchOptions,
             method: 'POST',
-            //headers: {
-                //'Content-Type': 'application/json'
-            //},
-
             body: JSON.stringify(bookRec)
         })
         .then(response => response.json())
@@ -269,13 +270,13 @@ permalink: /random_book_recommender/
             alert('An error occurred while adding the book recommendation.');
         });
     }
-    //Delete the last entered bookrec
+    // Function to delete the last entered book recommendation
     function deleteBookRec() {
         if (lastAddedBookId === null) {
             alert('No book recommendation to delete.');
             return;
         }
-        //
+        // Send a DELETE request to delete the book recommendation
         fetch(`${pythonURI}/api/delete_bookrec/${lastAddedBookId}`, {
             ...fetchOptions,
             method: 'DELETE'
@@ -295,22 +296,22 @@ permalink: /random_book_recommender/
             alert('An error occurred while deleting the book recommendation.');
         });
     }
-    //Update the last added book
+    // Function to update the last added book recommendation
     function updateBookRec() {
         if (lastAddedBookData === null) {
             alert('No book recommendation to update.');
             return;
         }
-
+        // Populate the form with the last added book data
         document.getElementById('title').value = lastAddedBookData.title;
         document.getElementById('author').value = lastAddedBookData.author;
         document.getElementById('genre').value = lastAddedBookData.genre;
         document.getElementById('description').value = lastAddedBookData.description;
         document.getElementById('cover_url').value = lastAddedBookData.cover_url;
-        //
+        // Display the save edits button
         document.getElementById('saveEditsButton').style.display = 'block';
     }
-
+    // Function to save the edits made to the book recommendation
     function saveEdits() {
         const title = document.getElementById('title').value;
         const author = document.getElementById('author').value;
@@ -326,6 +327,7 @@ permalink: /random_book_recommender/
             cover_url: coverUrl 
         };
 
+        // Send a PUT request to update the book recommendation
         fetch(`${pythonURI}/api/update_bookrec/${lastAddedBookId}`, {
             ...fetchOptions,
             method: 'PUT',
@@ -347,7 +349,8 @@ permalink: /random_book_recommender/
         });
     }
 
-    function clearForm() { //The form clears after submitting a bookrec
+    // Function to clear the form after submitting a book recommendation
+    function clearForm() { 
         document.getElementById('title').value = '';
         document.getElementById('author').value = '';
         document.getElementById('genre').value = '';
@@ -359,7 +362,7 @@ permalink: /random_book_recommender/
         lastAddedBookId = null;
         lastAddedBookData = null;
     }
-//
+    // Event listeners for various buttons
     document.getElementById('getRandomBookButton').addEventListener('click', getRandomBook);
     document.getElementById('startOver').addEventListener('click', startOver);
     document.getElementById('addBookRec').addEventListener('click', inputBookRec);
