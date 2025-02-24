@@ -47,15 +47,6 @@ permalink: /random_book_recommender/
         cursor: pointer;
     }
 
-    input, textarea, {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 20px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 16px;
-    }
-
     select:focus, button:hover {
         background-color: #500A0A/*#72db8e*/;
         transition: 0.3s;   
@@ -95,6 +86,15 @@ permalink: /random_book_recommender/
     .start_over:hover {
         /*background-color:*/
     }
+
+    input, textarea {
+        width: 75%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
 </style>
 <html>
     <div class="container">
@@ -121,18 +121,18 @@ permalink: /random_book_recommender/
             <button class="start_over" id="startOver" onclick="startOver()">Get a Different Book</button>
         </div>
         <!--This section is the display for adding a bookrec-->
-        <div id="add_bookrec">
+        <div id="addBookRec">
             <button onclick="inputBookRec()">Add a Book Recommendation!</button>
         </div>
         <div id="input_bookrec" class="bookrec_table" style="display: none;">
             <form id="bookRecForm">
                 <p><label>
                     Book Title:
-                    <input type="text" name="title" id="title" required>
+                    <input type="text" name="title" id="title" placeholder="Enter Book Title" required>
                 </label></p>
                 <p><label>
                     Author:
-                    <input type="text" name="author" id="author" required>
+                    <input type="text" name="author" id="author" placeholder="Enter Book Author" required>
                 </label></p>
                 <p><label>
                     Genre:
@@ -150,15 +150,17 @@ permalink: /random_book_recommender/
                 </label></p>
                 <p><label>
                     Description:
-                    <textarea type="text" name="description" rows="5" id="description" required></textarea>
+                    <textarea type="text" name="description" rows="5" id="description" placeholder="Enter a short summary of the book" required></textarea>
                 </label></p>
                 <p><label>
                     Book Cover Image URL:
-                    <input type="url" name="cover_url" id="cover_url" required>
+                    <input type="url" name="cover_url" id="cover_url" placeholder="Enter Book Cover Image URL" required>
                 </label></p>
                 <p>
                     <button type="button" id="addBookRecButton" onclick="addBookRec()">Done</button>
                     <button type="button" id="deleteBookRecButton" onclick="deleteBookRec()">Delete</button>
+                    <button type="button" id="updateBookRecButton" onclick="updateBookRec()">Update</button>
+                    <button type="button" id="saveEditsButton" onclick="saveEdits()" style="display: none;">Save Edits</button>
                 </p>
             </form>
         </div>
@@ -178,8 +180,11 @@ permalink: /random_book_recommender/
         classic: "Classics",
         mystery: "Mystery"
     };
-    function getRandomBook() {
+    //
+    let lastAddedBookId = null; //for deleting the book by last ID
+    let lastAddedBookData = null; //for updating the last book
 
+    function getRandomBook() {
     //Get the selected genre from the dropdown
     //const genre = document.getElementById("genre").value;
     const genreKey = document.getElementById("genre").value;
@@ -215,16 +220,21 @@ permalink: /random_book_recommender/
         document.getElementById("genre_selection").style.display = "none";
         document.getElementById("book_display").style.display = "block";
     }
-    function startOver() {
+    function startOver() { //redirects the book display back to the default display
         document.getElementById("genre_selection").style.display = "block";
         document.getElementById("book_display").style.display = "none";
     }
-    let lastAddedBookId = null;
+
+    //Adding, Updating, Deleting Book Reccomendations Section
+
+    // Function to display the book recommendation input form
     function inputBookRec() {
         document.getElementById("input_bookrec").style.display = "block";
         document.getElementById("add_bookrec").style.display = "none";
     }
-    function addBookRec() {
+
+    // Function to add a book recommendation
+    function addBookRec() { 
         const title = document.getElementById('title').value;
         const author = document.getElementById('author').value;
         const genre = document.getElementById('genre').value;
@@ -238,21 +248,19 @@ permalink: /random_book_recommender/
             cover_url: coverUrl 
         };
 
-    //
+        // Send a POST request to add the book recommendation
         fetch(`${pythonURI}/api/add_bookrec`, {
             ...fetchOptions,
             method: 'POST',
-            //headers: {
-                //'Content-Type': 'application/json'
-            //},
-
             body: JSON.stringify(bookRec)
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
                 alert('Book recommendation added successfully!');
-                lastAddedBookId = data.id;
+                lastAddedBookId = data.id; // Store the ID of the added book
+                lastAddedBookData = { ...bookRec, id: data.id }; // Store the data of the added book
+                clearForm();
             } else {
                 alert('Failed to add book recommendation.');
             }
@@ -262,12 +270,13 @@ permalink: /random_book_recommender/
             alert('An error occurred while adding the book recommendation.');
         });
     }
+    // Function to delete the last entered book recommendation
     function deleteBookRec() {
         if (lastAddedBookId === null) {
             alert('No book recommendation to delete.');
             return;
         }
-        //
+        // Send a DELETE request to delete the book recommendation
         fetch(`${pythonURI}/api/delete_bookrec/${lastAddedBookId}`, {
             ...fetchOptions,
             method: 'DELETE'
@@ -287,7 +296,61 @@ permalink: /random_book_recommender/
             alert('An error occurred while deleting the book recommendation.');
         });
     }
-    function clearForm() {
+    // Function to update the last added book recommendation
+    function updateBookRec() {
+        if (lastAddedBookData === null) {
+            alert('No book recommendation to update.');
+            return;
+        }
+        // Populate the form with the last added book data
+        document.getElementById('title').value = lastAddedBookData.title;
+        document.getElementById('author').value = lastAddedBookData.author;
+        document.getElementById('genre').value = lastAddedBookData.genre;
+        document.getElementById('description').value = lastAddedBookData.description;
+        document.getElementById('cover_url').value = lastAddedBookData.cover_url;
+        // Display the save edits button
+        document.getElementById('saveEditsButton').style.display = 'block';
+    }
+    // Function to save the edits made to the book recommendation
+    function saveEdits() {
+        const title = document.getElementById('title').value;
+        const author = document.getElementById('author').value;
+        const genre = document.getElementById('genre').value;
+        const description = document.getElementById('description').value;
+        const coverUrl = document.getElementById('cover_url').value;
+
+        const updatedBookRec = { 
+            title: title,
+            author: author,
+            genre: genre,
+            description: description,
+            cover_url: coverUrl 
+        };
+
+        // Send a PUT request to update the book recommendation
+        fetch(`${pythonURI}/api/update_bookrec/${lastAddedBookId}`, {
+            ...fetchOptions,
+            method: 'PUT',
+            body: JSON.stringify(updatedBookRec)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Book recommendation updated successfully!');
+                lastAddedBookData = { ...updatedBookRec, id: lastAddedBookId }; // Update the stored data
+                clearForm();
+            } else {
+                alert('Failed to update book recommendation.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while updating the book recommendation.');
+        });
+    }
+
+    // Function to clear the form after submitting a book recommendation
+    function clearForm() { 
         document.getElementById('title').value = '';
         document.getElementById('author').value = '';
         document.getElementById('genre').value = '';
@@ -295,12 +358,17 @@ permalink: /random_book_recommender/
         document.getElementById('cover_url').value = '';
         document.getElementById("input_bookrec").style.display = "none";
         document.getElementById("add_bookrec").style.display = "block";
+        document.getElementById('saveEditsButton').style.display = 'none';
         lastAddedBookId = null;
+        lastAddedBookData = null;
     }
-//
+    // Event listeners for various buttons
     document.getElementById('getRandomBookButton').addEventListener('click', getRandomBook);
     document.getElementById('startOver').addEventListener('click', startOver);
+    document.getElementById('addBookRec').addEventListener('click', inputBookRec);
     document.getElementById('addBookRecButton').addEventListener('click', addBookRec);
     document.getElementById('deleteBookRecButton').addEventListener('click', deleteBookRec);
+    document.getElementById('updateBookRecButton').addEventListener('click', updateBookRec);
+    document.getElementById('saveEditsButton').addEventListener('click', saveEdits);
 </script>
 </html>

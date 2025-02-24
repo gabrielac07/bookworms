@@ -36,21 +36,23 @@ show_reading_time: false
 </div>
 
 <div class="wishlist-container">
-  <h2>Wishlist Feature</h2>
+  <h2>My Reading List</h2>
   <div>
     <label for="bookDropdown">Select a Book: </label>
     <select id="bookDropdown">
       <option value="">--Choose a book--</option>
     </select>
-    <button id="addToWishlistButton">Add to Wishlist</button>
+    <button id="addToWishlistButton">Add to reading list</button>
   </div>
   <div>
-    <h3>Your Wishlist</h3>
     <table id="wishlistTable">
       <thead>
         <tr>
           <th>Title</th>
           <th>Author</th>
+          <th>Status</th>
+          <th>Date Added</th>
+          <th>Availability</th>
           <th>Action</th>
         </tr>
       </thead>
@@ -500,8 +502,36 @@ async function deleteBookFromWishlist(bookId) {
   }
 }
 
+// Function to update a book in the wishlist
+async function updateBookInWishlist(itemId, newStatus, newAvailability) {
+  const URL = `${pythonURI}/api/wishlist/${itemId}`;
+  const body = {
+    status: newStatus,
+    availability: newAvailability
+  };
+
+  try {
+    const response = await fetch(URL, {
+      ...fetchOptions,
+      method: 'PUT',
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `Failed to update book in wishlist: ${response.status}`);
+    }
+
+    document.getElementById('profile-message').textContent = 'Book updated successfully!';
+    userWishlist = await fetchWishlist(); // Refresh the wishlist after updating a book
+    displayWishlist();
+  } catch (error) {
+    document.getElementById('profile-message').textContent = `Error: ${error.message}`;
+  }
+}
+
 // Display the wishlist
-function displayWishlist() {
+async function displayWishlist() {
   const wishlistContainer = document.getElementById('wishlist');
   if (!wishlistContainer) return; // Ensure the element exists
   wishlistContainer.innerHTML = '';
@@ -511,14 +541,45 @@ function displayWishlist() {
     emptyMessage.textContent = 'No books in the wishlist.';
     wishlistContainer.appendChild(emptyMessage);
   } else {
-    userWishlist.forEach((book) => {
+    // Sort the wishlist by status
+    const sortedWishlist = userWishlist.sort((a, b) => {
+      const statusOrder = { 'for later': 1, 'in progress': 2, 'finished': 3 };
+      return statusOrder[a.status] - statusOrder[b.status];
+    });
+
+    sortedWishlist.forEach((book) => {
       const tr = document.createElement('tr');
       const titleCell = document.createElement('td');
       const authorCell = document.createElement('td');
+      const statusCell = document.createElement('td');
+      const dateAddedCell = document.createElement('td');
+      const availabilityCell = document.createElement('td');
       const actionCell = document.createElement('td');
 
       titleCell.textContent = book.title;
       authorCell.textContent = book.author;
+
+      // Create a dropdown for status
+      const statusDropdown = document.createElement('select');
+      ['for later', 'in progress', 'finished'].forEach((status) => {
+        const option = document.createElement('option');
+        option.value = status;
+        option.textContent = status;
+        if (status === book.status) {
+          option.selected = true;
+        }
+        statusDropdown.appendChild(option);
+      });
+      statusDropdown.onchange = () => {
+        const newStatus = statusDropdown.value;
+        const newAvailability = book.availability;
+        updateBookInWishlist(book.id, newStatus, newAvailability);
+      };
+      statusCell.appendChild(statusDropdown);
+
+      dateAddedCell.textContent = book.date_added; // Date already formatted in backend
+
+      availabilityCell.textContent = book.availability;
 
       const deleteButton = document.createElement('button');
       deleteButton.textContent = 'Delete';
@@ -528,6 +589,9 @@ function displayWishlist() {
       actionCell.appendChild(deleteButton);
       tr.appendChild(titleCell);
       tr.appendChild(authorCell);
+      tr.appendChild(statusCell);
+      tr.appendChild(dateAddedCell);
+      tr.appendChild(availabilityCell);
       tr.appendChild(actionCell);
       wishlistContainer.appendChild(tr);
     });
@@ -568,6 +632,7 @@ document.getElementById('addToWishlistButton').addEventListener('click', addBook
 
   .wishlist-container {
     background-color: #d2b48c; /* Light brown */
+    color: black; /* Set font color to black */
   }
 
   /* Card Styling */
@@ -597,6 +662,7 @@ document.getElementById('addToWishlistButton').addEventListener('click', addBook
 
   button.delete-btn {
     background-color: #b22222; /* Solid red for delete */
+    padding: 5px 10px; /* Make delete button smaller */
   }
 
   button.delete-btn:hover {
@@ -608,6 +674,7 @@ document.getElementById('addToWishlistButton').addEventListener('click', addBook
     width: 100%;
     border-collapse: collapse;
     font-family: Arial, sans-serif; /* Updated font for better readability */
+    color: #333; /* Darker font color */
   }
 
   .wishlist-container th, .wishlist-container td {

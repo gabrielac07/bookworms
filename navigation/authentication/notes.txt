@@ -1,0 +1,6 @@
+- rating???
+- status: completed, in progress, for later
+- date added
+- avaliability: random
+- rename to reading list
+- unique to each user
