@@ -87,34 +87,46 @@ permalink: /bookstore/
             .catch(error => console.error("Error fetching books:", error));
     }
 
-    function fetchCartItems() {
-        fetch(`${pythonURI}/api/cart`)
-            .then(response => response.json())
-            .then(data => {
-                const cartItemsContainer = document.getElementById("cartItems");
-                cartItemsContainer.innerHTML = "";
-                if (data.items && data.items.length > 0) {
-                    data.items.forEach(item => {
-                        const cartItemDiv = document.createElement("div");
-                        cartItemDiv.classList.add("cart-item");
-                        cartItemDiv.innerHTML = `
-                            <span>${item.title}</span>
-                            <span>Price: $${item.price} | Quantity: ${item.quantity}</span>
-                            <button class="delete-item" data-id="${item.id}">Remove</button>
-                        `;
-                        cartItemsContainer.appendChild(cartItemDiv);
-                    });
-                    document.querySelectorAll(".delete-item").forEach(button => {
-                        button.addEventListener("click", function() {
-                            deleteCartItem(this.dataset.id);
-                        });
-                    });
-                } else {
-                    cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
-                }
-            })
-            .catch(error => console.error("Error fetching cart items:", error));
-    }
+    window.fetchCartItems = function() {
+    fetch(`${pythonURI}/api/user`, {  
+        method: "GET",
+        credentials: "include"
+    })
+    .then(response => response.json())
+    .then(user => {
+        return fetch(`${pythonURI}/api/cart`, {
+            ...fetchOptions,
+            method: "GET",
+            credentials: "include"
+        });
+    })
+    .then(response => response.json())
+    .then(data => {
+        const cartItemsContainer = document.getElementById("cartItems");
+        cartItemsContainer.innerHTML = "";
+        if (data.items && data.items.length > 0) {
+            data.items.forEach(item => {
+                const cartItemDiv = document.createElement("div");
+                cartItemDiv.classList.add("cart-item");
+                cartItemDiv.innerHTML = `
+                    <span>${item.title}</span>
+                    <span>Price: $${item.price} | Quantity: ${item.quantity}</span>
+                    <button class="delete-item" data-id="${item.id}">Remove</button>
+                `;
+                cartItemsContainer.appendChild(cartItemDiv);
+            });
+            document.querySelectorAll(".delete-item").forEach(button => {
+                button.addEventListener("click", function() {
+                    deleteCartItem(this.dataset.id);
+                });
+            });
+        } else {
+            cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
+        }
+    })
+    .catch(error => console.error("Error fetching cart items:", error));
+};
+
 
     window.updateQuantity = function(title, change) {
         const quantitySpan = document.getElementById(`quantity-${title}`);
@@ -171,29 +183,50 @@ permalink: /bookstore/
 
 
 
-    window.deleteCartItem = function(itemId) {
-        fetch(`${pythonURI}/api/cart/${itemId}`, {
+   window.deleteCartItem = function(itemId) {
+    fetch(`${pythonURI}/api/user`, {  
+        method: "GET",
+        credentials: "include"
+    })
+    .then(response => response.json())
+    .then(user => {
+        return fetch(`${pythonURI}/api/cart/${itemId}`, {
             ...fetchOptions,
-            method: "DELETE"
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message || "Item removed from cart.");
-            fetchCartItems();
-        })
-        .catch(error => console.error("Error deleting cart item:", error));
-    }
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ _name: user.uid }), // ✅ Send user UID for token validation
+            credentials: "include"
+        });
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message || "Item removed from cart.");
+        fetchCartItems();
+    })
+    .catch(error => console.error("Error deleting cart item:", error));
+};
 
-    window.clearCart = function() {
-        fetch(`${pythonURI}/api/cart`, {
+window.clearCart = function() {
+    fetch(`${pythonURI}/api/user`, {  
+        method: "GET",
+        credentials: "include"
+    })
+    .then(response => response.json())
+    .then(user => {
+        return fetch(`${pythonURI}/api/cart`, {
             ...fetchOptions,
-            method: "DELETE"
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message || "Cart cleared.");
-            fetchCartItems();
-        })
-        .catch(error => console.error("Error clearing cart:", error));
-    }
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ _name: user.uid }), // ✅ Send user UID for token validation
+            credentials: "include"
+        });
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message || "Cart cleared.");
+        fetchCartItems();
+    })
+    .catch(error => console.error("Error clearing cart:", error));
+};
+
 </script>
