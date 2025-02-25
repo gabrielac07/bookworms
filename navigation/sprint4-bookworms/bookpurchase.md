@@ -165,7 +165,7 @@ permalink: /bookstore/
     window.deleteCartItem = function(itemId) {
         fetch(`${pythonURI}/api/cart/${itemId}`, {
             ...fetchOptions,
-            method: "DELETE",
+            method: "DELETE"
         })
         .then(response => response.json())
         .then(data => {
@@ -178,7 +178,7 @@ permalink: /bookstore/
     window.clearCart = function() {
         fetch(`${pythonURI}/api/cart`, {
             ...fetchOptions,
-            method: "DELETE",
+            method: "DELETE"
         })
         .then(response => response.json())
         .then(data => {
