@@ -4,11 +4,6 @@ title: Reaction
 permalink: /reaction/
 ---
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-    }
 
     form {
             margin-bottom: 20px;
@@ -24,7 +19,6 @@ permalink: /reaction/
     }
 
     h1, h2, h3 {
-        font-family: 'Arial', sans-serif;
         color: #4A4A4A;
     }
 /* 

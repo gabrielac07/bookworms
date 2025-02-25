@@ -5,7 +5,7 @@ permalink: /random_book_recommender/
 ---
 <style>
     .container {
-        max-width: 600px;
+        max-width: 800px;
         margin: 50px auto;
         padding: 20px;
         background-color: #E8C5A4;
@@ -95,6 +95,15 @@ permalink: /random_book_recommender/
         border-radius: 4px;
         font-size: 14px;
     }
+
+    table {
+        color: #E5E7EB;
+        background: #a57e5a;
+    }
+
+    th {
+        background-color: #500A0A;
+    }
 </style>
 <html>
     <div class="container">
@@ -137,7 +146,7 @@ permalink: /random_book_recommender/
                 <p><label>
                     Genre:
                     <!--<input type="text" name="genre" id="genre" required>-->
-                    <select name="genre" id="genre" required>
+                    <select name="genre" id="book_genre" required>
                         <option value="nonfiction">Nonfiction</option>
                         <option value="historical_fiction">Historical Fiction</option>
                         <option value="suspense_thriller">Suspense/Thriller</option>
@@ -158,14 +167,15 @@ permalink: /random_book_recommender/
                 </label></p>
                 <p>
                     <button type="submit">Add Book</button>
+                    <button type="reset" class="clear_form">Reset</button>
                 </p>
             </form>
         </div>
     </div>
-    <div id="book-list" class="container">
+    <div id="book_table" class="container">
         <h1>Added Book Reccomendations</h1>
         <br>
-        <div id="book-list-content">
+        <div id="book_table_content">
             <p style="color: #500A0A">No books added yet. Click "Add a  Book Reccomendation" and fill out the form to start adding more books to our recommendations pool!</p>
         </div>
     </div>
@@ -243,7 +253,7 @@ permalink: /random_book_recommender/
 
         const title = document.getElementById('title').value;
         const author = document.getElementById('author').value;
-        const genre = document.getElementById('genre').value;
+        const genre = document.getElementById('book_genre').value;
         const description = document.getElementById('description').value;
         const coverImageUrl = document.getElementById('cover_url').value;
 
@@ -272,7 +282,7 @@ permalink: /random_book_recommender/
             const result = await response.json();
             console.log("Book reccomendation added successfully")
             alert('Book added successfully!');
-            document.getElementById('input_bookrec').reset();
+            document.getElementById('bookRecForm').reset();
             fetchBooks();  // Refresh book list
         } catch (error) {
             console.error('Error adding book to reccomendations:', error);
@@ -310,40 +320,42 @@ permalink: /random_book_recommender/
     }
     // Function to update the last added book recommendation
     async function updateBook(title) {
-    const bookContainer = Array.from(document.querySelectorAll('.book'))
-        .find(book => book.querySelector('h3').innerText === title);
+        const bookContainer = Array.from(document.querySelectorAll('.book'))
+            .find(book => book.querySelector('td:nth-child(2)').innerText === title);
 
-    if (!bookContainer) {
-        alert('Book not found for update.');
-        return;
-    }
+        if (!bookContainer) {
+            alert('Book not found for update.');
+            return;
+        }
 
-    const currentTitle = bookContainer.querySelector('h3').innerText;
-    const currentAuthor = bookContainer.querySelector('p:nth-child(2)').innerText.split(': ')[1];
-    const descriptionElement = Array.from(bookContainer.querySelectorAll('p'))
-        .find(p => p.innerText.startsWith('Description:'));
-    const currentDescription = descriptionElement ? descriptionElement.innerText.replace('Description: ', '') : '';
-    const currentGenre = bookContainer.dataset.genre || '';
-    const currentCoverUrl = bookContainer.querySelector('img').src;
+        const currentTitle = bookContainer.querySelector('td:nth-child(2)').innerText;
+        const currentAuthor = bookContainer.querySelector('td:nth-child(3)').innerText;
+        const currentGenre = bookContainer.querySelector('td:nth-child(4)').innerText;
+        const currentDescription = bookContainer.querySelector('td:nth-child(5)').innerText;
+        const currentCoverUrl = bookContainer.querySelector('img').src;
 
     // Replace static fields with editable inputs
     bookContainer.innerHTML = `
-        <input type="text" id="edit-title" value="${currentTitle}" placeholder="Title">
-        <input type="text" id="edit-author" value="${currentAuthor}" placeholder="Author">
-        <select id="edit-genre">
-            <option value="Classics" ${currentGenre === 'Classics' ? 'selected' : ''}>Classics</option>
-            <option value="Fantasy" ${currentGenre === 'Fantasy' ? 'selected' : ''}>Fantasy</option>
-            <option value="Nonfiction" ${currentGenre === 'Nonfiction' ? 'selected' : ''}>Nonfiction</option>
-            <option value="Historical Fiction" ${currentGenre === 'Historical Fiction' ? 'selected' : ''}>Historical Fiction</option>
-            <option value="Suspense/Thriller" ${currentGenre === 'Suspense/Thriller' ? 'selected' : ''}>Suspense/Thriller</option>
-            <option value="Romance" ${currentGenre === 'Romance' ? 'selected' : ''}>Romance</option>
-            <option value="Dystopian" ${currentGenre === 'Dystopian' ? 'selected' : ''}>Dystopian</option>
-            <option value="Mystery" ${currentGenre === 'Mystery' ? 'selected' : ''}>Mystery</option>
-        </select>
-        <textarea id="edit-description" placeholder="Description">${currentDescription}</textarea>
-        <input type="text" id="edit-cover-url" value="${currentCoverUrl}" placeholder="Cover URL">
-        <button id="save-update">OK</button>
-        <button id="cancel-update">Cancel</button>
+        <td><input type="text" id="edit-cover-url" value="${currentCoverUrl}" placeholder="Cover URL"></td>
+        <td><input type="text" id="edit-title" value="${currentTitle}" placeholder="Title"></td>
+        <td><input type="text" id="edit-author" value="${currentAuthor}" placeholder="Author"></td>
+        <td>
+            <select id="edit-genre">
+                <option value="Classics" ${currentGenre === 'Classics' ? 'selected' : ''}>Classics</option>
+                <option value="Fantasy" ${currentGenre === 'Fantasy' ? 'selected' : ''}>Fantasy</option>
+                <option value="Nonfiction" ${currentGenre === 'Nonfiction' ? 'selected' : ''}>Nonfiction</option>
+                <option value="Historical Fiction" ${currentGenre === 'Historical Fiction' ? 'selected' : ''}>Historical Fiction</option>
+                <option value="Suspense/Thriller" ${currentGenre === 'Suspense/Thriller' ? 'selected' : ''}>Suspense/Thriller</option>
+                <option value="Romance" ${currentGenre === 'Romance' ? 'selected' : ''}>Romance</option>
+                <option value="Dystopian" ${currentGenre === 'Dystopian' ? 'selected' : ''}>Dystopian</option>
+                <option value="Mystery" ${currentGenre === 'Mystery' ? 'selected' : ''}>Mystery</option>
+            </select>
+        </td>
+        <td><textarea id="edit-description" placeholder="Description">${currentDescription}</textarea></td>
+        <td>
+            <button id="save-update">OK</button>
+            <button id="cancel-update">Cancel</button>
+        </td>
     `;
 
     // Handle Cancel Button
@@ -390,20 +402,23 @@ permalink: /random_book_recommender/
     });
 }
     // create list at bottom
-    async function fetchBooks() {
+        async function fetchBooks() {
         try {
             const response = await fetch(new URL(`${pythonURI}/api/suggest/book`), fetchOptions); // Fetch all suggested books
             if (!response.ok) {
                 throw new Error('Failed to fetch books: ' + response.statusText);
             }
 
-        const books = await response.json();
+            const books = await response.json();
 
-        const bookList = document.getElementById('book-list-content');
-        if (books.length === 0) {
-            bookList.innerHTML = '<p style="color: #000000">No books added yet. Fill out the form above to start adding your favorite books!</p>';
-            return;
-        }
+            // Filter out static books
+            const userAddedBooks = books.filter(book => book.title !== 'The Raven Boys' && book.title !== 'Catch-22');
+
+            const bookList = document.getElementById('book_table_content');
+            if (userAddedBooks.length === 0) {
+                bookList.innerHTML = '<p style="color: #000000">No books added yet. Fill out the form above to start adding your favorite books!</p>';
+                return;
+            }
 
         // Render books
         bookList.innerHTML = `
@@ -419,7 +434,7 @@ permalink: /random_book_recommender/
                     </tr>
                 </thead>
                 <tbody>
-                    ${books.map(book => `
+                    ${userAddedBooks.map(book => `
                         <tr class="book">
                             <td><img src="${book.cover_url}" alt="Cover image of ${book.title}" style="max-width: 100px;"></td>
                             <td>${book.title}</td>
