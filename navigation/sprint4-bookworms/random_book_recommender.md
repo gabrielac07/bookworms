@@ -10,6 +10,7 @@ permalink: /random_book_recommender/
         padding: 20px;
         background-color: #E8C5A4;
         border-radius: 8px;
+        text-align: center;
     }
 
     h1 {
