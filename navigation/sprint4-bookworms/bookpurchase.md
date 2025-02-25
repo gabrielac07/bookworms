@@ -5,74 +5,139 @@ permalink: /bookstore/
 ---
 
 <style>
-        .book-tile { margin: 10px; padding: 10px; border: 1px solid #ddd; display: inline-block; text-align: center; }
-        .book-cover { width: 100px; height: auto; }
-        .quantity-controls { margin-top: 5px; }
-  </style>
+    .book-tile { margin: 10px; padding: 10px; border: 1px solid #ddd; display: inline-block; text-align: center; }
+    .book-cover { width: 100px; height: auto; }
+    .quantity-controls { margin-top: 5px; }
+    .cart-container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #E8C4A4;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        background-color: #A57F5A;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 10px;
+    }
+</style>
 
-<h1>Book Store</h1>
-  <div id="book-container"></div>
-  <h2>Shopping Cart</h2>
-  <div id="cartItems"></div>
+<div id="book-container"></div>
+<h2>Shopping Cart</h2>
+<div id="cartItems"></div>
+<button id="clearCartButton">Clear Cart</button>
 
 <script type="module">
-        import { pythonURI } from "{{site.baseurl}}/assets/js/api/config.js";
+    import { pythonURI, fetchOptions } from "{{site.baseurl}}/assets/js/api/config.js";
 
-        document.addEventListener("DOMContentLoaded", function () {
-            fetchBooks();
-            fetchCartItems();
-        });
+    document.addEventListener("DOMContentLoaded", function () {
+        fetchBooks();
+        fetchCartItems();
+        document.getElementById("clearCartButton").addEventListener("click", clearCart);
+    });
 
-        function fetchBooks() {
-            fetch(`${pythonURI}/api/wishlist/books`)
-                .then(response => response.json())
-                .then(books => {
-                    const bookContainer = document.getElementById("book-container");
-                    bookContainer.innerHTML = books.map(book => {
-                        const price = (Math.random() * 10 + 5).toFixed(2);
-                        return `
-                            <div class="book-tile">
-                                <img src="${book.cover_url}" alt="${book.title}" class="book-cover" />
-                                <h3>${book.title}</h3>
-                                <p>Price: $${price}</p>
-                                <div class="quantity-controls">
-                                    <button onclick="updateQuantity('${book.title}', -1)">-</button>
-                                    <span id="quantity-${book.title}">0</span>
-                                    <button onclick="updateQuantity('${book.title}', 1)">+</button>
-                                </div>
+    function fetchBooks() {
+        fetch(`${pythonURI}/api/wishlist/books`)
+            .then(response => response.json())
+            .then(books => {
+                const bookContainer = document.getElementById("book-container");
+                bookContainer.innerHTML = books.map(book => {
+                    const price = (Math.random() * 10 + 5).toFixed(2);
+                    return `
+                        <div class="book-tile">
+                            <img src="${book.cover_url}" alt="${book.title}" class="book-cover" />
+                            <h3>${book.title}</h3>
+                            <p>Price: $${price}</p>
+                            <div class="quantity-controls">
+                                <button onclick="updateQuantity('${book.title}', -1)">-</button>
+                                <span id="quantity-${book.title}">0</span>
+                                <button onclick="updateQuantity('${book.title}', 1)">+</button>
                             </div>
+                            <button class="add-to-cart" data-title="${book.title}" data-price="${price}">Add to Cart</button>
+                        </div>
+                    `;
+                }).join('');
+                document.querySelectorAll(".add-to-cart").forEach(button => {
+                    button.addEventListener("click", function() {
+                        addToCart(this.dataset.title, this.dataset.price);
+                    });
+                });
+            })
+            .catch(error => console.error("Error fetching books:", error));
+    }
+
+    function fetchCartItems() {
+        fetch(`${pythonURI}/api/cart`)
+            .then(response => response.json())
+            .then(data => {
+                const cartItemsContainer = document.getElementById("cartItems");
+                cartItemsContainer.innerHTML = "";
+                if (data.items && data.items.length > 0) {
+                    data.items.forEach(item => {
+                        const cartItemDiv = document.createElement("div");
+                        cartItemDiv.classList.add("cart-item");
+                        cartItemDiv.innerHTML = `
+                            <span>${item.title}</span>
+                            <span>Price: $${item.price} | Quantity: ${item.quantity}</span>
+                            <button class="delete-item" data-id="${item.id}">Remove</button>
                         `;
-                    }).join('');
-                })
-                .catch(error => console.error("Error fetching books:", error));
-        }
-
-        function fetchCartItems() {
-            fetch(`${pythonURI}/api/cart`)
-                .then(response => response.json())
-                .then(data => {
-                    const cartItemsContainer = document.getElementById("cartItems");
-                    cartItemsContainer.innerHTML = "";
-                    if (data.items && data.items.length > 0) {
-                        data.items.forEach(item => {
-                            const cartItemDiv = document.createElement("div");
-                            cartItemDiv.classList.add("cart-item");
-                            cartItemDiv.innerHTML = `
-                                <span>${item.title}</span>
-                                <span>Price: $${item.price} | Quantity: ${item.quantity}</span>
-                            `;
-                            cartItemsContainer.appendChild(cartItemDiv);
+                        cartItemsContainer.appendChild(cartItemDiv);
+                    });
+                    document.querySelectorAll(".delete-item").forEach(button => {
+                        button.addEventListener("click", function() {
+                            deleteCartItem(this.dataset.id);
                         });
-                    } else {
-                        cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
-                    }
-                })
-                .catch(error => console.error("Error fetching cart items:", error));
+                    });
+                } else {
+                    cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
+                }
+            })
+            .catch(error => console.error("Error fetching cart items:", error));
+    }
+
+    window.updateQuantity = function(title, change) {
+        const quantitySpan = document.getElementById(`quantity-${title}`);
+        let currentQuantity = parseInt(quantitySpan.innerText);
+        let newQuantity = Math.max(0, currentQuantity + change);
+        quantitySpan.innerText = newQuantity;
+    }
+
+    window.addToCart = function(title, price) {
+        price = parseFloat(price);
+        const quantity = parseInt(document.getElementById(`quantity-${title}`).innerText);
+        
+        if (quantity > 0) {
+            const data = { title, price, quantity };
+            console.log("Sending to API:", data);
+
+            fetch(`${pythonURI}/api/cart`, {
+                ...fetchOptions,
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Response from API:", data);
+                if (data.success) {
+                    alert("Book added to cart!");
+                    setTimeout(fetchCartItems, 500); // Ensure data is updated before fetching
+                } else {
+                    alert("Failed to add book to cart: " + (data.message || "Unknown error"));
+                }
+            })
+            .catch(error => {
+                console.error("Error adding book to cart:", error);
+                alert("Error adding book to cart. Check the console for details.");
+            });
+        } else {
+            alert("Please select a quantity greater than zero before adding to the cart.");
         }
-    </script>
-
-  
-
-
-  
-
+    }
+</script>
