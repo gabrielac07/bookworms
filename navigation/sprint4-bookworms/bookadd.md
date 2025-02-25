@@ -5,12 +5,13 @@ permalink: /bookadd/
 ---
 <style>
     .container {
-        max-width: 800px;
+        max-width: 600px;
         margin: 50px auto;
         padding: 20px;
         background-color: #E8C5A4;
         border-radius: 8px;
     }
+    
 
     h1 {
         background: #a57e5a;
@@ -21,6 +22,18 @@ permalink: /bookadd/
     }
 
     .container > h2 {
+        margin: 20px 0 10px;
+        font-size: 1.5em;
+        color: #4C4C4C !important;
+    }
+    .container2 {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #E8C5A4;
+        border-radius: 8px;
+    }
+    .container2 > h2 {
         margin: 20px 0 10px;
         font-size: 1.5em;
         color: #4C4C4C !important;
@@ -124,12 +137,53 @@ permalink: /bookadd/
     }
 
     .book-options {
-        display: flex; 
+        display: flex;
+        flex-wrap: wrap;
         gap: 0.5em;
     }
+
     .book-options button {
-        width: 75px; 
-        padding: 0.3em;
+        width: 45%;
+        font-size: 11px;
+    }
+
+
+    /*expand button code*/
+    #book-list-content.collapsed .book {
+    display: none;
+    }
+
+    #book-list-content.collapsed .book:nth-child(-n+3) {
+        display: block;
+    }
+
+    #book-list-content {
+        overflow: hidden;
+        transition: max-height 0.5s ease;
+    }
+
+    #book-list-content.collapsed {
+        max-height: 680px; 
+    }
+
+    #toggle-books {
+        display: block;
+        margin: 20px auto;
+        padding: 10px 20px;
+        background-color: #a57e5a;
+        color: white;
+        border: 1px solid #500A0A;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    #toggle-books:hover {
+        background-color: #500A0A;
+        transition: 0.3s;
+    }
+
+    .admin-button {
+    display: none;
     }
 </style>
 
@@ -168,17 +222,35 @@ permalink: /bookadd/
 </form>
 </div>
 
-<div id="book-list" class="container">
-    <h1>Your Suggested Books</h1>
-    <br>
-    <div id="book-list-content">
-        <p style="color: #000000">No books added yet. Fill out the form above to start adding your favorite books!</p>
+<div id="book-list" class="container2">
+    <h1>Your Suggested Books</h1><br>
+    <div id="accepted-books-container">
+    <h2>Accepted Books:</h2>
+    <p id="accepted-books-list" style="color: #a57e5a;">None yet.</p></div>
+    <div id="rejected-books-container">
+    <h3>Rejected Books:</h3>
+    <p id="rejected-books-list" style="color: #a57e5a;">None yet.</p></div><br>
+    <div id="book-list-content" class="collapsed">
+        <p style="color: #a57e5a">No books added yet. Fill out the form above to start adding your favorite books!</p>
     </div>
+    <button id="toggle-books">Show More</button>
 </div>
 
 
 <script type="module">
     import { pythonURI, fetchOptions } from '{{ site.baseurl }}/assets/js/api/config.js';
+
+    const toggleButton = document.getElementById('toggle-books');
+    const bookList = document.getElementById('book-list-content');
+
+    toggleButton.addEventListener('click', () => {
+        bookList.classList.toggle('collapsed');
+        bookList.classList.toggle('expanded');
+        
+        toggleButton.textContent = 
+            bookList.classList.contains('collapsed') ? 'Show More' : 'Show Less';
+    });
+
 
     document.getElementById('book-form').addEventListener('submit', async function(event) {
         event.preventDefault();
@@ -187,14 +259,14 @@ permalink: /bookadd/
         const author = document.getElementById('author').value;
         const genre = document.getElementById('genre').value;
         const description = document.getElementById('description').value;
-        const coverImageUrl = document.getElementById('cover_url').value;
+        const cover_url = document.getElementById('cover_url').value;
 
         const bookData = {
             title: title,
             author: author,
             genre: genre,
             description: description,
-            cover_url: coverImageUrl
+            cover_url: cover_url
         };
         
         try {
@@ -229,7 +301,6 @@ permalink: /bookadd/
                 throw new Error('Failed to fetch random book: ' + response.statusText);
             }
             const book = await response.json();
-            console.log(book);
         } catch (error) {
             console.error('Error fetching random book:', error);
         }
@@ -345,6 +416,132 @@ permalink: /bookadd/
         }
     });
 }
+    
+    let acceptedBooks = ""; // Variable to store accepted books list
+
+    function updateAcceptedBooksList() {
+        const acceptedBooksListElement = document.getElementById("accepted-books-list");
+        acceptedBooksListElement.textContent = acceptedBooks.trim() ? acceptedBooks : "None yet.";
+    }
+
+    async function acceptBook(title) {
+    const bookContainer = Array.from(document.querySelectorAll('.book'))
+        .find(book => book.querySelector('h3').innerText === title);
+
+    if (!bookContainer) {
+        alert('Book not found for acceptance.');
+        return;
+    }
+
+    const author = bookContainer.querySelector('p:nth-child(2)').innerText.split(': ')[1];
+    const genre = bookContainer.querySelector('p:nth-child(3)').innerText.split(': ')[1];
+    const description = bookContainer.querySelector('p:nth-child(4)').innerText.replace('Description: ', '');
+    const cover_url = bookContainer.querySelector('img').src;
+
+    const bookData = {
+        title: title,
+        author: author,
+        genre: genre,
+        description: description,
+        cover_url: cover_url
+    };
+
+    try {
+        const response = await fetch(`${pythonURI}/api/suggest/accept`, { 
+            ...fetchOptions,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bookData)
+        });
+
+        const response2 = await fetch(`${pythonURI}/api/suggest`, {
+            ...fetchOptions,
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ title }) 
+        });
+
+        if (!response2.ok) {
+            throw new Error('Failed to accept book: ' + response2.statusText);
+        }
+
+        acceptedBooks += (acceptedBooks ? ", " : "") + title;
+        updateAcceptedBooksList(); // Update display
+        
+        console.log("Book accepted successfully");
+        alert('Book accepted successfully!');
+        console.log("Book removed from suggestions successfully");
+        fetchBooks();  // Refresh book list
+    } catch (error) {
+        console.error('Error accepting book:', error);
+        alert('Error accepting book: ' + error.message);
+    }
+}    
+
+    /*
+    async function rejectBook(title) {
+        const bookList = document.getElementById('book-list-content');
+        const books = Array.from(bookList.getElementsByClassName('book'));
+        const book = books.find(book => book.querySelector('h3').innerText === title);
+    
+        if (!book) {
+            alert('Book not found for rejection.');
+            return;
+        }
+
+    if (confirm(`Are you sure you want to reject "${title}"?`)) {
+        for (let book of books) {
+            if (book.querySelector('h3').textContent === title) {
+                book.querySelector('h3').textContent = `Rejected: ${title}`;
+
+                alert("Book rejected successfully");
+                break;
+            }
+        }
+    }
+}
+*/
+
+let rejectedBooks = ""; // Variable to store accepted books list
+
+    function updateRejectedBooksList() {
+        const rejectedBooksListElement = document.getElementById("rejected-books-list");
+        rejectedBooksListElement.textContent = rejectedBooks.trim() ? rejectedBooks : "None yet.";
+    }
+
+async function rejectBook(title) {
+    if (confirm(`Are you sure you want to reject "${title}"?`)) {
+        try {
+            const response = await fetch(`${pythonURI}/api/suggest`, {
+                ...fetchOptions,
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title }) // Pass title as an object
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to reject book: ' + response.statusText);
+            }
+
+            console.log("Book rejected successfully");
+            alert('Book rejected successfully!');
+            rejectedBooks += (rejectedBooks ? ", " : "") + title;
+            updateRejectedBooksList();
+            fetchBooks();
+        } catch (error) {
+            console.error('Error rejecting book:', error);
+            alert('Error rejecting book: ' + error.message);
+        }
+    } else {
+        alert("Rejection canceled");
+    }
+}
 
     // create list at bottom
     async function fetchBooks() {
@@ -375,6 +572,8 @@ permalink: /bookadd/
             <div class="book-options">
                 <button class="updateButton" data-title="${book.title}">Update</button>
                 <button class="deleteButton" data-title="${book.title}">Delete</button>
+                <button class="acceptButton" data-title="${book.title}">Accept</button>
+                <button class="rejectButton" data-title="${book.title}">Reject</button>
             </div>
         </div>
     `
@@ -391,6 +590,18 @@ permalink: /bookadd/
             button.addEventListener('click', (event) => {
                 const title = event.target.dataset.title; 
                 deleteBook(title);
+            });
+        });
+        document.querySelectorAll('.acceptButton').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const title = event.target.dataset.title; // Get the title from data attribute
+                acceptBook(title);
+            });
+        });
+        document.querySelectorAll('.rejectButton').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const title = event.target.dataset.title; // Get the title from data attribute
+                rejectBook(title);
             });
         });
 
