@@ -16,8 +16,8 @@ permalink: /bookstore/
 }
 
 .book-cover {
-    width: 140px; /* Ensure all images have the same width */
-    height: 150px; /* Ensure all images have the same height */
+    width: 190px; /* Ensure all images have the same width */
+    height: 280px; /* Ensure all images have the same height */
     object-fit: cover; /* This ensures images are resized properly without distortion */
     border-radius: 5px; /* Optional: makes images look nicer */
 }
@@ -58,7 +58,7 @@ permalink: /bookstore/
     });
 
     function fetchBooks() {
-        fetch(`${pythonURI}/api/wishlist/books`)
+        fetch(`${pythonURI}/api/suggest/book`)
             .then(response => response.json())
             .then(books => {
                 const bookContainer = document.getElementById("book-container");
