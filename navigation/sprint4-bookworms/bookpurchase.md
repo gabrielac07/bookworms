@@ -128,19 +128,27 @@ permalink: /bookstore/
     const quantity = parseInt(document.getElementById(`quantity-${title}`).innerText);
 
     if (quantity > 0) {
-        const data = {
-            id: Date.now().toString(),  // Ensure a unique string ID
-            title,
-            price,
-            quantity,
-            _name: "Thomas Edison" // Set a default name
-        };
+        fetch(`${pythonURI}/api/user`, {  // Fetch user credentials first
+            method: "GET",
+            credentials: "include"  // Ensure cookie-based auth works
+        })
+        .then(response => response.json())
+        .then(user => {
+            const data = {
+                id: Date.now().toString(),  
+                title,
+                price,
+                quantity,
+                _name: user.uid  // ✅ Set _name to "uid" from credentials
+            };
 
-        fetch(`${pythonURI}/api/cart`, {
-            ...fetchOptions,
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
+            return fetch(`${pythonURI}/api/cart`, {
+                ...fetchOptions,
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+                credentials: "include"
+            });
         })
         .then(response => {
             if (!response.ok) {
@@ -160,6 +168,7 @@ permalink: /bookstore/
         alert("Please select a quantity greater than zero before adding to the cart.");
     }
 };
+
 
 
     window.deleteCartItem = function(itemId) {
