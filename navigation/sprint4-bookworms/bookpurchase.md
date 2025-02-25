@@ -45,7 +45,7 @@ permalink: /bookstore/
 <h2>Shopping Cart</h2>
 <div id="cartItems"></div>
 <button id="clearCartButton">Clear Cart</button>
-<h2>Check out some other great reads!</h2>
+<h2>Check out some other great reads below!</h2>
 <div id="book-container"></div>
 
 <script type="module">
