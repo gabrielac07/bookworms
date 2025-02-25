@@ -5,8 +5,22 @@ permalink: /bookstore/
 ---
 
 <style>
-    .book-tile { margin: 10px; padding: 10px; border: 1px solid #ddd; display: inline-block; text-align: center; }
-    .book-cover { width: 100px; height: auto; }
+    .book-tile {
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    display: inline-block;
+    text-align: center;
+    width: 200px; /* Set a fixed width */
+    height: 300px; /* Set a fixed height */
+}
+
+.book-cover {
+    width: 140px; /* Ensure all images have the same width */
+    height: 150px; /* Ensure all images have the same height */
+    object-fit: cover; /* This ensures images are resized properly without distortion */
+    border-radius: 5px; /* Optional: makes images look nicer */
+}
     .quantity-controls { margin-top: 5px; }
     .cart-container {
         max-width: 600px;
@@ -28,10 +42,11 @@ permalink: /bookstore/
     }
 </style>
 
-<div id="book-container"></div>
 <h2>Shopping Cart</h2>
 <div id="cartItems"></div>
 <button id="clearCartButton">Clear Cart</button>
+<h2>Check out some other great reads!</h2>
+<div id="book-container"></div>
 
 <script type="module">
     import { pythonURI, fetchOptions } from "{{site.baseurl}}/assets/js/api/config.js";
@@ -108,29 +123,44 @@ permalink: /bookstore/
         quantitySpan.innerText = newQuantity;
     }
 
-    window.addToCart = function(title, price) {
-        price = parseFloat(price);
-        const quantity = parseInt(document.getElementById(`quantity-${title}`).innerText);
-        
-        if (quantity > 0) {
-            const data = { title, price, quantity };
+   window.addToCart = function(title, price) {
+    price = parseFloat(price);
+    const quantity = parseInt(document.getElementById(`quantity-${title}`).innerText);
 
-            fetch(`${pythonURI}/api/cart`, {
-                ...fetchOptions,
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message || "Book added to cart!");
-                fetchCartItems();
-            })
-            .catch(error => console.error("Error adding book to cart:", error));
-        } else {
-            alert("Please select a quantity greater than zero before adding to the cart.");
-        }
+    if (quantity > 0) {
+        const data = {
+            id: Date.now().toString(),  // Ensure a unique string ID
+            title,
+            price,
+            quantity,
+            _name: "Thomas Edison" // Set a default name
+        };
+
+        fetch(`${pythonURI}/api/cart`, {
+            ...fetchOptions,
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert(data.message || "Book added to cart!");
+            fetchCartItems();
+        })
+        .catch(error => {
+            console.error("Error adding book to cart:", error);
+            alert("Failed to add book to cart. Please try again.");
+        });
+    } else {
+        alert("Please select a quantity greater than zero before adding to the cart.");
     }
+};
+
 
     window.deleteCartItem = function(itemId) {
         fetch(`${pythonURI}/api/cart/${itemId}`, {
