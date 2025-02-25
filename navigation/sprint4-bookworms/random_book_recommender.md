@@ -158,6 +158,7 @@ permalink: /random_book_recommender/
                 </label></p>
                 <p>
                     <button type="submit">Add Book</button>
+                    <button type="reset" class="clear_form">Reset</button>
                 </p>
             </form>
         </div>
@@ -272,7 +273,7 @@ permalink: /random_book_recommender/
             const result = await response.json();
             console.log("Book reccomendation added successfully")
             alert('Book added successfully!');
-            document.getElementById('input_bookrec').reset();
+            document.getElementById('bookRecForm').reset();
             fetchBooks();  // Refresh book list
         } catch (error) {
             console.error('Error adding book to reccomendations:', error);
@@ -390,20 +391,23 @@ permalink: /random_book_recommender/
     });
 }
     // create list at bottom
-    async function fetchBooks() {
+        async function fetchBooks() {
         try {
             const response = await fetch(new URL(`${pythonURI}/api/suggest/book`), fetchOptions); // Fetch all suggested books
             if (!response.ok) {
                 throw new Error('Failed to fetch books: ' + response.statusText);
             }
 
-        const books = await response.json();
+            const books = await response.json();
 
-        const bookList = document.getElementById('book-list-content');
-        if (books.length === 0) {
-            bookList.innerHTML = '<p style="color: #000000">No books added yet. Fill out the form above to start adding your favorite books!</p>';
-            return;
-        }
+            // Filter out static books
+            const userAddedBooks = books.filter(book => book.title !== 'The Raven Boys' && book.title !== 'Catch-22');
+
+            const bookList = document.getElementById('book-list-content');
+            if (userAddedBooks.length === 0) {
+                bookList.innerHTML = '<p style="color: #000000">No books added yet. Fill out the form above to start adding your favorite books!</p>';
+                return;
+            }
 
         // Render books
         bookList.innerHTML = `
@@ -419,7 +423,7 @@ permalink: /random_book_recommender/
                     </tr>
                 </thead>
                 <tbody>
-                    ${books.map(book => `
+                    ${userAddedBooks.map(book => `
                         <tr class="book">
                             <td><img src="${book.cover_url}" alt="Cover image of ${book.title}" style="max-width: 100px;"></td>
                             <td>${book.title}</td>
