@@ -481,8 +481,8 @@ async function addBookToWishlist() {
 }
 
 // Delete a book from the wishlist
-async function deleteBookFromWishlist(bookId) {
-  const URL = `${pythonURI}/api/wishlist/${bookId}`;
+async function deleteBookFromWishlist(id) {
+  const URL = `${pythonURI}/api/wishlist/${id}`;
   try {
     const response = await fetch(URL, {
       ...fetchOptions,
@@ -503,8 +503,8 @@ async function deleteBookFromWishlist(bookId) {
 }
 
 // Function to update a book in the wishlist
-async function updateBookInWishlist(itemId, newStatus, newAvailability) {
-  const URL = `${pythonURI}/api/wishlist/${itemId}`;
+async function updateBookInWishlist(id, newStatus, newAvailability) {
+  const URL = `${pythonURI}/api/wishlist/${id}`;
   const body = {
     status: newStatus,
     availability: newAvailability
@@ -524,6 +524,33 @@ async function updateBookInWishlist(itemId, newStatus, newAvailability) {
 
     document.getElementById('profile-message').textContent = 'Book updated successfully!';
     userWishlist = await fetchWishlist(); // Refresh the wishlist after updating a book
+    displayWishlist();
+  } catch (error) {
+    document.getElementById('profile-message').textContent = `Error: ${error.message}`;
+  }
+}
+
+// Function to update availability of a book in the wishlist (admin only)
+async function updateBookAvailability(id, newAvailability) {
+  const URL = `${pythonURI}/api/wishlist/availability/${id}`;
+  const body = {
+    availability: newAvailability
+  };
+
+  try {
+    const response = await fetch(URL, {
+      ...fetchOptions,
+      method: 'PUT',
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `Failed to update availability: ${response.status}`);
+    }
+
+    document.getElementById('profile-message').textContent = 'Availability updated successfully!';
+    userWishlist = await fetchWishlist(); // Refresh the wishlist after updating availability
     displayWishlist();
   } catch (error) {
     document.getElementById('profile-message').textContent = `Error: ${error.message}`;
@@ -579,7 +606,22 @@ async function displayWishlist() {
 
       dateAddedCell.textContent = book.date_added; // Date already formatted in backend
 
-      availabilityCell.textContent = book.availability;
+      // Create a dropdown for availability
+      const availabilityDropdown = document.createElement('select');
+      ['available', 'out of stock'].forEach((availability) => {
+        const option = document.createElement('option');
+        option.value = availability;
+        option.textContent = availability;
+        if (availability === book.availability) {
+          option.selected = true;
+        }
+        availabilityDropdown.appendChild(option);
+      });
+      availabilityDropdown.onchange = () => {
+        const newAvailability = availabilityDropdown.value;
+        updateBookAvailability(book.id, newAvailability);
+      };
+      availabilityCell.appendChild(availabilityDropdown);
 
       const deleteButton = document.createElement('button');
       deleteButton.textContent = 'Delete';
