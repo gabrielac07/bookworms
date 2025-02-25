@@ -42,7 +42,7 @@ permalink: /random_book_recommender/
         border: 1px solid;
         color: white;
         background-color: #a57e5a;
-        /*border-color: white;*/
+        border-color: #500A0A;
         border-radius: 4px;
         cursor: pointer;
     }
