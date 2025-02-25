@@ -114,7 +114,6 @@ permalink: /bookstore/
         
         if (quantity > 0) {
             const data = { title, price, quantity };
-            console.log("Sending to API:", data);
 
             fetch(`${pythonURI}/api/cart`, {
                 ...fetchOptions,
@@ -124,20 +123,38 @@ permalink: /bookstore/
             })
             .then(response => response.json())
             .then(data => {
-                console.log("Response from API:", data);
-                if (data.success) {
-                    alert("Book added to cart!");
-                    setTimeout(fetchCartItems, 500); // Ensure data is updated before fetching
-                } else {
-                    alert("Failed to add book to cart: " + (data.message || "Unknown error"));
-                }
+                alert(data.message || "Book added to cart!");
+                fetchCartItems();
             })
-            .catch(error => {
-                console.error("Error adding book to cart:", error);
-                alert("Error adding book to cart. Check the console for details.");
-            });
+            .catch(error => console.error("Error adding book to cart:", error));
         } else {
             alert("Please select a quantity greater than zero before adding to the cart.");
         }
+    }
+
+    window.deleteCartItem = function(itemId) {
+        fetch(`${pythonURI}/api/cart/${itemId}`, {
+            ...fetchOptions,
+            method: "DELETE",
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message || "Item removed from cart.");
+            fetchCartItems();
+        })
+        .catch(error => console.error("Error deleting cart item:", error));
+    }
+
+    window.clearCart = function() {
+        fetch(`${pythonURI}/api/cart`, {
+            ...fetchOptions,
+            method: "DELETE",
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message || "Cart cleared.");
+            fetchCartItems();
+        })
+        .catch(error => console.error("Error clearing cart:", error));
     }
 </script>
