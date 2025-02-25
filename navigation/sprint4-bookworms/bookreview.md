@@ -67,7 +67,7 @@ permalink: /bookrates/
     border-bottom: 1px solid #cce7ff;
     padding: 10px;
     margin-top: 10px;
-    background-color: #873132;
+    background-color: #E8C5A4 /*#873132*/;
     border-radius: 5px;
   }
   .comment-text {
@@ -81,8 +81,18 @@ permalink: /bookrates/
     font-size: 16px;
     border-radius: 5px;
     border: 1px solid #E8C5A4/*#C45A5C*/;
-    color: #BC4749;
+    color: #500A0A;
   }
+
+  input, textarea {
+    /*width: 75%;*/
+    padding: 5px;
+    margin-bottom: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+
 </style>
 
 <div class="search-container">
@@ -165,7 +175,7 @@ permalink: /bookrates/
 
           <label for="userIdInput">User ID:</label>
           <input type="number" id="userIdInput" placeholder="Enter your User ID" />
-
+          <br>
           <textarea id="commentInput" placeholder="Add a comment..."></textarea>
           <button id="submitCommentBtn" class="submit-comment">Submit</button>
           <div id="commentsList"></div>
