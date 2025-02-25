@@ -58,7 +58,7 @@ permalink: /bookstore/
     });
 
     function fetchBooks() {
-        fetch(`${pythonURI}/api/suggest/book`)
+        fetch(`${pythonURI}/api/wishlist/books`)
             .then(response => response.json())
             .then(books => {
                 const bookContainer = document.getElementById("book-container");
