@@ -10,8 +10,8 @@ permalink: /bookrates/
 <style>
   /* Styling for elements */
   .book-card {
-    background-color: #D4AFB9;
-    color: #BC4749;
+    background-color: #E8C5A4/*#D4AFB9*/;
+    /*color: #E5E7EB/*#BC4749*/;
     padding: 20px;
     max-width: 700px;
     margin: 20px auto;
@@ -26,7 +26,7 @@ permalink: /bookrates/
   }
   .book-author {
     font-size: 18px;
-    color: #BC4749;
+    color: #E5E7EB/*#BC4749*/;
   }
   .book-cover {
     width: 400px;
@@ -39,7 +39,7 @@ permalink: /bookrates/
     margin-top: 20px;
   }
   .comment-section {
-    background-color: #BC4749;
+    background-color: #a57e5a/*#BC4749*/;
     color: white;
     padding: 15px;
     border-radius: 5px;
@@ -49,14 +49,20 @@ permalink: /bookrates/
   .submit-comment {
     display: block;
     margin-top: 10px;
-    background-color: #C45A5C;
-    border: none;
+    background-color: #E8C5A4/*#C45A5C*/;
+    border-color: #E8C5A4/*none*/;
     color: white;
     padding: 8px 12px;
     border-radius: 5px;
     cursor: pointer;
     text-align: left;
   }
+
+  .submit-comment:hover {
+      background-color: #500A0A/*#72db8e*/;
+      transition: 0.3s;
+  }
+
   .comment-box {
     border-bottom: 1px solid #cce7ff;
     padding: 10px;
@@ -74,7 +80,7 @@ permalink: /bookrates/
     padding: 10px;
     font-size: 16px;
     border-radius: 5px;
-    border: 1px solid #C45A5C;
+    border: 1px solid #E8C5A4/*#C45A5C*/;
     color: #BC4749;
   }
 </style>
