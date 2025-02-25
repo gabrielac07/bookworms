@@ -157,12 +157,16 @@ permalink: /random_book_recommender/
                     <input type="url" name="cover_url" id="cover_url" placeholder="Enter Book Cover Image URL" required>
                 </label></p>
                 <p>
-                    <button type="button" id="addBookRecButton" onclick="addBookRec()">Done</button>
-                    <button type="button" id="deleteBookRecButton" onclick="deleteBookRec()">Delete</button>
-                    <button type="button" id="updateBookRecButton" onclick="updateBookRec()">Update</button>
-                    <button type="button" id="saveEditsButton" onclick="saveEdits()" style="display: none;">Save Edits</button>
+                    <button type="submit">Add Book</button>
                 </p>
             </form>
+        </div>
+    </div>
+    <div id="book-list" class="container">
+        <h1>Added Book Reccomendations</h1>
+        <br>
+        <div id="book-list-content">
+            <p style="color: #500A0A">No books added yet. Click "Add a  Book Reccomendation" and fill out the form to start adding more books to our recommendations pool!</p>
         </div>
     </div>
 
@@ -181,8 +185,8 @@ permalink: /random_book_recommender/
         mystery: "Mystery"
     };
     //
-    let lastAddedBookId = null; //for deleting the book by last ID
-    let lastAddedBookData = null; //for updating the last book
+    //let lastAddedBookId = null; //for deleting the book by last ID
+    //let lastAddedBookData = null; //for updating the last book
 
     function getRandomBook() {
     //Get the selected genre from the dropdown
@@ -234,141 +238,229 @@ permalink: /random_book_recommender/
     }
 
     // Function to add a book recommendation
-    function addBookRec() { 
+    document.getElementById('input_bookrec').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
         const title = document.getElementById('title').value;
         const author = document.getElementById('author').value;
         const genre = document.getElementById('genre').value;
         const description = document.getElementById('description').value;
-        const coverUrl = document.getElementById('cover_url').value;
-        const bookRec = { 
+        const coverImageUrl = document.getElementById('cover_url').value;
+
+        const bookData = {
             title: title,
             author: author,
             genre: genre,
             description: description,
-            cover_url: coverUrl 
+            cover_url: coverImageUrl
         };
+        
+        try {
+            const response = await fetch(`${pythonURI}/api/suggest`, {  // Use /api/suggest endpoint
+                ...fetchOptions,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(bookData)
+            });
 
-        // Send a POST request to add the book recommendation
-        fetch(`${pythonURI}/api/add_bookrec`, {
-            ...fetchOptions,
-            method: 'POST',
-            body: JSON.stringify(bookRec)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Book recommendation added successfully!');
-                lastAddedBookId = data.id; // Store the ID of the added book
-                lastAddedBookData = { ...bookRec, id: data.id }; // Store the data of the added book
-                clearForm();
-            } else {
-                alert('Failed to add book recommendation.');
+            if (!response.ok) {
+                throw new Error('Failed to add book to reccomendations: ' + response.statusText);
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while adding the book recommendation.');
-        });
-    }
-    // Function to delete the last entered book recommendation
-    function deleteBookRec() {
-        if (lastAddedBookId === null) {
-            alert('No book recommendation to delete.');
-            return;
+
+            const result = await response.json();
+            console.log("Book reccomendation added successfully")
+            alert('Book added successfully!');
+            document.getElementById('input_bookrec').reset();
+            fetchBooks();  // Refresh book list
+        } catch (error) {
+            console.error('Error adding book to reccomendations:', error);
+            alert('Error adding book to reccomendations: ' + error.message);
         }
-        // Send a DELETE request to delete the book recommendation
-        fetch(`${pythonURI}/api/delete_bookrec/${lastAddedBookId}`, {
-            ...fetchOptions,
-            method: 'DELETE'
+    });
 
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message === 'Book deleted successfully') {
-                alert('Book recommendation deleted successfully!');
-                clearForm();
-            } else {
-                alert('Failed to delete book recommendation.');
+    // Function to delete the last entered book recommendation
+    async function deleteBook(title) {
+        if (confirm(`Are you sure you want to delete "${title}"?`)) {
+            try {
+                const response = await fetch(`${pythonURI}/api/suggest`, {
+                    ...fetchOptions,
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ title }) // Pass title as an object
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to delete book: ' + response.statusText);
+                }
+
+                console.log("Book deleted successfully");
+                alert('Book deleted successfully!');
+                fetchBooks(); // Refresh the book list
+            } catch (error) {
+                console.error('Error deleting book:', error);
+                alert('Error deleting book: ' + error.message);
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while deleting the book recommendation.');
-        });
+        } else {
+            alert("Deletion canceled");
+        }
     }
     // Function to update the last added book recommendation
-    function updateBookRec() {
-        if (lastAddedBookData === null) {
-            alert('No book recommendation to update.');
-            return;
-        }
-        // Populate the form with the last added book data
-        document.getElementById('title').value = lastAddedBookData.title;
-        document.getElementById('author').value = lastAddedBookData.author;
-        document.getElementById('genre').value = lastAddedBookData.genre;
-        document.getElementById('description').value = lastAddedBookData.description;
-        document.getElementById('cover_url').value = lastAddedBookData.cover_url;
-        // Display the save edits button
-        document.getElementById('saveEditsButton').style.display = 'block';
-    }
-    // Function to save the edits made to the book recommendation
-    function saveEdits() {
-        const title = document.getElementById('title').value;
-        const author = document.getElementById('author').value;
-        const genre = document.getElementById('genre').value;
-        const description = document.getElementById('description').value;
-        const coverUrl = document.getElementById('cover_url').value;
+    async function updateBook(title) {
+    const bookContainer = Array.from(document.querySelectorAll('.book'))
+        .find(book => book.querySelector('h3').innerText === title);
 
-        const updatedBookRec = { 
+    if (!bookContainer) {
+        alert('Book not found for update.');
+        return;
+    }
+
+    const currentTitle = bookContainer.querySelector('h3').innerText;
+    const currentAuthor = bookContainer.querySelector('p:nth-child(2)').innerText.split(': ')[1];
+    const descriptionElement = Array.from(bookContainer.querySelectorAll('p'))
+        .find(p => p.innerText.startsWith('Description:'));
+    const currentDescription = descriptionElement ? descriptionElement.innerText.replace('Description: ', '') : '';
+    const currentGenre = bookContainer.dataset.genre || '';
+    const currentCoverUrl = bookContainer.querySelector('img').src;
+
+    // Replace static fields with editable inputs
+    bookContainer.innerHTML = `
+        <input type="text" id="edit-title" value="${currentTitle}" placeholder="Title">
+        <input type="text" id="edit-author" value="${currentAuthor}" placeholder="Author">
+        <select id="edit-genre">
+            <option value="Classics" ${currentGenre === 'Classics' ? 'selected' : ''}>Classics</option>
+            <option value="Fantasy" ${currentGenre === 'Fantasy' ? 'selected' : ''}>Fantasy</option>
+            <option value="Nonfiction" ${currentGenre === 'Nonfiction' ? 'selected' : ''}>Nonfiction</option>
+            <option value="Historical Fiction" ${currentGenre === 'Historical Fiction' ? 'selected' : ''}>Historical Fiction</option>
+            <option value="Suspense/Thriller" ${currentGenre === 'Suspense/Thriller' ? 'selected' : ''}>Suspense/Thriller</option>
+            <option value="Romance" ${currentGenre === 'Romance' ? 'selected' : ''}>Romance</option>
+            <option value="Dystopian" ${currentGenre === 'Dystopian' ? 'selected' : ''}>Dystopian</option>
+            <option value="Mystery" ${currentGenre === 'Mystery' ? 'selected' : ''}>Mystery</option>
+        </select>
+        <textarea id="edit-description" placeholder="Description">${currentDescription}</textarea>
+        <input type="text" id="edit-cover-url" value="${currentCoverUrl}" placeholder="Cover URL">
+        <button id="save-update">OK</button>
+        <button id="cancel-update">Cancel</button>
+    `;
+
+    // Handle Cancel Button
+    document.getElementById('cancel-update').addEventListener('click', () => {
+        fetchBooks(); // Reload the book list to cancel editing
+    });
+
+    document.getElementById('save-update').addEventListener('click', async () => {
+        const updatedTitle = document.getElementById('edit-title').value;
+        const updatedAuthor = document.getElementById('edit-author').value;
+        const updatedGenre = document.getElementById('edit-genre').value;
+        const updatedDescription = document.getElementById('edit-description').value;
+        const updatedCoverUrl = document.getElementById('edit-cover-url').value;
+
+        const updatedBookData = {
             title: title,
-            author: author,
-            genre: genre,
-            description: description,
-            cover_url: coverUrl 
+            author: updatedAuthor,
+            genre: updatedGenre,
+            description: updatedDescription,
+            cover_url: updatedCoverUrl
         };
 
-        // Send a PUT request to update the book recommendation
-        fetch(`${pythonURI}/api/update_bookrec/${lastAddedBookId}`, {
-            ...fetchOptions,
-            method: 'PUT',
-            body: JSON.stringify(updatedBookRec)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Book recommendation updated successfully!');
-                lastAddedBookData = { ...updatedBookRec, id: lastAddedBookId }; // Update the stored data
-                clearForm();
-            } else {
-                alert('Failed to update book recommendation.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while updating the book recommendation.');
-        });
-    }
+        try {
+            const response = await fetch(`${pythonURI}/api/suggest`, {
+                ...fetchOptions,
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedBookData)
+            });
 
-    // Function to clear the form after submitting a book recommendation
-    function clearForm() { 
-        document.getElementById('title').value = '';
-        document.getElementById('author').value = '';
-        document.getElementById('genre').value = '';
-        document.getElementById('description').value = '';
-        document.getElementById('cover_url').value = '';
-        document.getElementById("input_bookrec").style.display = "none";
-        document.getElementById("add_bookrec").style.display = "block";
-        document.getElementById('saveEditsButton').style.display = 'none';
-        lastAddedBookId = null;
-        lastAddedBookData = null;
+            if (!response.ok) {
+                throw new Error('Failed to update book: ' + response.statusText);
+            }
+
+            console.log('Book updated successfully');
+            alert('Book updated successfully!');
+            fetchBooks(); // Refresh the book list
+        } catch (error) {
+            console.error('Error updating book:', error);
+            alert('Error updating book: ' + error.message);
+        }
+    });
+}
+    // create list at bottom
+    async function fetchBooks() {
+        try {
+            const response = await fetch(new URL(`${pythonURI}/api/suggest/book`), fetchOptions); // Fetch all suggested books
+            if (!response.ok) {
+                throw new Error('Failed to fetch books: ' + response.statusText);
+            }
+
+        const books = await response.json();
+
+        const bookList = document.getElementById('book-list-content');
+        if (books.length === 0) {
+            bookList.innerHTML = '<p style="color: #000000">No books added yet. Fill out the form above to start adding your favorite books!</p>';
+            return;
+        }
+
+        // Render books
+        bookList.innerHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cover</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Genre</th>
+                        <th>Descriptions</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${books.map(book => `
+                        <tr class="book">
+                            <td><img src="${book.cover_url}" alt="Cover image of ${book.title}" style="max-width: 100px;"></td>
+                            <td>${book.title}</td>
+                            <td>${book.author}</td>
+                            <td>${book.genre}</td>
+                            <td>${book.description}</td>
+                            <td>
+                                <button class="updateButton" data-title="${book.title}">Update</button>
+                                <button class="deleteButton" data-title="${book.title}">Delete</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+        
+        document.querySelectorAll('.updateButton').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const title = event.target.dataset.title; // Get the title from data attribute
+                updateBook(title);
+            });
+        });
+        document.querySelectorAll('.deleteButton').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const title = event.target.dataset.title; 
+                deleteBook(title);
+            });
+        });
+
+    } catch (error) {
+        console.error('Error fetching books:', error);
     }
+}
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchBooks();
+    });
+
     // Event listeners for various buttons
     document.getElementById('getRandomBookButton').addEventListener('click', getRandomBook);
     document.getElementById('startOver').addEventListener('click', startOver);
     document.getElementById('addBookRec').addEventListener('click', inputBookRec);
-    document.getElementById('addBookRecButton').addEventListener('click', addBookRec);
-    document.getElementById('deleteBookRecButton').addEventListener('click', deleteBookRec);
-    document.getElementById('updateBookRecButton').addEventListener('click', updateBookRec);
-    document.getElementById('saveEditsButton').addEventListener('click', saveEdits);
 </script>
 </html>
