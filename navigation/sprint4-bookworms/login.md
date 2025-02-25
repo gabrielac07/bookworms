@@ -42,6 +42,22 @@ show_reading_time: false
     margin-bottom: 20px;
 }
 
+.button {
+    padding: 5px 10px;
+    font-size: 15px;
+    margin: 10px 5px;
+    border: 1px solid;
+    color: white;
+    background-color: #a57e5a;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #500A0A;
+    transition: 0.3s;   
+}
+
 </style>
 
 <div class="login-container">
@@ -62,7 +78,7 @@ show_reading_time: false
                 </label>
             </p>
             <p>
-                <button type="submit">Login</button>
+                <button class="button" type="submit">Login</button>
             </p>
             <p id="message" style="color: red;"></p>
         </form>

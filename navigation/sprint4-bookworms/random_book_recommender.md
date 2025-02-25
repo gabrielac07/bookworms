@@ -95,6 +95,15 @@ permalink: /random_book_recommender/
         border-radius: 4px;
         font-size: 14px;
     }
+
+    table {
+        color: #E5E7EB;
+        background: #a57e5a;
+    }
+
+    th {
+        background-color: #500A0A;
+    }
 </style>
 <html>
     <div class="container">
@@ -163,10 +172,10 @@ permalink: /random_book_recommender/
             </form>
         </div>
     </div>
-    <div id="book-list" class="container">
+    <div id="book_table" class="container">
         <h1>Added Book Reccomendations</h1>
         <br>
-        <div id="book-list-content">
+        <div id="book_table_content">
             <p style="color: #500A0A">No books added yet. Click "Add a  Book Reccomendation" and fill out the form to start adding more books to our recommendations pool!</p>
         </div>
     </div>
@@ -405,7 +414,7 @@ permalink: /random_book_recommender/
             // Filter out static books
             const userAddedBooks = books.filter(book => book.title !== 'The Raven Boys' && book.title !== 'Catch-22');
 
-            const bookList = document.getElementById('book-list-content');
+            const bookList = document.getElementById('book_table_content');
             if (userAddedBooks.length === 0) {
                 bookList.innerHTML = '<p style="color: #000000">No books added yet. Fill out the form above to start adding your favorite books!</p>';
                 return;
