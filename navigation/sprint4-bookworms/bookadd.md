@@ -11,6 +11,7 @@ permalink: /bookadd/
         background-color: #E8C5A4;
         border-radius: 8px;
     }
+    
 
     h1 {
         background: #a57e5a;
