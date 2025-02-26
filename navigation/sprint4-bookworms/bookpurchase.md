@@ -118,9 +118,9 @@ permalink: /bookstore/
                             <h3>${book.title}</h3>
                             <p>Price: $${price}</p>
                             <div class="quantity-controls">
-                                <button class="quality-buttons" onclick="updateQuantity('${book.title}', 1)">+</button>
-                                <span id="quantity-${book.title}">0</span>
                                 <button class="quality-buttons" onclick="updateQuantity('${book.title}', -1)">-</button>
+                                <span id="quantity-${book.title}">0</span>
+                                <button class="quality-buttons" onclick="updateQuantity('${book.title}', 1)">+</button>
                             </div>
                             <button class="add-to-cart" data-title="${book.title}" data-price="${price}">Add to Cart</button>
                         </div>
