@@ -48,9 +48,33 @@ permalink: /random_book_recommender/
         cursor: pointer;
     }
 
+    .updateButton, .deleteButton, #save-update, #cancel-update {
+        padding: 5px 10px;
+        font-size: 15px;
+        margin: 5px 2.5px;
+        border: 1px solid;
+        color: white;
+        background-color: #a57e5a;
+        border-color: #500A0A;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
     select:focus, button:hover {
         background-color: #500A0A/*#72db8e*/;
         transition: 0.3s;   
+    }
+
+    #edit-genre {
+        padding: 5px 10px;
+        font-size: 15px;
+        margin: 5px 2.5px;
+        border: 1px solid;
+        color: white;
+        background-color: #a57e5a;
+        border-color: #500A0A;
+        border-radius: 4px;
+        cursor: pointer;
     }
 
     .book_details {
