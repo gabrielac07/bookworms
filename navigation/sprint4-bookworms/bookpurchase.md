@@ -50,7 +50,7 @@ permalink: /bookstore/
         margin-bottom: 10px;
     }
 
-.add-to-cart, .quality-buttons {
+.add-to-cart {
     display: block;
     margin: 20px auto;
     padding: 10px 20px;
@@ -60,6 +60,18 @@ permalink: /bookstore/
     border-radius: 4px;
     cursor: pointer;
 }
+
+.quality-buttons {
+    display: inline-block;
+    margin: 10px auto;
+    padding: 5px 10px;
+    background-color: #a57e5a;
+    color: white;
+    border: 1px solid #a57e5a;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
 .add-to-cart:hover, .delete-item:hover, #clearCartButton:hover, .quality-buttons:hover {
     background-color: #500A0A;
     transition: 0.3s;
@@ -106,9 +118,9 @@ permalink: /bookstore/
                             <h3>${book.title}</h3>
                             <p>Price: $${price}</p>
                             <div class="quantity-controls">
-                                <button class="quality-buttons" onclick="updateQuantity('${book.title}', -1)">-</button>
-                                <span id="quantity-${book.title}">0</span>
                                 <button class="quality-buttons" onclick="updateQuantity('${book.title}', 1)">+</button>
+                                <span id="quantity-${book.title}">0</span>
+                                <button class="quality-buttons" onclick="updateQuantity('${book.title}', -1)">-</button>
                             </div>
                             <button class="add-to-cart" data-title="${book.title}" data-price="${price}">Add to Cart</button>
                         </div>
