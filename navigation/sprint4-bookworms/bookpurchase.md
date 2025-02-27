@@ -50,6 +50,14 @@ permalink: /bookstore/
         margin-bottom: 10px;
     }
 
+.book-title-price {
+    background-color: #A57F5A;
+    margin: 5px;
+    border-radius: 4px;
+    padding-bottom: 3px;
+    padding-top: 1px;
+}
+
 .add-to-cart {
     display: block;
     margin: 20px auto;
@@ -115,8 +123,10 @@ permalink: /bookstore/
                     return `
                         <div class="book-tile">
                             <img src="${book.cover_url}" alt="${book.title}" class="book-cover" />
+                            <div class="book-title-price">
                             <h3>${book.title}</h3>
                             <p>Price: $${price}</p>
+                            </div>
                             <div class="quantity-controls">
                                 <button class="quality-buttons" onclick="updateQuantity('${book.title}', -1)">-</button>
                                 <span id="quantity-${book.title}">0</span>
