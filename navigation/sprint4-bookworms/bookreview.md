@@ -108,6 +108,7 @@ permalink: /bookrates/
   import { pythonURI, fetchOptions } from "{{site.baseurl}}/assets/js/api/config.js";
   
   let currentBook = {};
+  let userId = 1
 
   // Fetch random book from backend (Flask API)
   function fetchRandomBook() {
@@ -174,7 +175,7 @@ permalink: /bookrates/
           <input type="number" id="bookIdInput" value="${id}" disabled />
 
           <label for="userIdInput">User ID:</label>
-          <input type="number" id="userIdInput" placeholder="Enter your User ID" />
+          <input type="number" id="userIdInput" value = "${userId}" disabled />
           <br>
           <textarea id="commentInput" placeholder="Add a comment..."></textarea>
           <button id="submitCommentBtn" class="submit-comment">Submit</button>
