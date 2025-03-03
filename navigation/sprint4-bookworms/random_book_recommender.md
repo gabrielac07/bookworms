@@ -48,9 +48,33 @@ permalink: /random_book_recommender/
         cursor: pointer;
     }
 
+    .updateButton, .deleteButton, #save-update, #cancel-update {
+        padding: 5px 10px;
+        font-size: 15px;
+        margin: 5px 2.5px;
+        border: 1px solid;
+        color: white;
+        background-color: #a57e5a;
+        border-color: #500A0A;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
     select:focus, button:hover {
         background-color: #500A0A/*#72db8e*/;
         transition: 0.3s;   
+    }
+
+    #edit-genre {
+        padding: 5px 10px;
+        font-size: 15px;
+        margin: 5px 2.5px;
+        border: 1px solid;
+        color: white;
+        background-color: #a57e5a;
+        border-color: #500A0A;
+        border-radius: 4px;
+        cursor: pointer;
     }
 
     .book_details {
@@ -100,10 +124,36 @@ permalink: /random_book_recommender/
     table {
         color: #E5E7EB;
         background: #a57e5a;
+        width: 100%;
+        border-collapse: collapse;
     }
 
     th {
         background-color: #500A0A;
+    }
+
+    th:nth-child(1), td:nth-child(1) { /* Cover column */
+        width: 15%;
+    }
+
+    th:nth-child(2), td:nth-child(2) { /* Title column */
+        width: 15%;
+    }
+
+    th:nth-child(3), td:nth-child(3) { /* Author column */
+        width: 15%;
+    }
+
+    th:nth-child(4), td:nth-child(4) { /* Genre column */
+        width: 10%;
+    }
+
+    th:nth-child(5), td:nth-child(5) { /* Description column */
+        width: 35%;
+    }
+
+    th:nth-child(6), td:nth-child(6) { /* Actions column */
+        width: 10%;
     }
 </style>
 <html>

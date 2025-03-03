@@ -5,14 +5,23 @@ permalink: /bookstore/
 ---
 
 <style>
-    .book-tile {
-    margin: 10px;
+.book-tile {
+    /*margin: 10px;
     padding: 10px;
     border: 1px solid #ddd;
     display: inline-block;
     text-align: center;
     width: 200px; /* Set a fixed width */
-    height: 300px; /* Set a fixed height */
+    /*height: 300px; /* Set a fixed height */
+    display: inline-block;
+    background-color: #E8C4A4;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    max-width: 200px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    color: #faebd8;
 }
 
 .book-cover {
@@ -40,6 +49,53 @@ permalink: /bookstore/
         border-radius: 4px;
         margin-bottom: 10px;
     }
+
+.book-title-price {
+    background-color: #A57F5A;
+    margin: 5px;
+    border-radius: 4px;
+    padding-bottom: 3px;
+    padding-top: 1px;
+}
+
+.add-to-cart {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #a57e5a;
+    color: white;
+    border: 1px solid #a57e5a;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.quality-buttons {
+    display: inline-block;
+    margin: 10px auto;
+    padding: 5px 10px;
+    background-color: #a57e5a;
+    color: white;
+    border: 1px solid #a57e5a;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.add-to-cart:hover, .delete-item:hover, #clearCartButton:hover, .quality-buttons:hover {
+    background-color: #500A0A;
+    transition: 0.3s;
+}
+
+.delete-item, #clearCartButton {
+    display: block;
+    /*margin: 20px auto;*/
+    padding: 5px 10px;
+    background-color: #E8C4A4;
+    color: white;
+    border: 1px solid #E8C4A4;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
 </style>
 
 <h2>Shopping Cart</h2>
@@ -67,12 +123,14 @@ permalink: /bookstore/
                     return `
                         <div class="book-tile">
                             <img src="${book.cover_url}" alt="${book.title}" class="book-cover" />
+                            <div class="book-title-price">
                             <h3>${book.title}</h3>
                             <p>Price: $${price}</p>
+                            </div>
                             <div class="quantity-controls">
-                                <button onclick="updateQuantity('${book.title}', -1)">-</button>
+                                <button class="quality-buttons" onclick="updateQuantity('${book.title}', -1)">-</button>
                                 <span id="quantity-${book.title}">0</span>
-                                <button onclick="updateQuantity('${book.title}', 1)">+</button>
+                                <button class="quality-buttons" onclick="updateQuantity('${book.title}', 1)">+</button>
                             </div>
                             <button class="add-to-cart" data-title="${book.title}" data-price="${price}">Add to Cart</button>
                         </div>

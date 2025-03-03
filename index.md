@@ -124,6 +124,24 @@ show_reading_time: false
        text-align: center;
        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
    }
+
+   button {
+    padding: 5px 10px;
+    font-size: 15px;
+    margin: 5px 2.5px;
+    border: 1px solid;
+    color: white;
+    background-color: #a57e5a;
+    /*border-color: #500A0A;*/
+    border-radius: 4px;
+    cursor: pointer;
+   }
+
+   button:hover {
+    background-color: #500A0A/*#72db8e*/;
+    transition: 0.3s;  
+   }
+
 </style>
 
 
@@ -134,7 +152,7 @@ show_reading_time: false
           <button onclick="location.href='{{site.baseurl}}/login'">Login</button>
           <button onclick="location.href='{{site.baseurl}}/profile'">Edit</button>
       </div>
-      <div class="section">
+      <!--<div class="section">
           <h2>Genre Chatroom</h2>
           <p>Explore genres!</p>
           <button onclick="location.href='{{site.baseurl}}/genre_chatroom'" >Enter 💬📚</button>
@@ -142,5 +160,5 @@ show_reading_time: false
       <div class="section">
           <h2>About Us</h2>
           <button onclick="location.href='{{site.baseurl}}/bookworms_about'">Click Here</button>
-      </div>
+      </div>-->
 </div>
