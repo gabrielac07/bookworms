@@ -480,31 +480,7 @@ permalink: /bookadd/
         console.error('Error accepting book:', error);
         alert('Error accepting book: ' + error.message);
     }
-}    
-
-    /*
-    async function rejectBook(title) {
-        const bookList = document.getElementById('book-list-content');
-        const books = Array.from(bookList.getElementsByClassName('book'));
-        const book = books.find(book => book.querySelector('h3').innerText === title);
-    
-        if (!book) {
-            alert('Book not found for rejection.');
-            return;
-        }
-
-    if (confirm(`Are you sure you want to reject "${title}"?`)) {
-        for (let book of books) {
-            if (book.querySelector('h3').textContent === title) {
-                book.querySelector('h3').textContent = `Rejected: ${title}`;
-
-                alert("Book rejected successfully");
-                break;
-            }
-        }
-    }
-}
-*/
+}   
 
 let rejectedBooks = ""; // Variable to store accepted books list
 
