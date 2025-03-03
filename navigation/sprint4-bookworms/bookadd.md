@@ -224,6 +224,12 @@ permalink: /bookadd/
 
 <div id="book-list" class="container2">
     <h1>Your Suggested Books</h1><br>
+    <label for="sort-books">Sort Books:</label>
+    <select id="sort-books">
+        <option value="none">No Sort (Oldest > Newest)</option>
+        <option value="alphabetical">Alphabetically</option>
+    </select>
+    <br><br>
     <div id="accepted-books-container">
     <h2>Accepted Books:</h2>
     <p id="accepted-books-list" style="color: #a57e5a;">None yet.</p></div>
@@ -519,6 +525,8 @@ async function rejectBook(title) {
     }
 }
 
+document.getElementById('sort-books').addEventListener('change', fetchBooks);
+
     // create list at bottom
     async function fetchBooks() {
         try {
@@ -529,6 +537,11 @@ async function rejectBook(title) {
 
         const books = await response.json();
 
+        const sortOption = document.getElementById('sort-books').value;
+        if (sortOption === "alphabetical") {
+            books.sort((a, b) => a.title.localeCompare(b.title));
+        }
+
         const bookList = document.getElementById('book-list-content');
         if (books.length === 0) {
             bookList.innerHTML = '<p style="color: #000000">No books added yet. Fill out the form above to start adding your favorite books!</p>';
@@ -536,7 +549,7 @@ async function rejectBook(title) {
         }
 
         // Render books
-        bookList.innerHTML = books
+    bookList.innerHTML = books
     .map(
         book => `
         <div class="book">
