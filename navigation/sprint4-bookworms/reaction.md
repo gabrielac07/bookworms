@@ -79,32 +79,14 @@ permalink: /reaction/
         justify-content: space-between;
         align-items: center;
     }
-
-    .emotion-item div {
-        display: flex;
-        gap: 5px;
-    }
-
-    .update-button, .delete-button {
-        background: none;
-        border: none;
-        font-size: 18px;
-        cursor: pointer;
-        padding: 5px;
-    }
-
-    .update-button:hover {
-        color: #f0ad4e;
-    }
-
-    .delete-button:hover {
-        color: #d9534f;
-    }
 </style>
+
 <input type="hidden" id="userId" value="1"> 
+
 <div>
     <p> Share how these books made you feel! </p>
 </div>
+
 <div class="container">
     <form id="addEmotionForm">
         <label for="bookDropdown">Select Book</label>
@@ -130,7 +112,11 @@ permalink: /reaction/
         </select>
         <button type="submit">Add Emotion</button>
     </form>
+    <!-- <button id="getBookReactionsButton">Get Book Reactions</button> -->
+    <button id="getUserReactionsButton">Get My Reactions</button>
+    <button id="resetUserReactionsButton">Reset My Reactions</button>
     <div id="addedEmotions" class="results"></div>
+    <div id="reactionsList" class="results"></div>
 </div>
 
 <script type="module">
@@ -168,9 +154,7 @@ permalink: /reaction/
         });
     }
 
-    document.getElementById('addEmotionForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const userId = document.getElementById('userId').value;
+    document.getElementById('getBookReactionsButton').addEventListener('click', async () => {
         const bookDropdown = document.getElementById('bookDropdown');
         const selectedOption = bookDropdown.options[bookDropdown.selectedIndex];
 
@@ -181,145 +165,68 @@ permalink: /reaction/
 
         const bookData = JSON.parse(selectedOption.value);
         const bookId = bookData.id;
-        const bookTitle = bookData.title;
-        const authorId = bookData.author;
-        const reactionType = document.getElementById('addReactionType').value;
 
         try {
-            const response = await fetch(`${pythonURI}/api/emotion`, {
-                ...fetchOptions,
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: userId, title_id: bookId, author_id: authorId, reaction_type: reactionType }),
-            });
-
+            const response = await fetch(`${pythonURI}/api/emotion/${bookId}`, fetchOptions);
             if (!response.ok) throw new Error(await response.text());
 
-            displayAddedEmotion(bookId, bookTitle, authorId, reactionType);
-            showStatusMessage('Emotion successfully added!');
+            const data = await response.json();
+            displayReactions(data.emotions);
         } catch (error) {
-            showStatusMessage(`Failed to add emotion: ${error.message}`, false);
+            showStatusMessage(`Failed to fetch reactions: ${error.message}`, false);
         }
     });
 
-    function displayAddedEmotion(bookId, bookTitle, authorId, reactionType) {
-        const addedEmotionsDiv = document.getElementById('addedEmotions');
-        const emotionItem = document.createElement('div');
-        emotionItem.className = 'emotion-item';
-        emotionItem.dataset.bookId = bookId;
-        emotionItem.dataset.authorId = authorId;
-        emotionItem.dataset.reaction = reactionType;
-
-        emotionItem.innerHTML = `
-            <span>📖 <b>${bookTitle}</b> by ${authorId} — Reaction: <span class="reaction-text">${reactionType}</span></span>
-            <div>
-                <button class="update-button">📝</button>
-                <button class="delete-button">🗑️</button>
-            </div>
-        `;
-
-        addedEmotionsDiv.appendChild(emotionItem);
-        emotionItem.querySelector('.update-button').addEventListener('click', handleUpdateEmotion);
-        emotionItem.querySelector('.delete-button').addEventListener('click', handleDeleteEmotion);
-    }
-
-    async function handleUpdateEmotion(event) {
+    document.getElementById('getUserReactionsButton').addEventListener('click', async () => {
         const userId = document.getElementById('userId').value;
-        const emotionItem = event.target.closest('.emotion-item');
-        const titleId = emotionItem.dataset.bookId;
-        const authorId = emotionItem.dataset.authorId;
-
-        const dropdown = document.createElement('select');
-        dropdown.innerHTML = document.getElementById('addReactionType').innerHTML;
-        dropdown.value = emotionItem.dataset.reaction;
-
-        const submitButton = document.createElement('button');
-        submitButton.textContent = 'Save';
-        submitButton.onclick = async () => {
-            const newReaction = dropdown.value;
-            if (!newReaction) return;
-
-            try {
-                const response = await fetch(`${pythonURI}/api/emotion/update`, {
-                    ...fetchOptions,
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userId, title_id: titleId, reaction_type: newReaction }),
-                });
-
-                if (!response.ok) throw new Error(await response.text());
-
-                emotionItem.dataset.reaction = newReaction;
-                emotionItem.querySelector('.reaction-text').textContent = newReaction;
-                showStatusMessage('Emotion successfully updated!');
-
-                emotionItem.innerHTML = `
-                    <span>📖 <b>${emotionItem.dataset.bookTitle}</b> by ${authorId} — Reaction: <span class="reaction-text">${newReaction}</span></span>
-                    <div>
-                        <button class="update-button">📝</button>
-                        <button class="delete-button">🗑️</button>
-                    </div>
-                `;
-
-                emotionItem.querySelector('.update-button').addEventListener('click', handleUpdateEmotion);
-                emotionItem.querySelector('.delete-button').addEventListener('click', handleDeleteEmotion);
-            } catch (error) {
-                showStatusMessage(`Failed to update: ${error.message}`, false);
-            }
-        };
-
-        const actionCell = event.target.parentElement;
-        actionCell.innerHTML = '';
-        actionCell.appendChild(dropdown);
-        actionCell.appendChild(submitButton);
-    }
-
-    async function handleDeleteEmotion(event) {
-        const userId = document.getElementById('userId').value;
-        const emotionItem = event.target.closest('.emotion-item');
-        const titleId = emotionItem.dataset.bookId;
-        const authorId = emotionItem.dataset.authorId;
-
-        if (!confirm(`Delete emotion for "${emotionItem.dataset.bookTitle}"?`)) return;
 
         try {
-            const response = await fetch(`${pythonURI}/api/emotion/delete`, {
+            const response = await fetch(`${pythonURI}/api/emotion/user/${userId}`, fetchOptions);
+            if (!response.ok) throw new Error(await response.text());
+
+            const data = await response.json();
+            displayReactions(data.emotions);
+        } catch (error) {
+            showStatusMessage(`Failed to fetch reactions: ${error.message}`, false);
+        }
+    });
+
+    document.getElementById('resetUserReactionsButton').addEventListener('click', async () => {
+        const userId = document.getElementById('userId').value;
+
+        if (!confirm("Are you sure you want to reset all your reactions? This cannot be undone.")) return;
+
+        try {
+            const response = await fetch(`${pythonURI}/api/emotion/reset_reactions/${userId}`, {
                 ...fetchOptions,
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: userId, title_id: titleId, author_id: authorId }),
             });
 
             if (!response.ok) throw new Error(await response.text());
 
-            emotionItem.remove();
-            showStatusMessage('Emotion successfully deleted!');
+            document.getElementById('reactionsList').innerHTML = ''; // Clear UI
+            showStatusMessage('All your reactions have been reset.');
         } catch (error) {
-            showStatusMessage(`Failed to delete: ${error.message}`, false);
+            showStatusMessage(`Failed to reset reactions: ${error.message}`, false);
         }
-    }
+    });
 
-    function showStatusMessage(message, isSuccess = true) {
-        const statusMessage = document.getElementById('statusMessage') || createStatusMessageElement();
-        statusMessage.textContent = message;
-        statusMessage.style.color = isSuccess ? 'green' : 'red';
-        statusMessage.style.display = 'block';
-        setTimeout(() => statusMessage.style.display = 'none', 3000);
-    }
+    function displayReactions(emotions) {
+        const reactionsList = document.getElementById('reactionsList');
+        reactionsList.innerHTML = '';
 
-    function createStatusMessageElement() {
-        const statusMessage = document.createElement('div');
-        statusMessage.id = 'statusMessage';
-        statusMessage.style.position = 'fixed';
-        statusMessage.style.top = '10px';
-        statusMessage.style.left = '50%';
-        statusMessage.style.transform = 'translateX(-50%)';
-        statusMessage.style.padding = '10px 20px';
-        statusMessage.style.background = 'rgba(255, 255, 255, 0.9)';
-        statusMessage.style.border = '1px solid black';
-        statusMessage.style.borderRadius = '5px';
-        statusMessage.style.fontWeight = 'bold';
-        document.body.appendChild(statusMessage);
-        return statusMessage;
+        if (!emotions.length) {
+            reactionsList.innerHTML = '<p>No reactions found.</p>';
+            return;
+        }
+
+        emotions.forEach(emotion => {
+            const emotionItem = document.createElement('div');
+            emotionItem.className = 'emotion-item';
+            emotionItem.innerHTML = `
+                <span>📖 <b>${emotion.title_id}</b> by ${emotion.author_id} — Reaction: <span class="reaction-text">${emotion.reaction_type}</span></span>
+            `;
+            reactionsList.appendChild(emotionItem);
+        });
     }
 </script>
