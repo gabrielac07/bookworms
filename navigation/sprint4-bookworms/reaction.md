@@ -3,6 +3,7 @@ layout: page
 title: Reaction
 permalink: /reaction/
 ---
+
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -11,8 +12,8 @@ permalink: /reaction/
     }
 
     form {
-            margin-bottom: 20px;
-        }
+        margin-bottom: 20px;
+    }
 
     .container {
         max-width: 800px;
@@ -27,15 +28,6 @@ permalink: /reaction/
         font-family: 'Arial', sans-serif;
         color: #4A4A4A;
     }
-/* 
-    h1 {
-        font-size: 50px;
-        text-align: center;
-        background-color: #E8C5A4;
-        padding: 20px;
-        color: #4A4A4A;
-        border-radius: 8px;
-    } */
 
     h2 {
         margin: 20px 0 10px;
@@ -59,15 +51,6 @@ permalink: /reaction/
         font-size: 16px;
     }
 
-    input:focus, select:focus, button:focus {
-        outline: none;
-        border-color: #A57E5A;
-    }
-
-    select {
-        background-color: #F8F0E3;
-    }
-
     button {
         background-color: #A57E5A;
         color: white;
@@ -81,14 +64,6 @@ permalink: /reaction/
         transition: 0.3s;
     }
 
-    .start_over {
-        background-color: #D9534F;
-    }
-
-    .start_over:hover {
-        background-color: #C9302C;
-    }
-
     .results {
         margin-top: 20px;
         color: black;
@@ -100,37 +75,46 @@ permalink: /reaction/
         padding: 15px;
         border-radius: 5px;
         border: 1px solid #E0C7A0;
-        color: black;
         display: flex;
+        justify-content: space-between;
         align-items: center;
     }
 
-    .emotion-item span {
-        margin-right: 10px;
-        font-size: 50em;
+    .emotion-item div {
+        display: flex;
+        gap: 5px;
     }
 
-    /* Styling for form elements */
-    form {
-        margin-bottom: 30px;
+    .update-button, .delete-button {
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 5px;
+    }
+
+    .update-button:hover {
+        color: #f0ad4e;
+    }
+
+    .delete-button:hover {
+        color: #d9534f;
     }
 </style>
-<!-- User ID (hidden for now) -->
-<input type="hidden" id="userId" value="1"> <!-- Example user ID; replace with dynamic value -->
+<input type="hidden" id="userId" value="1"> 
 <div>
     <p> Share how these books made you feel! </p>
 </div>
-
 <div class="container">
     <form id="addEmotionForm">
-        <label for="addTitleId">Title</label>
-        <input type="text" id="addTitleId" placeholder="Enter title" required>
-        <label for="addAuthorId">Author</label>
-        <input type="text" id="addAuthorId" placeholder="Enter author's name" required>
+        <label for="bookDropdown">Select Book</label>
+        <select id="bookDropdown" required>
+            <option value="">Select a book</option>
+        </select>
         <label for="addReactionType">Select Reaction</label>
         <select id="addReactionType" required>
             <option value="">Select Reaction</option>
-            <option value="🎉">🎉 Celebratory</option>
+            <option value="🎉">🎉 Happy</option>
             <option value="👍">👍 Good</option>
             <option value="❤️">❤️ Loved</option>
             <option value="😂">😂 Hilarious</option>
@@ -140,262 +124,202 @@ permalink: /reaction/
             <option value="🤔">🤔 Ponderous</option>
             <option value="💔">💔 Heart Broken</option>
             <option value="🎈">🎈 Drifting Away</option>
-            <option value="✨">✨ Magical </option>
+            <option value="✨">✨ Magical</option>
             <option value="🍀">🍀 Lucky</option>
             <option value="🌈">🌈 Rainbow</option>
         </select>
         <button type="submit">Add Emotion</button>
     </form>
-    <!-- Display Added Emotions -->
     <div id="addedEmotions" class="results"></div>
-    <h2>Other Options</h2>
-    <select id="otherOptionsDropdown">
-        <option value="">Select an Option</option>
-        <option value="getReactionsForTitle">Get Reactions for Title</option>
-        <option value="getReactionsForUser">Get Reactions for User</option>
-        <option value="updateEmotion">Update Emotion</option>
-        <option value="deleteEmotion">Delete Emotion</option>
-        <option value="resetReactions">Reset Reactions</option>
-    </select>
-    <!-- Get Reactions for Title -->
-    <div id="titleOptions" style="display: none;">
-        <h3>Get Reactions for Title</h3>
-        <input type="text" placeholder="Enter title" id="getTitleId">
-        <button id="getReactionsForTitleButton">Get Reactions</button>
-        <div id="titleResults" class="results"></div>
-    </div>
-    <!-- Get Reactions for User -->
-    <div id="userOptions" style="display: none;">
-        <h3>Get Reactions for User</h3>
-        <input type="number" placeholder="User ID" id="getUserId" value="1">
-        <button id="getReactionsForUserButton">Get Reactions</button>
-        <div id="userResults" class="results"></div>
-    </div>
-    <!-- Update Emotion -->
-    <div id="updateOptions" style="display: none;">
-        <h3>Update Emotion</h3>
-        <input type="number" placeholder="User ID" id="updateUserId" value="1" required>
-        <input type="text" placeholder="Title" id="updateTitleId" required>
-        <select id="updateReactionType" required>
-            <option value="">Select New Reaction</option>
-            <option value="🎉">🎉 Celebration</option>
-            <option value="👍">👍 Like</option>
-            <option value="❤️">❤️ Love</option>
-            <option value="😂">😂 Funny</option>
-            <option value="😢">😢 Sad</option>
-            <option value="🔥">🔥 Hot</option>
-            <option value="😎">😎 Cool</option>
-            <option value="🥳">🥳 Party</option>
-            <option value="🤔">🤔 Thinking</option>
-            <option value="💔">💔 Broken Heart</option>
-            <option value="🎈">🎈 Balloon</option>
-            <option value="🌟">🌟 Star</option>
-            <option value="✨">✨ Sparkle</option>
-            <option value="🍀">🍀 Lucky</option>
-            <option value="🌈">🌈 Rainbow</option>
-        </select>
-        <input type="text" placeholder="Author" id="updateAuthorIdUpdate" required>
-        <button id="updateEmotionButton">Update Emotion</button>
-    </div>
-    <!-- Delete Emotion -->
-    <div id="deleteOptions" style="display: none;">
-        <h3>Delete Emotion</h3>
-        <input type="number" placeholder="User ID" id="deleteUserId" value="1" required>
-        <input type="text" placeholder="Title" id="deleteTitleId" required>
-        <button id="deleteEmotionButton">Delete Emotion</button>
-    </div>
-    <!-- Reset Reactions -->
-    <div id="resetOptions" style="display: none;">
-        <h3>Reset All Reactions for User</h3>
-        <input type="number" placeholder="User ID" id="resetUserId" value="1" required>
-        <button id="resetReactionsButton">Reset Reactions</button>
-    </div>
 </div>
 
 <script type="module">
     import { pythonURI, fetchOptions } from '{{ site.baseurl }}/assets/js/api/config.js';
-    // const API_URL = 'http://127.0.0.1:8504/api/emotion'; // Update with your API URL
 
-    // Function to add emotion
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const books = await fetchBooks();
+            populateBookDropdown(books);
+        } catch (error) {
+            console.error('Error fetching books:', error);
+        }
+    });
+
+    async function fetchBooks() {
+        const URL = `${pythonURI}/api/wishlist/books`;
+        try {
+            const response = await fetch(URL, fetchOptions);
+            if (!response.ok) throw new Error(`Failed to fetch books: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Error:', error);
+            return [];
+        }
+    }
+
+    function populateBookDropdown(books) {
+        const dropdown = document.getElementById('bookDropdown');
+        dropdown.innerHTML = '<option value="">Select a book</option>';
+        books.forEach((book) => {
+            const option = document.createElement('option');
+            option.value = JSON.stringify({ id: book.id, title: book.title, author: book.author });
+            option.textContent = `${book.title} by ${book.author}`;
+            dropdown.appendChild(option);
+        });
+    }
+
     document.getElementById('addEmotionForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const userId = document.getElementById('userId').value; // Get logged in user ID
-        const titleId = document.getElementById('addTitleId').value;
-        const authorId = document.getElementById('addAuthorId').value;
+        const userId = document.getElementById('userId').value;
+        const bookDropdown = document.getElementById('bookDropdown');
+        const selectedOption = bookDropdown.options[bookDropdown.selectedIndex];
+
+        if (!selectedOption.value) {
+            showStatusMessage('Please select a book.', false);
+            return;
+        }
+
+        const bookData = JSON.parse(selectedOption.value);
+        const bookId = bookData.id;
+        const bookTitle = bookData.title;
+        const authorId = bookData.author;
         const reactionType = document.getElementById('addReactionType').value;
 
         try {
-             const response = await fetch(`${pythonURI}/api/emotion`, {
+            const response = await fetch(`${pythonURI}/api/emotion`, {
                 ...fetchOptions,
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ user_id: userId, title_id: titleId, author_id: authorId, reaction_type: reactionType }),
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId, title_id: bookId, author_id: authorId, reaction_type: reactionType }),
             });
-            const result = await response.json();
-            if (!response.ok) throw new Error(result.error || 'Failed to add emotion.');
 
-            // Display the added emotion
-            displayAddedEmotion(titleId, authorId, reactionType);
-            clearAddEmotionForm();
-            alert('Emotion added successfully!');
+            if (!response.ok) throw new Error(await response.text());
+
+            displayAddedEmotion(bookId, bookTitle, authorId, reactionType);
+            showStatusMessage('Emotion successfully added!');
         } catch (error) {
-            alert(error.message);
+            showStatusMessage(`Failed to add emotion: ${error.message}`, false);
         }
     });
 
-    // Function to display added emotion
-    function displayAddedEmotion(titleId, authorId, reactionType) {
+    function displayAddedEmotion(bookId, bookTitle, authorId, reactionType) {
         const addedEmotionsDiv = document.getElementById('addedEmotions');
         const emotionItem = document.createElement('div');
         emotionItem.className = 'emotion-item';
-        emotionItem.innerHTML = `Title: ${titleId}, Author: ${authorId}, Reaction: ${reactionType}`;
+        emotionItem.dataset.bookId = bookId;
+        emotionItem.dataset.authorId = authorId;
+        emotionItem.dataset.reaction = reactionType;
+
+        emotionItem.innerHTML = `
+            <span>📖 <b>${bookTitle}</b> by ${authorId} — Reaction: <span class="reaction-text">${reactionType}</span></span>
+            <div>
+                <button class="update-button">📝</button>
+                <button class="delete-button">🗑️</button>
+            </div>
+        `;
+
         addedEmotionsDiv.appendChild(emotionItem);
+        emotionItem.querySelector('.update-button').addEventListener('click', handleUpdateEmotion);
+        emotionItem.querySelector('.delete-button').addEventListener('click', handleDeleteEmotion);
     }
 
-    // Clear the add emotion form
-    function clearAddEmotionForm() {
-        document.getElementById('addTitleId').value = '';
-        document.getElementById('addAuthorId').value = '';
-        document.getElementById('addReactionType').value = '';
+    async function handleUpdateEmotion(event) {
+        const userId = document.getElementById('userId').value;
+        const emotionItem = event.target.closest('.emotion-item');
+        const titleId = emotionItem.dataset.bookId;
+        const authorId = emotionItem.dataset.authorId;
+
+        const dropdown = document.createElement('select');
+        dropdown.innerHTML = document.getElementById('addReactionType').innerHTML;
+        dropdown.value = emotionItem.dataset.reaction;
+
+        const submitButton = document.createElement('button');
+        submitButton.textContent = 'Save';
+        submitButton.onclick = async () => {
+            const newReaction = dropdown.value;
+            if (!newReaction) return;
+
+            try {
+                const response = await fetch(`${pythonURI}/api/emotion/update`, {
+                    ...fetchOptions,
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, title_id: titleId, reaction_type: newReaction }),
+                });
+
+                if (!response.ok) throw new Error(await response.text());
+
+                emotionItem.dataset.reaction = newReaction;
+                emotionItem.querySelector('.reaction-text').textContent = newReaction;
+                showStatusMessage('Emotion successfully updated!');
+
+                emotionItem.innerHTML = `
+                    <span>📖 <b>${emotionItem.dataset.bookTitle}</b> by ${authorId} — Reaction: <span class="reaction-text">${newReaction}</span></span>
+                    <div>
+                        <button class="update-button">📝</button>
+                        <button class="delete-button">🗑️</button>
+                    </div>
+                `;
+
+                emotionItem.querySelector('.update-button').addEventListener('click', handleUpdateEmotion);
+                emotionItem.querySelector('.delete-button').addEventListener('click', handleDeleteEmotion);
+            } catch (error) {
+                showStatusMessage(`Failed to update: ${error.message}`, false);
+            }
+        };
+
+        const actionCell = event.target.parentElement;
+        actionCell.innerHTML = '';
+        actionCell.appendChild(dropdown);
+        actionCell.appendChild(submitButton);
     }
 
-    // Handle other options selection
-    document.getElementById('otherOptionsDropdown').addEventListener('change', (e) => {
-        const selectedOption = e.target.value;
+    async function handleDeleteEmotion(event) {
+        const userId = document.getElementById('userId').value;
+        const emotionItem = event.target.closest('.emotion-item');
+        const titleId = emotionItem.dataset.bookId;
+        const authorId = emotionItem.dataset.authorId;
 
-        document.getElementById('titleOptions').style.display = 'none';
-        document.getElementById('userOptions').style.display = 'none';
-        document.getElementById('updateOptions').style.display = 'none';
-        document.getElementById('deleteOptions').style.display = 'none';
-        document.getElementById('resetOptions').style.display = 'none';
-
-        if (selectedOption === 'getReactionsForTitle') {
-            document.getElementById('titleOptions').style.display = 'block';
-        } else if (selectedOption === 'getReactionsForUser') {
-            document.getElementById('userOptions').style.display = 'block';
-        } else if (selectedOption === 'updateEmotion') {
-            document.getElementById('updateOptions').style.display = 'block';
-        } else if (selectedOption === 'deleteEmotion') {
-            document.getElementById('deleteOptions').style.display = 'block';
-        } else if (selectedOption === 'resetReactions') {
-            document.getElementById('resetOptions').style.display = 'block';
-        }
-    });
-
-    // Get Reactions for Title
-    document.getElementById('getReactionsForTitleButton').addEventListener('click', async () => {
-        const titleId = document.getElementById('getTitleId').value;
-
-        try {
-            const response = await fetch(`${pythonURI}/api/emotion/${titleId}`);
-            const result = await response.json();
-            const titleResultsDiv = document.getElementById('titleResults');
-
-            titleResultsDiv.innerHTML = ''; // Clear previous results
-            if (response.ok) {
-                result.emotions.forEach(emotion => {
-                    const emotionItem = document.createElement('div');
-                    emotionItem.innerHTML = `User ID: ${emotion.user_id}, Reaction: ${emotion.reaction_type}`;
-                    titleResultsDiv.appendChild(emotionItem);
-                });
-            } else {
-                titleResultsDiv.innerHTML = result.error || 'Error fetching reactions.';
-            }
-        } catch (error) {
-            alert(error.message);
-        }
-    });
-
-    // Get Reactions for User
-    document.getElementById('getReactionsForUserButton').addEventListener('click', async () => {
-        const userId = document.getElementById('getUserId').value;
-
-        try {
-            const response = await fetch(`${pythonURI}/api/emotion/user/${userId}`);
-            const result = await response.json();
-            const userResultsDiv = document.getElementById('userResults');
-
-            userResultsDiv.innerHTML = ''; // Clear previous results
-            if (response.ok) {
-                result.emotions.forEach(emotion => {
-                    const emotionItem = document.createElement('div');
-                    emotionItem.innerHTML = `Title: ${emotion.title_id}, Reaction: ${emotion.reaction_type}`;
-                    userResultsDiv.appendChild(emotionItem);
-                });
-            } else {
-                userResultsDiv.innerHTML = result.error || 'Error fetching reactions.';
-            }
-        } catch (error) {
-            alert(error.message);
-        }
-    });
-
-    // Update Emotion
-    document.getElementById('updateEmotionButton').addEventListener('click', async () => {
-        const userId = document.getElementById('updateUserId').value;
-        const titleId = document.getElementById('updateTitleId').value;
-        const reactionType = document.getElementById('updateReactionType').value;
-        const authorId = document.getElementById('updateAuthorIdUpdate').value;
-
-        try {
-            const response = await fetch(`${pythonURI}/api/emotion/update`, {
-                ...fetchOptions,
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ user_id: userId, title_id: titleId, reaction_type: reactionType, author_id: authorId }),
-            });
-            const result = await response.json();
-            if (!response.ok) throw new Error(result.error || 'Failed to update emotion.');
-
-            alert(result.message || 'Emotion updated successfully!');
-        } catch (error) {
-            alert(error.message);
-        }
-    });
-
-    // Delete Emotion
-    document.getElementById('deleteEmotionButton').addEventListener('click', async () => {
-        const userId = document.getElementById('deleteUserId').value;
-        const titleId = document.getElementById('deleteTitleId').value;
+        if (!confirm(`Delete emotion for "${emotionItem.dataset.bookTitle}"?`)) return;
 
         try {
             const response = await fetch(`${pythonURI}/api/emotion/delete`, {
                 ...fetchOptions,
                 method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ user_id: userId, title_id: titleId }),
-            });
-            const result = await response.json();
-            if (!response.ok) throw new Error(result.error || 'Failed to delete emotion.');
-
-            alert(result.message || 'Emotion deleted successfully!');
-        } catch (error) {
-            alert(error.message);
-        }
-    });
-
-     // Reset Reactions
-    document.getElementById('resetReactionsButton').addEventListener('click', async () => {
-        const userId = document.getElementById('resetUserId').value;
-
-        try {
-            const response = await fetch(`${pythonURI}/api/emotion/reset_reactions/${userId}`, {
-                ...fetchOptions,
-                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId, title_id: titleId, author_id: authorId }),
             });
 
-            const result = await response.json();
-            if (!response.ok) throw new Error(result.error || 'Failed to reset reactions.');
+            if (!response.ok) throw new Error(await response.text());
 
-            alert(result.message || 'All reactions reset successfully!');
+            emotionItem.remove();
+            showStatusMessage('Emotion successfully deleted!');
         } catch (error) {
-            alert(error.message);
+            showStatusMessage(`Failed to delete: ${error.message}`, false);
         }
-    });
+    }
+
+    function showStatusMessage(message, isSuccess = true) {
+        const statusMessage = document.getElementById('statusMessage') || createStatusMessageElement();
+        statusMessage.textContent = message;
+        statusMessage.style.color = isSuccess ? 'green' : 'red';
+        statusMessage.style.display = 'block';
+        setTimeout(() => statusMessage.style.display = 'none', 3000);
+    }
+
+    function createStatusMessageElement() {
+        const statusMessage = document.createElement('div');
+        statusMessage.id = 'statusMessage';
+        statusMessage.style.position = 'fixed';
+        statusMessage.style.top = '10px';
+        statusMessage.style.left = '50%';
+        statusMessage.style.transform = 'translateX(-50%)';
+        statusMessage.style.padding = '10px 20px';
+        statusMessage.style.background = 'rgba(255, 255, 255, 0.9)';
+        statusMessage.style.border = '1px solid black';
+        statusMessage.style.borderRadius = '5px';
+        statusMessage.style.fontWeight = 'bold';
+        document.body.appendChild(statusMessage);
+        return statusMessage;
+    }
 </script>
