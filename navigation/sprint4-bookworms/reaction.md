@@ -131,7 +131,21 @@ permalink: /reaction/
         <button type="submit">Add Emotion</button>
     </form>
     <div id="addedEmotions" class="results"></div>
+    <button id="fetchEmotionsBtn">Get Emotions</button>
+    <div id="emotionResults" class="results"></div>
 </div>
+<!-- 
+<div class="container">
+    <form id="addEmotionForm">
+        <label for="bookDropdown">Select Book</label>
+        <select id="bookDropdown" required>
+            <option value="">Select a book</option>
+        </select>
+    </form>
+    <div id="addedEmotions" class="results"></div>
+    <button id="fetchEmotionsBtn">Get Emotions</button>
+    <div id="emotionResults" class="results"></div>
+</div> -->
 
 <script type="module">
     import { pythonURI, fetchOptions } from '{{ site.baseurl }}/assets/js/api/config.js';
@@ -297,6 +311,50 @@ permalink: /reaction/
         } catch (error) {
             showStatusMessage(`Failed to delete: ${error.message}`, false);
         }
+    }
+
+    document.getElementById("fetchEmotionsBtn").addEventListener("click", async function () {
+        const bookDropdown = document.getElementById("bookDropdown");
+        const selectedOption = bookDropdown.options[bookDropdown.selectedIndex];
+
+        if (!selectedOption.value) {
+            showStatusMessage('Please select a book first.', false);
+            return;
+        }
+
+        const bookData = JSON.parse(selectedOption.value);
+        const titleId = bookData.id;
+
+        try {
+            const response = await fetch(`${pythonURI}/api/emotion/${titleId}`, fetchOptions);
+            const data = await response.json();
+
+            if (!response.ok) throw new Error(data.message || 'Failed to fetch emotions');
+
+            displayEmotions(data.emotions);
+        } catch (error) {
+            console.error('Error fetching emotions:', error);
+            showStatusMessage(`Error: ${error.message}`, false);
+        }
+    });
+
+    function displayEmotions(emotions) {
+        const resultsDiv = document.getElementById("emotionResults");
+        resultsDiv.innerHTML = "";
+
+        if (emotions.length === 0) {
+            resultsDiv.innerHTML = "<p>No reactions found for this book.</p>";
+            return;
+        }
+
+        emotions.forEach(emotion => {
+            const emotionItem = document.createElement("div");
+            emotionItem.className = "emotion-item";
+            emotionItem.innerHTML = `
+                <span>User: ${emotion.user_id}, Reaction: ${emotion.reaction_type}, Author: ${emotion.author_id}</span>
+            `;
+            resultsDiv.appendChild(emotionItem);
+        });
     }
 
     function showStatusMessage(message, isSuccess = true) {
