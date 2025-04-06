@@ -413,9 +413,10 @@ permalink: /bookadd/
         }
     }
 
-    async function updateBook(title) {
+
+    async function updateBook(id) {
     const bookContainer = Array.from(document.querySelectorAll('.book'))
-        .find(book => book.querySelector('h3').innerText === title);
+        .find(book => book.dataset.id === id);
 
     if (!bookContainer) {
         alert('Book not found for update.');
@@ -463,7 +464,7 @@ permalink: /bookadd/
         const updatedCoverUrl = document.getElementById('edit-cover-url').value;
 
         const updatedBookData = {
-            title: title,
+            title: updatedTitle,
             author: updatedAuthor,
             genre: updatedGenre,
             description: updatedDescription,
@@ -471,7 +472,7 @@ permalink: /bookadd/
         };
 
         try {
-            const response = await fetch(`${pythonURI}/api/suggest`, {
+            const response = await fetch(`${pythonURI}/api/suggest/${id}`, {
                 ...fetchOptions,
                 method: 'PUT',
                 headers: {
@@ -559,7 +560,7 @@ permalink: /bookadd/
     }
 }   
 
-let rejectedBooks = ""; // Variable to store accepted books list
+let rejectedBooks = ""; // Variable to store rejected books list
 
     function updateRejectedBooksList() {
         const rejectedBooksListElement = document.getElementById("rejected-books-list");
@@ -623,14 +624,14 @@ document.getElementById('sort-books').addEventListener('change', fetchBooks);
     bookList.innerHTML = books
     .map(
         book => `
-        <div class="book">
+        <div class="book" data-id="${book.id}" data-title="${book.title}">
             <h3>${book.title}</h3>
             <p><strong>Author:</strong> ${book.author}</p>
             <p><strong>Genre:</strong> ${book.genre}</p>
             <p><strong>Description:</strong> ${book.description}</p>
             <img src="${book.cover_url}" alt="Cover image of ${book.title}">
             <div class="book-options">
-                <button class="updateButton" data-title="${book.title}">Update</button>
+                <button class="updateButton" data-id="${book.id}">Update</button>
                 <button class="deleteButton" data-title="${book.title}">Delete</button>
                 <button class="acceptButton" data-title="${book.title}">Accept</button>
                 <button class="rejectButton" data-title="${book.title}">Reject</button>
@@ -642,8 +643,8 @@ document.getElementById('sort-books').addEventListener('change', fetchBooks);
         
         document.querySelectorAll('.updateButton').forEach(button => {
             button.addEventListener('click', (event) => {
-                const title = event.target.dataset.title; // Get the title from data attribute
-                updateBook(title);
+                const id = event.target.dataset.id; // Get the title from data attribute
+                updateBook(id);
             });
         });
         document.querySelectorAll('.deleteButton').forEach(button => {
