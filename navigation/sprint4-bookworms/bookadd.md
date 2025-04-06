@@ -188,38 +188,42 @@ permalink: /bookadd/
 </style>
 
 <div class="container">
-<h1>Suggest your favorite books here!</h1>
-<form id="book-form">
-    <div>
-        <h2>Book Title</h2>
-        <label for="title">Title</label>
-        <input type="text" id="title" name="title" placeholder="Enter book title" required>
-        <h2>Author</h2>
-        <label for="author">Author</label>
-        <input type="text" id="author" name="author" placeholder="Enter author's name" required>
-        <h2>Genre</h2>
-        <label for="genre">Genre</label>
-        <select id="genre" name="genre" required>
-            <option value="">Select Genre</option>
-            <option value="Classics">Classics</option>
-            <option value="Fantasy">Fantasy</option>
-            <option value="Nonfiction">Nonfiction</option>
-            <option value="Historical Fiction">Historical Fiction</option>
-            <option value="Suspense/Thriller">Suspense/Thriller</option>
-            <option value="Romance">Romance</option>
-            <option value="Dystopian">Dystopian</option>
-            <option value="Mystery">Mystery</option>
-        </select>
-        <h2>Description</h2>
-        <label for="description">Description</label>
-        <textarea id="description" name="description" rows="5" placeholder="Enter a brief description" required></textarea>
-        <h2>Cover Image</h2>
-        <label for="cover_url">Cover Image URL</label>
-        <input type="url" id="cover_url" name="cover_url" placeholder="Enter image URL" required>
-        <button type="submit">Add Book</button>
+    <h1>Suggest your favorite books here!</h1>
+    <form id="book-form">
+        <div id="books-container">
+            <div class="book-entry">
+                <h2>Book Title</h2>
+                <label for="title">Title</label>
+                <input type="text" class="title" placeholder="Enter book title" required>
+                <h2>Author</h2>
+                <label for="author">Author</label>
+                <input type="text" class="author" placeholder="Enter author's name" required>
+                <h2>Genre</h2>
+                <label for="genre">Genre</label>
+                <select class="genre" required>
+                    <option value="">Select Genre</option>
+                    <option value="Classics">Classics</option>
+                    <option value="Fantasy">Fantasy</option>
+                    <option value="Nonfiction">Nonfiction</option>
+                    <option value="Historical Fiction">Historical Fiction</option>
+                    <option value="Suspense/Thriller">Suspense/Thriller</option>
+                    <option value="Romance">Romance</option>
+                    <option value="Dystopian">Dystopian</option>
+                    <option value="Mystery">Mystery</option>
+                </select>
+                <h2>Description</h2>
+                <label for="description">Description</label>
+                <textarea class="description" rows="5" placeholder="Enter a brief description" required></textarea>
+                <h2>Cover Image</h2>
+                <label for="cover_url">Cover Image URL</label>
+                <input type="url" class="cover_url" placeholder="Enter image URL" required>
+                <button type="button" class="remove-book">Remove Book</button>
+            </div>
+        </div>
+        <button type="button" id="add-book">Add Another Book</button>
+        <button type="submit">Submit Books</button>
         <button type="reset" class="start_over">Start Over</button>
-    </div>
-</form>
+    </form>
 </div>
 
 <div id="book-list" class="container2">
@@ -258,46 +262,113 @@ permalink: /bookadd/
     });
 
 
-    document.getElementById('book-form').addEventListener('submit', async function(event) {
+    document.getElementById('add-book').addEventListener('click', () => {
+        const container = document.getElementById('books-container');
+        const newEntry = document.createElement('div');
+        newEntry.classList.add('book-entry');
+        newEntry.innerHTML = `
+            <h2>Book Title</h2>
+            <label>Title</label>
+            <input type="text" class="title" placeholder="Enter book title" required>
+
+            <h2>Author</h2>
+            <label>Author</label>
+            <input type="text" class="author" placeholder="Enter author's name" required>
+
+            <h2>Genre</h2>
+            <label>Genre</label>
+            <select class="genre" required>
+                <option value="">Select Genre</option>
+                <option value="Classics">Classics</option>
+                <option value="Fantasy">Fantasy</option>
+                <option value="Nonfiction">Nonfiction</option>
+                <option value="Historical Fiction">Historical Fiction</option>
+                <option value="Suspense/Thriller">Suspense/Thriller</option>
+                <option value="Romance">Romance</option>
+                <option value="Dystopian">Dystopian</option>
+                <option value="Mystery">Mystery</option>
+            </select>
+
+            <h2>Description</h2>
+            <label>Description</label>
+            <textarea class="description" rows="5" placeholder="Enter a brief description" required></textarea>
+
+            <h2>Cover Image</h2>
+            <label>Cover Image URL</label>
+            <input type="url" class="cover_url" placeholder="Enter image URL" required>
+
+            <button type="button" class="remove-book">Remove Book</button>
+        `;
+
+        // Add remove button handler
+        newEntry.querySelector('.remove-book').addEventListener('click', () => {
+            container.removeChild(newEntry);
+        });
+
+        container.appendChild(newEntry);
+    });
+
+    // Handle form submission for bulk data
+    document.getElementById('book-form').addEventListener('submit', async (event) => {
         event.preventDefault();
 
-        const title = document.getElementById('title').value;
-        const author = document.getElementById('author').value;
-        const genre = document.getElementById('genre').value;
-        const description = document.getElementById('description').value;
-        const cover_url = document.getElementById('cover_url').value;
+        const books = Array.from(document.querySelectorAll('.book-entry')).map(entry => ({
+            title: entry.querySelector('.title').value,
+            author: entry.querySelector('.author').value,
+            genre: entry.querySelector('.genre').value,
+            description: entry.querySelector('.description').value,
+            cover_url: entry.querySelector('.cover_url').value
+        }));
 
-        const bookData = {
-            title: title,
-            author: author,
-            genre: genre,
-            description: description,
-            cover_url: cover_url
-        };
-        
+        if (books.length === 0) {
+            alert('Please add at least one book.');
+            return;
+        }
+
         try {
-            const response = await fetch(`${pythonURI}/api/suggest`, {  // Use /api/suggest endpoint
-                ...fetchOptions,
+            const response = await fetch(`${pythonURI}/api/suggest/bulk`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(bookData)
+                body: JSON.stringify(books)
             });
 
             if (!response.ok) {
-                throw new Error('Failed to add book to suggestions: ' + response.statusText);
+                throw new Error(`Failed to add books: ${response.statusText}`);
             }
 
             const result = await response.json();
-            console.log("Book added to suggestions successfully")
-            alert('Book added successfully!');
-            document.getElementById('book-form').reset();
-            fetchBooks();  // Refresh book list
+            console.log('Bulk submission result:', result);
+
+            let successCount = 0;
+            let errorCount = 0;
+
+            result.forEach(res => {
+                if (res.error) {
+                    console.error(`Failed to add book "${res.title}": ${res.message}`);
+                    errorCount++;
+                } else {
+                    console.log(`Book "${res.title}" added successfully.`);
+                    successCount++;
+                }
+            });
+
+
+            // Reset form if successful
+            if (successCount > 0) {
+                document.getElementById('book-form').reset();
+                document.getElementById('books-container').innerHTML = ''; // Clear all entries
+            }
         } catch (error) {
-            console.error('Error adding book to suggestions:', error);
-            alert('Error adding book to suggestions: ' + error.message);
+            console.error('Error adding books:', error);
+            alert(`Error: ${error.message}`);
         }
+    });
+
+    // Reset handler (optional)
+    document.querySelector('.start_over').addEventListener('click', () => {
+        document.getElementById('books-container').innerHTML = ''; // Clear all books
     });
 
     async function fetchRandomBook() {
