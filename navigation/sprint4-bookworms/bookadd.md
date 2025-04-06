@@ -503,62 +503,68 @@ permalink: /bookadd/
     }
 
     async function acceptBook(title) {
-    const bookContainer = Array.from(document.querySelectorAll('.book'))
-        .find(book => book.querySelector('h3').innerText === title);
+        const bookContainer = Array.from(document.querySelectorAll('.book'))
+            .find(book => book.querySelector('h3').innerText === title);
 
-    if (!bookContainer) {
-        alert('Book not found for acceptance.');
-        return;
-    }
-
-    const author = bookContainer.querySelector('p:nth-child(2)').innerText.split(': ')[1];
-    const genre = bookContainer.querySelector('p:nth-child(3)').innerText.split(': ')[1];
-    const description = bookContainer.querySelector('p:nth-child(4)').innerText.replace('Description: ', '');
-    const cover_url = bookContainer.querySelector('img').src;
-
-    const bookData = {
-        title: title,
-        author: author,
-        genre: genre,
-        description: description,
-        cover_url: cover_url
-    };
-
-    try {
-        const response = await fetch(`${pythonURI}/api/suggest/accept`, { 
-            ...fetchOptions,
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(bookData)
-        });
-
-        const response2 = await fetch(`${pythonURI}/api/suggest`, {
-            ...fetchOptions,
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ title }) 
-        });
-
-        if (!response2.ok) {
-            throw new Error('Failed to accept book: ' + response2.statusText);
+        if (!bookContainer) {
+            alert('Book not found for acceptance.');
+            return;
         }
 
-        acceptedBooks += (acceptedBooks ? ", " : "") + title;
-        updateAcceptedBooksList(); // Update display
-        
-        console.log("Book accepted successfully");
-        alert('Book accepted successfully!');
-        console.log("Book removed from suggestions successfully");
-        fetchBooks();  // Refresh book list
-    } catch (error) {
-        console.error('Error accepting book:', error);
-        alert('Error accepting book: ' + error.message);
-    }
-}   
+        const author = bookContainer.querySelector('p:nth-child(2)').innerText.split(': ')[1];
+        const genre = bookContainer.querySelector('p:nth-child(3)').innerText.split(': ')[1];
+        const description = bookContainer.querySelector('p:nth-child(4)').innerText.replace('Description: ', '');
+        const cover_url = bookContainer.querySelector('img').src;
+
+        const bookData = {
+            title: title,
+            author: author,
+            genre: genre,
+            description: description,
+            cover_url: cover_url
+        };
+
+        try {
+            const response = await fetch(`${pythonURI}/api/suggest/accept`, { 
+                ...fetchOptions,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(bookData)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`Failed to accept book: ${errorData.error || response.statusText}`);
+            }
+
+            const response2 = await fetch(`${pythonURI}/api/suggest`, {
+                ...fetchOptions,
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title }) 
+            });
+
+            if (!response2.ok) {
+                const errorData = await response2.json();
+                throw new Error(`Failed to remove suggestion: ${errorData.error || response2.statusText}`);
+            }
+
+            acceptedBooks += (acceptedBooks ? ", " : "") + title;
+            updateAcceptedBooksList(); // Update display
+            
+            console.log("Book accepted successfully");
+            alert('Book accepted successfully!');
+            console.log("Book removed from suggestions successfully");
+            fetchBooks();  // Refresh book list
+        } catch (error) {
+            console.error(error);
+            alert(error.message);
+        }
+    }   
 
 let rejectedBooks = ""; // Variable to store rejected books list
 
@@ -570,7 +576,7 @@ let rejectedBooks = ""; // Variable to store rejected books list
 async function rejectBook(title) {
     if (confirm(`Are you sure you want to reject "${title}"?`)) {
         try {
-            const response = await fetch(`${pythonURI}/api/suggest`, {
+            const response = await fetch(`${pythonURI}/api/suggest/reject`, {
                 ...fetchOptions,
                 method: 'DELETE',
                 headers: {
@@ -580,7 +586,7 @@ async function rejectBook(title) {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to reject book: ' + response.statusText);
+                throw new Error(response.statusText);
             }
 
             console.log("Book rejected successfully");
