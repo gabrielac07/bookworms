@@ -238,8 +238,9 @@ permalink: /bookadd/
     <h2>Accepted Books:</h2>
     <p id="accepted-books-list" style="color: #a57e5a;">None yet.</p></div>
     <div id="rejected-books-container">
-    <h3>Rejected Books:</h3>
-    <p id="rejected-books-list" style="color: #a57e5a;">None yet.</p></div><br>
+    <h2>Rejected Books:</h2>
+    <p id="rejected-books-list" style="color: #a57e5a;">None yet.</p></div>
+    <button id="reset-button" style="margin-top: 20px;">Reset Suggestion History</button><br>
     <div id="book-list-content" class="collapsed">
         <p style="color: #a57e5a">No books added yet. Fill out the form above to start adding your favorite books!</p>
     </div>
@@ -438,7 +439,12 @@ permalink: /bookadd/
         rejectedBooks = localStorage.getItem("rejectedBooks") || "";
         updateAcceptedBooksList();
         updateRejectedBooksList();
-        });
+
+        const resetButton = document.getElementById("reset-button");
+        if (resetButton) {
+        resetButton.addEventListener("click", resetSuggestionStorage);
+    }
+    });
 
     const toggleButton = document.getElementById('toggle-books');
     const bookList = document.getElementById('book-list-content');
@@ -672,4 +678,15 @@ let rejectedBooks = "";
         rejectedBooksListElement.textContent = rejectedBooks.trim() ? rejectedBooks : "None yet.";
     }
 
+async function resetSuggestionStorage() {
+    if (confirm("Are you sure you want to reset suggestion history?")) {
+        localStorage.removeItem("acceptedBooks");
+        localStorage.removeItem("rejectedBooks");
+        acceptedBooks = "";
+        rejectedBooks = "";
+        updateAcceptedBooksList();
+        updateRejectedBooksList();
+        alert("Suggestion history reset.");
+    }
+}
 </script>
