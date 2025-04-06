@@ -432,7 +432,13 @@ permalink: /bookadd/
         console.error('Error fetching books:', error);
     }}
 
-    document.addEventListener('DOMContentLoaded', () => {fetchBooks();});
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchBooks();
+        acceptedBooks = localStorage.getItem("acceptedBooks") || "";
+        rejectedBooks = localStorage.getItem("rejectedBooks") || "";
+        updateAcceptedBooksList();
+        updateRejectedBooksList();
+        });
 
     const toggleButton = document.getElementById('toggle-books');
     const bookList = document.getElementById('book-list-content');
@@ -604,7 +610,9 @@ permalink: /bookadd/
             }
 
             acceptedBooks += (acceptedBooks ? ", " : "") + title;
-            updateAcceptedBooksList(); 
+            localStorage.setItem("acceptedBooks", acceptedBooks);
+            updateAcceptedBooksList();
+
             
             console.log("Book accepted successfully");
             alert('Book accepted successfully!');
@@ -641,8 +649,12 @@ async function rejectBook(title) {
 
             console.log("Book rejected successfully");
             alert('Book rejected successfully!');
+
             rejectedBooks += (rejectedBooks ? ", " : "") + title;
+            localStorage.setItem("rejectedBooks", rejectedBooks);
             updateRejectedBooksList();
+
+
             fetchBooks();
         } catch (error) {
             console.error('Error rejecting book:', error);
