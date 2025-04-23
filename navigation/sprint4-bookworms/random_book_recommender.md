@@ -317,7 +317,7 @@ permalink: /random_book_recommender/
         };
         
         try {
-            const response = await fetch(`${pythonURI}/api/suggest`, {  // Use /api/suggest endpoint
+            const response = await fetch(`${pythonURI}/api/bookrec`, {  // Use /api/bookrec endpoint
                 ...fetchOptions,
                 method: 'POST',
                 headers: {
@@ -345,7 +345,7 @@ permalink: /random_book_recommender/
     async function deleteBook(title) {
         if (confirm(`Are you sure you want to delete "${title}"?`)) {
             try {
-                const response = await fetch(`${pythonURI}/api/suggest`, {
+                const response = await fetch(`${pythonURI}/api/bookrec`, {
                     ...fetchOptions,
                     method: 'DELETE',
                     headers: {
@@ -430,7 +430,7 @@ permalink: /random_book_recommender/
         };
 
         try {
-            const response = await fetch(`${pythonURI}/api/suggest`, {
+            const response = await fetch(`${pythonURI}/api/bookrec`, {
                 ...fetchOptions,
                 method: 'PUT',
                 headers: {
@@ -453,17 +453,17 @@ permalink: /random_book_recommender/
     });
 }
     // create list at bottom
-        async function fetchBooks() {
+    async function fetchBooks() {
         try {
-            const response = await fetch(new URL(`${pythonURI}/api/suggest/book`), fetchOptions); // Fetch all suggested books
+            const response = await fetch(`${pythonURI}/api/bookrec/book`, fetchOptions);
             if (!response.ok) {
-                throw new Error('Failed to fetch books: ' + response.statusText);
+            throw new Error('Failed to fetch books: ' + response.statusText);
             }
 
             const books = await response.json();
 
             // Filter out static books
-            const userAddedBooks = books.filter(book => book.title !== 'The Raven Boys' && book.title !== 'Catch-22');
+            const userAddedBooks = books.filter(book => book.title !== 'A Game of Thrones' && book.title !== 'A Clash of Kings');
 
             const bookList = document.getElementById('book_table_content');
             if (userAddedBooks.length === 0) {
