@@ -358,8 +358,8 @@ permalink: /random_book_recommender/
                     throw new Error('Failed to delete book: ' + response.statusText);
                 }
 
-                console.log("Book deleted successfully");
-                alert('Book deleted successfully!');
+                console.log(`Book "${title}" deleted successfully`);
+                alert(`Book "${title}" deleted successfully!`);
                 fetchBooks(); // Refresh the book list
             } catch (error) {
                 console.error('Error deleting book:', error);
@@ -457,68 +457,87 @@ permalink: /random_book_recommender/
         try {
             const response = await fetch(`${pythonURI}/api/bookrec/book`, fetchOptions);
             if (!response.ok) {
-            throw new Error('Failed to fetch books: ' + response.statusText);
+                throw new Error('Failed to fetch books: ' + response.statusText);
             }
 
             const books = await response.json();
 
-            // Filter out static books
-            const userAddedBooks = books.filter(book => book.title !== 'A Game of Thrones' && book.title !== 'A Clash of Kings');
+            // Define static books
+            const staticBooks = [
+                {
+                    title: "A Clash of Kings",
+                    author: "George R. R. Martin",
+                    genre: "Fantasy",
+                    description: "A Clash of Kings by George R. R. Martin is the second installment in the A Song of Ice and Fire series. The novel follows the chaos and power struggles that erupt across the Seven Kingdoms as multiple factions claim the Iron Throne following the death of King Robert Baratheon. Amid the political intrigue and battles, dark supernatural forces begin to rise, threatening the realm from the shadows.",
+                    cover_url: "https://m.media-amazon.com/images/I/81ES5DAxprL.jpg"
+                },
+                {
+                    title: "A Storm of Swords",
+                    author: "George R. R. Martin",
+                    genre: "Fantasy",
+                    description: "A Storm of Swords by George R. R. Martin is the third book in the A Song of Ice and Fire series. The novel continues the epic tale of political intrigue, betrayal, and warfare in the Seven Kingdoms. As the War of the Five Kings rages on, alliances are forged and broken, and the fate of Westeros hangs in the balance.",
+                    cover_url: "https://m.media-amazon.com/images/I/819o5XLwuFL.jpg"
+                }
+            ];
+
+            // Combine static books with user-added books
+            const allBooks = [...staticBooks, ...books];
 
             const bookList = document.getElementById('book_table_content');
-            if (userAddedBooks.length === 0) {
-                bookList.innerHTML = '<p style="color: #000000">No books added yet. Fill out the form above to start adding your favorite books!</p>';
-                return;
+            if (allBooks.length === 0) {
+            bookList.innerHTML = '<p style="color: #000000">No books added yet. Fill out the form above to start adding your favorite books!</p>';
+            return;
             }
 
-        // Render books
-        bookList.innerHTML = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>Cover</th>
-                        <th>Title</th>
-                        <th>Author</th>
-                        <th>Genre</th>
-                        <th>Descriptions</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${userAddedBooks.map(book => `
-                        <tr class="book">
-                            <td><img src="${book.cover_url}" alt="Cover image of ${book.title}" style="max-width: 100px;"></td>
-                            <td>${book.title}</td>
-                            <td>${book.author}</td>
-                            <td>${book.genre}</td>
-                            <td>${book.description}</td>
-                            <td>
-                                <button class="updateButton" data-title="${book.title}">Update</button>
-                                <button class="deleteButton" data-title="${book.title}">Delete</button>
-                            </td>
+            // Render books
+            bookList.innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cover</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Genre</th>
+                            <th>Description</th>
+                            <th>Actions</th>
                         </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        `;
-        
-        document.querySelectorAll('.updateButton').forEach(button => {
-            button.addEventListener('click', (event) => {
-                const title = event.target.dataset.title; // Get the title from data attribute
-                updateBook(title);
-            });
-        });
-        document.querySelectorAll('.deleteButton').forEach(button => {
-            button.addEventListener('click', (event) => {
-                const title = event.target.dataset.title; 
-                deleteBook(title);
-            });
-        });
+                    </thead>
+                    <tbody>
+                        ${books.map(book => `
+                            <tr class="book">
+                                <td><img src="${book.cover_url}" alt="Cover image of ${book.title}" style="max-width: 100px;"></td>
+                                <td>${book.title}</td>
+                                <td>${book.author}</td>
+                                <td>${book.genre}</td>
+                                <td>${book.description}</td>
+                                <td>
+                                    <button class="updateButton" data-title="${book.title}">Update</button>
+                                    <button class="deleteButton" data-title="${book.title}">Delete</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
 
-    } catch (error) {
-        console.error('Error fetching books:', error);
+            // Attach event listeners for update and delete buttons
+            document.querySelectorAll('.updateButton').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const title = event.target.dataset.title;
+                    updateBook(title);
+                });
+            });
+            document.querySelectorAll('.deleteButton').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const title = event.target.dataset.title; // Get the title from the button's data attribute
+                    deleteBook(title);
+                });
+            });
+
+        } catch (error) {
+            console.error('Error fetching books:', error);
+        }
     }
-}
 
     document.addEventListener('DOMContentLoaded', () => {
         fetchBooks();
