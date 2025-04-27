@@ -188,38 +188,42 @@ permalink: /bookadd/
 </style>
 
 <div class="container">
-<h1>Suggest your favorite books here!</h1>
-<form id="book-form">
-    <div>
-        <h2>Book Title</h2>
-        <label for="title">Title</label>
-        <input type="text" id="title" name="title" placeholder="Enter book title" required>
-        <h2>Author</h2>
-        <label for="author">Author</label>
-        <input type="text" id="author" name="author" placeholder="Enter author's name" required>
-        <h2>Genre</h2>
-        <label for="genre">Genre</label>
-        <select id="genre" name="genre" required>
-            <option value="">Select Genre</option>
-            <option value="Classics">Classics</option>
-            <option value="Fantasy">Fantasy</option>
-            <option value="Nonfiction">Nonfiction</option>
-            <option value="Historical Fiction">Historical Fiction</option>
-            <option value="Suspense/Thriller">Suspense/Thriller</option>
-            <option value="Romance">Romance</option>
-            <option value="Dystopian">Dystopian</option>
-            <option value="Mystery">Mystery</option>
-        </select>
-        <h2>Description</h2>
-        <label for="description">Description</label>
-        <textarea id="description" name="description" rows="5" placeholder="Enter a brief description" required></textarea>
-        <h2>Cover Image</h2>
-        <label for="cover_url">Cover Image URL</label>
-        <input type="url" id="cover_url" name="cover_url" placeholder="Enter image URL" required>
-        <button type="submit">Add Book</button>
+    <h1>Suggest your favorite books here!</h1>
+    <form id="book-form">
+        <div id="books-container">
+            <div class="book-entry">
+                <h2>Book Title</h2>
+                <label for="title">Title</label>
+                <input type="text" class="title" placeholder="Enter book title" required>
+                <h2>Author</h2>
+                <label for="author">Author</label>
+                <input type="text" class="author" placeholder="Enter author's name" required>
+                <h2>Genre</h2>
+                <label for="genre">Genre</label>
+                <select class="genre" required>
+                    <option value="">Select Genre</option>
+                    <option value="Classics">Classics</option>
+                    <option value="Fantasy">Fantasy</option>
+                    <option value="Nonfiction">Nonfiction</option>
+                    <option value="Historical Fiction">Historical Fiction</option>
+                    <option value="Suspense/Thriller">Suspense/Thriller</option>
+                    <option value="Romance">Romance</option>
+                    <option value="Dystopian">Dystopian</option>
+                    <option value="Mystery">Mystery</option>
+                </select>
+                <h2>Description</h2>
+                <label for="description">Description</label>
+                <textarea class="description" rows="5" placeholder="Enter a brief description" required></textarea>
+                <h2>Cover Image</h2>
+                <label for="cover_url">Cover Image URL</label>
+                <input type="url" class="cover_url" placeholder="Enter image URL" required>
+                <button type="button" class="remove-book">Remove Book</button>
+            </div>
+        </div>
+        <button type="button" id="add-book">Add Another Book</button>
+        <button type="submit">Submit Books</button>
         <button type="reset" class="start_over">Start Over</button>
-    </div>
-</form>
+    </form>
 </div>
 
 <div id="book-list" class="container2">
@@ -234,8 +238,9 @@ permalink: /bookadd/
     <h2>Accepted Books:</h2>
     <p id="accepted-books-list" style="color: #a57e5a;">None yet.</p></div>
     <div id="rejected-books-container">
-    <h3>Rejected Books:</h3>
-    <p id="rejected-books-list" style="color: #a57e5a;">None yet.</p></div><br>
+    <h2>Rejected Books:</h2>
+    <p id="rejected-books-list" style="color: #a57e5a;">None yet.</p></div>
+    <button id="reset-button" style="margin-top: 20px;">Reset Suggestion History</button><br>
     <div id="book-list-content" class="collapsed">
         <p style="color: #a57e5a">No books added yet. Fill out the form above to start adding your favorite books!</p>
     </div>
@@ -246,288 +251,118 @@ permalink: /bookadd/
 <script type="module">
     import { pythonURI, fetchOptions } from '{{ site.baseurl }}/assets/js/api/config.js';
 
-    const toggleButton = document.getElementById('toggle-books');
-    const bookList = document.getElementById('book-list-content');
+    document.getElementById('add-book').addEventListener('click', () => {
+        const container = document.getElementById('books-container');
+        const newEntry = document.createElement('div');
+        newEntry.classList.add('book-entry');
+        newEntry.innerHTML = `
+            <h2>Book Title</h2>
+            <label>Title</label>
+            <input type="text" class="title" placeholder="Enter book title" required>
 
-    toggleButton.addEventListener('click', () => {
-        bookList.classList.toggle('collapsed');
-        bookList.classList.toggle('expanded');
-        
-        toggleButton.textContent = 
-            bookList.classList.contains('collapsed') ? 'Show More' : 'Show Less';
+            <h2>Author</h2>
+            <label>Author</label>
+            <input type="text" class="author" placeholder="Enter author's name" required>
+
+            <h2>Genre</h2>
+            <label>Genre</label>
+            <select class="genre" required>
+                <option value="">Select Genre</option>
+                <option value="Classics">Classics</option>
+                <option value="Fantasy">Fantasy</option>
+                <option value="Nonfiction">Nonfiction</option>
+                <option value="Historical Fiction">Historical Fiction</option>
+                <option value="Suspense/Thriller">Suspense/Thriller</option>
+                <option value="Romance">Romance</option>
+                <option value="Dystopian">Dystopian</option>
+                <option value="Mystery">Mystery</option>
+            </select>
+
+            <h2>Description</h2>
+            <label>Description</label>
+            <textarea class="description" rows="5" placeholder="Enter a brief description" required></textarea>
+
+            <h2>Cover Image</h2>
+            <label>Cover Image URL</label>
+            <input type="url" class="cover_url" placeholder="Enter image URL" required>
+
+            <button type="button" class="remove-book">Remove Book</button>
+        `;
+
+        // Remove book form button
+        newEntry.querySelector('.remove-book').addEventListener('click', () => {
+            container.removeChild(newEntry);
+        });
+
+        container.appendChild(newEntry);
     });
 
-
-    document.getElementById('book-form').addEventListener('submit', async function(event) {
+    // Bulk data form submission
+    document.getElementById('book-form').addEventListener('submit', async (event) => {
         event.preventDefault();
 
-        const title = document.getElementById('title').value;
-        const author = document.getElementById('author').value;
-        const genre = document.getElementById('genre').value;
-        const description = document.getElementById('description').value;
-        const cover_url = document.getElementById('cover_url').value;
+        const books = Array.from(document.querySelectorAll('.book-entry')).map(entry => ({
+            title: entry.querySelector('.title').value,
+            author: entry.querySelector('.author').value,
+            genre: entry.querySelector('.genre').value,
+            description: entry.querySelector('.description').value,
+            cover_url: entry.querySelector('.cover_url').value
+        }));
 
-        const bookData = {
-            title: title,
-            author: author,
-            genre: genre,
-            description: description,
-            cover_url: cover_url
-        };
-        
+        if (books.length === 0) {
+            alert('Please add at least one book.');
+            return;
+        }
+
         try {
-            const response = await fetch(`${pythonURI}/api/suggest`, {  // Use /api/suggest endpoint
-                ...fetchOptions,
+            const response = await fetch(`${pythonURI}/api/suggest/bulk`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(bookData)
+                body: JSON.stringify(books)
             });
 
             if (!response.ok) {
-                throw new Error('Failed to add book to suggestions: ' + response.statusText);
+                throw new Error(`Failed to add books: ${response.statusText}`);
             }
 
             const result = await response.json();
-            console.log("Book added to suggestions successfully")
-            alert('Book added successfully!');
-            document.getElementById('book-form').reset();
-            fetchBooks();  // Refresh book list
-        } catch (error) {
-            console.error('Error adding book to suggestions:', error);
-            alert('Error adding book to suggestions: ' + error.message);
-        }
-    });
+            console.log('Bulk submission result:', result);
 
-    async function fetchRandomBook() {
-        try {
-            const response = await fetch(`${pythonURI}/api/suggest/random`);  // Use /api/suggest/random for GET
-            if (!response.ok) {
-                throw new Error('Failed to fetch random book: ' + response.statusText);
-            }
-            const book = await response.json();
-        } catch (error) {
-            console.error('Error fetching random book:', error);
-        }
-    }
+            let successCount = 0;
+            let errorCount = 0;
 
-    fetchRandomBook();
-
-    async function deleteBook(title) {
-        if (confirm(`Are you sure you want to delete "${title}"?`)) {
-            try {
-                const response = await fetch(`${pythonURI}/api/suggest`, {
-                    ...fetchOptions,
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ title }) // Pass title as an object
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to delete book: ' + response.statusText);
+            result.forEach(res => {
+                if (res.error) {
+                    console.error(`Failed to add book "${res.title}": ${res.message}`);
+                    errorCount++;
+                } else {
+                    console.log(`Book "${res.title}" added successfully.`);
+                    successCount++;
                 }
-
-                console.log("Book deleted successfully");
-                alert('Book deleted successfully!');
-                fetchBooks(); // Refresh the book list
-            } catch (error) {
-                console.error('Error deleting book:', error);
-                alert('Error deleting book: ' + error.message);
-            }
-        } else {
-            alert("Deletion canceled");
-        }
-    }
-
-    async function updateBook(title) {
-    const bookContainer = Array.from(document.querySelectorAll('.book'))
-        .find(book => book.querySelector('h3').innerText === title);
-
-    if (!bookContainer) {
-        alert('Book not found for update.');
-        return;
-    }
-
-    const currentTitle = bookContainer.querySelector('h3').innerText;
-    const currentAuthor = bookContainer.querySelector('p:nth-child(2)').innerText.split(': ')[1];
-    const descriptionElement = Array.from(bookContainer.querySelectorAll('p'))
-        .find(p => p.innerText.startsWith('Description:'));
-    const currentDescription = descriptionElement ? descriptionElement.innerText.replace('Description: ', '') : '';
-    const currentGenre = bookContainer.dataset.genre || '';
-    const currentCoverUrl = bookContainer.querySelector('img').src;
-
-    // Replace static fields with editable inputs
-    bookContainer.innerHTML = `
-        <input type="text" id="edit-title" value="${currentTitle}" placeholder="Title">
-        <input type="text" id="edit-author" value="${currentAuthor}" placeholder="Author">
-        <select id="edit-genre">
-            <option value="Classics" ${currentGenre === 'Classics' ? 'selected' : ''}>Classics</option>
-            <option value="Fantasy" ${currentGenre === 'Fantasy' ? 'selected' : ''}>Fantasy</option>
-            <option value="Nonfiction" ${currentGenre === 'Nonfiction' ? 'selected' : ''}>Nonfiction</option>
-            <option value="Historical Fiction" ${currentGenre === 'Historical Fiction' ? 'selected' : ''}>Historical Fiction</option>
-            <option value="Suspense/Thriller" ${currentGenre === 'Suspense/Thriller' ? 'selected' : ''}>Suspense/Thriller</option>
-            <option value="Romance" ${currentGenre === 'Romance' ? 'selected' : ''}>Romance</option>
-            <option value="Dystopian" ${currentGenre === 'Dystopian' ? 'selected' : ''}>Dystopian</option>
-            <option value="Mystery" ${currentGenre === 'Mystery' ? 'selected' : ''}>Mystery</option>
-        </select>
-        <textarea id="edit-description" placeholder="Description">${currentDescription}</textarea>
-        <input type="text" id="edit-cover-url" value="${currentCoverUrl}" placeholder="Cover URL">
-        <button id="save-update">OK</button>
-        <button id="cancel-update">Cancel</button>
-    `;
-
-    // Handle Cancel Button
-    document.getElementById('cancel-update').addEventListener('click', () => {
-        fetchBooks(); // Reload the book list to cancel editing
-    });
-
-    document.getElementById('save-update').addEventListener('click', async () => {
-        const updatedTitle = document.getElementById('edit-title').value;
-        const updatedAuthor = document.getElementById('edit-author').value;
-        const updatedGenre = document.getElementById('edit-genre').value;
-        const updatedDescription = document.getElementById('edit-description').value;
-        const updatedCoverUrl = document.getElementById('edit-cover-url').value;
-
-        const updatedBookData = {
-            title: title,
-            author: updatedAuthor,
-            genre: updatedGenre,
-            description: updatedDescription,
-            cover_url: updatedCoverUrl
-        };
-
-        try {
-            const response = await fetch(`${pythonURI}/api/suggest`, {
-                ...fetchOptions,
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(updatedBookData)
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to update book: ' + response.statusText);
-            }
 
-            console.log('Book updated successfully');
-            alert('Book updated successfully!');
-            fetchBooks(); // Refresh the book list
+            // Reset form if successful
+            if (successCount > 0) {
+                document.getElementById('book-form').reset();
+                document.getElementById('books-container').innerHTML = ''; // Clear all entries
+            }
         } catch (error) {
-            console.error('Error updating book:', error);
-            alert('Error updating book: ' + error.message);
+            console.error('Error adding books:', error);
+            alert(`Error: ${error.message}`);
         }
     });
-}
-    
-    let acceptedBooks = ""; // Variable to store accepted books list
 
-    function updateAcceptedBooksList() {
-        const acceptedBooksListElement = document.getElementById("accepted-books-list");
-        acceptedBooksListElement.textContent = acceptedBooks.trim() ? acceptedBooks : "None yet.";
-    }
+    // Start over button
+    document.querySelector('.start_over').addEventListener('click', () => {
+        document.getElementById('books-container').innerHTML = ''; // Clear all books
+    });
 
-    async function acceptBook(title) {
-    const bookContainer = Array.from(document.querySelectorAll('.book'))
-        .find(book => book.querySelector('h3').innerText === title);
+    document.getElementById('sort-books').addEventListener('change', fetchBooks);
 
-    if (!bookContainer) {
-        alert('Book not found for acceptance.');
-        return;
-    }
-
-    const author = bookContainer.querySelector('p:nth-child(2)').innerText.split(': ')[1];
-    const genre = bookContainer.querySelector('p:nth-child(3)').innerText.split(': ')[1];
-    const description = bookContainer.querySelector('p:nth-child(4)').innerText.replace('Description: ', '');
-    const cover_url = bookContainer.querySelector('img').src;
-
-    const bookData = {
-        title: title,
-        author: author,
-        genre: genre,
-        description: description,
-        cover_url: cover_url
-    };
-
-    try {
-        const response = await fetch(`${pythonURI}/api/suggest/accept`, { 
-            ...fetchOptions,
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(bookData)
-        });
-
-        const response2 = await fetch(`${pythonURI}/api/suggest`, {
-            ...fetchOptions,
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ title }) 
-        });
-
-        if (!response2.ok) {
-            throw new Error('Failed to accept book: ' + response2.statusText);
-        }
-
-        acceptedBooks += (acceptedBooks ? ", " : "") + title;
-        updateAcceptedBooksList(); // Update display
-        
-        console.log("Book accepted successfully");
-        alert('Book accepted successfully!');
-        console.log("Book removed from suggestions successfully");
-        fetchBooks();  // Refresh book list
-    } catch (error) {
-        console.error('Error accepting book:', error);
-        alert('Error accepting book: ' + error.message);
-    }
-}   
-
-let rejectedBooks = ""; // Variable to store accepted books list
-
-    function updateRejectedBooksList() {
-        const rejectedBooksListElement = document.getElementById("rejected-books-list");
-        rejectedBooksListElement.textContent = rejectedBooks.trim() ? rejectedBooks : "None yet.";
-    }
-
-async function rejectBook(title) {
-    if (confirm(`Are you sure you want to reject "${title}"?`)) {
-        try {
-            const response = await fetch(`${pythonURI}/api/suggest`, {
-                ...fetchOptions,
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ title }) // Pass title as an object
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to reject book: ' + response.statusText);
-            }
-
-            console.log("Book rejected successfully");
-            alert('Book rejected successfully!');
-            rejectedBooks += (rejectedBooks ? ", " : "") + title;
-            updateRejectedBooksList();
-            fetchBooks();
-        } catch (error) {
-            console.error('Error rejecting book:', error);
-            alert('Error rejecting book: ' + error.message);
-        }
-    } else {
-        alert("Rejection canceled");
-    }
-}
-
-document.getElementById('sort-books').addEventListener('change', fetchBooks);
-
-    // create list at bottom
+    // Create display at bottom
     async function fetchBooks() {
         try {
             const response = await fetch(new URL(`${pythonURI}/api/suggest/book`), fetchOptions); // Fetch all suggested books
@@ -548,18 +383,18 @@ document.getElementById('sort-books').addEventListener('change', fetchBooks);
             return;
         }
 
-        // Render books
+    // Render books
     bookList.innerHTML = books
     .map(
         book => `
-        <div class="book">
+        <div class="book" data-id="${book.id}" data-title="${book.title}">
             <h3>${book.title}</h3>
             <p><strong>Author:</strong> ${book.author}</p>
             <p><strong>Genre:</strong> ${book.genre}</p>
             <p><strong>Description:</strong> ${book.description}</p>
             <img src="${book.cover_url}" alt="Cover image of ${book.title}">
             <div class="book-options">
-                <button class="updateButton" data-title="${book.title}">Update</button>
+                <button class="updateButton" data-id="${book.id}">Update</button>
                 <button class="deleteButton" data-title="${book.title}">Delete</button>
                 <button class="acceptButton" data-title="${book.title}">Accept</button>
                 <button class="rejectButton" data-title="${book.title}">Reject</button>
@@ -571,8 +406,8 @@ document.getElementById('sort-books').addEventListener('change', fetchBooks);
         
         document.querySelectorAll('.updateButton').forEach(button => {
             button.addEventListener('click', (event) => {
-                const title = event.target.dataset.title; // Get the title from data attribute
-                updateBook(title);
+                const id = event.target.dataset.id;
+                updateBook(id);
             });
         });
         document.querySelectorAll('.deleteButton').forEach(button => {
@@ -583,25 +418,275 @@ document.getElementById('sort-books').addEventListener('change', fetchBooks);
         });
         document.querySelectorAll('.acceptButton').forEach(button => {
             button.addEventListener('click', (event) => {
-                const title = event.target.dataset.title; // Get the title from data attribute
+                const title = event.target.dataset.title;
                 acceptBook(title);
             });
         });
         document.querySelectorAll('.rejectButton').forEach(button => {
             button.addEventListener('click', (event) => {
-                const title = event.target.dataset.title; // Get the title from data attribute
+                const title = event.target.dataset.title;
                 rejectBook(title);
             });
         });
 
     } catch (error) {
         console.error('Error fetching books:', error);
+    }}
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchBooks();
+        acceptedBooks = localStorage.getItem("acceptedBooks") || "";
+        rejectedBooks = localStorage.getItem("rejectedBooks") || "";
+        updateAcceptedBooksList();
+        updateRejectedBooksList();
+
+        const resetButton = document.getElementById("reset-button");
+        if (resetButton) {
+        resetButton.addEventListener("click", resetSuggestionStorage);
+    }
+    });
+
+    const toggleButton = document.getElementById('toggle-books');
+    const bookList = document.getElementById('book-list-content');
+
+    toggleButton.addEventListener('click', () => {
+        bookList.classList.toggle('collapsed');
+        bookList.classList.toggle('expanded');
+        
+        toggleButton.textContent = 
+            bookList.classList.contains('collapsed') ? 'Show More' : 'Show Less';
+    });
+
+    async function updateBook(id) {
+        const bookContainer = Array.from(document.querySelectorAll('.book'))
+            .find(book => book.dataset.id === id);
+
+        if (!bookContainer) {
+            alert('Book not found for update.');
+            return;
+        }
+
+        const currentTitle = bookContainer.querySelector('h3').innerText;
+        const currentAuthor = bookContainer.querySelector('p:nth-child(2)').innerText.split(': ')[1];
+        const descriptionElement = Array.from(bookContainer.querySelectorAll('p'))
+            .find(p => p.innerText.startsWith('Description:'));
+        const currentDescription = descriptionElement ? descriptionElement.innerText.replace('Description: ', '') : '';
+        const currentGenre = bookContainer.dataset.genre || '';
+        const currentCoverUrl = bookContainer.querySelector('img').src;
+
+        // Add editable inputs to book
+        bookContainer.innerHTML = `
+            <input type="text" id="edit-title" value="${currentTitle}" placeholder="Title">
+            <input type="text" id="edit-author" value="${currentAuthor}" placeholder="Author">
+            <select id="edit-genre">
+                <option value="Classics" ${currentGenre === 'Classics' ? 'selected' : ''}>Classics</option>
+                <option value="Fantasy" ${currentGenre === 'Fantasy' ? 'selected' : ''}>Fantasy</option>
+                <option value="Nonfiction" ${currentGenre === 'Nonfiction' ? 'selected' : ''}>Nonfiction</option>
+                <option value="Historical Fiction" ${currentGenre === 'Historical Fiction' ? 'selected' : ''}>Historical Fiction</option>
+                <option value="Suspense/Thriller" ${currentGenre === 'Suspense/Thriller' ? 'selected' : ''}>Suspense/Thriller</option>
+                <option value="Romance" ${currentGenre === 'Romance' ? 'selected' : ''}>Romance</option>
+                <option value="Dystopian" ${currentGenre === 'Dystopian' ? 'selected' : ''}>Dystopian</option>
+                <option value="Mystery" ${currentGenre === 'Mystery' ? 'selected' : ''}>Mystery</option>
+            </select>
+            <textarea id="edit-description" placeholder="Description">${currentDescription}</textarea>
+            <input type="text" id="edit-cover-url" value="${currentCoverUrl}" placeholder="Cover URL">
+            <button id="save-update">OK</button>
+            <button id="cancel-update">Cancel</button>
+        `;
+
+        // Cancel update
+        document.getElementById('cancel-update').addEventListener('click', () => {fetchBooks();});
+
+        document.getElementById('save-update').addEventListener('click', async () => {
+            const updatedTitle = document.getElementById('edit-title').value;
+            const updatedAuthor = document.getElementById('edit-author').value;
+            const updatedGenre = document.getElementById('edit-genre').value;
+            const updatedDescription = document.getElementById('edit-description').value;
+            const updatedCoverUrl = document.getElementById('edit-cover-url').value;
+
+            const updatedBookData = {
+                title: updatedTitle,
+                author: updatedAuthor,
+                genre: updatedGenre,
+                description: updatedDescription,
+                cover_url: updatedCoverUrl
+            };
+
+            try {
+                const response = await fetch(`${pythonURI}/api/suggest/${id}`, {
+                    ...fetchOptions,
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedBookData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update book: ' + response.statusText);
+                }
+
+                console.log('Book updated successfully');
+                alert('Book updated successfully!');
+                fetchBooks();
+            } catch (error) {
+                console.error('Error updating book:', error);
+                alert('Error updating book: ' + error.message);
+            }
+        });
+    }
+
+    async function deleteBook(title) {
+        if (confirm(`Are you sure you want to delete "${title}"?`)) {
+            try {
+                const response = await fetch(`${pythonURI}/api/suggest`, {
+                    ...fetchOptions,
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ title })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to delete book: ' + response.statusText);
+                }
+
+                console.log("Book deleted successfully");
+                alert('Book deleted successfully!');
+                fetchBooks();
+            } catch (error) {
+                console.error('Error deleting book:', error);
+                alert('Error deleting book: ' + error.message);
+            }
+        } else {
+            alert("Deletion canceled");
+        }
+    }
+
+    async function acceptBook(title) {
+        const bookContainer = Array.from(document.querySelectorAll('.book'))
+            .find(book => book.querySelector('h3').innerText === title);
+
+        if (!bookContainer) {
+            alert('Book not found for acceptance.');
+            return;
+        }
+
+        const author = bookContainer.querySelector('p:nth-child(2)').innerText.split(': ')[1];
+        const genre = bookContainer.querySelector('p:nth-child(3)').innerText.split(': ')[1];
+        const description = bookContainer.querySelector('p:nth-child(4)').innerText.replace('Description: ', '');
+        const cover_url = bookContainer.querySelector('img').src;
+
+        const bookData = {
+            title: title,
+            author: author,
+            genre: genre,
+            description: description,
+            cover_url: cover_url
+        };
+
+        try {
+            const response = await fetch(`${pythonURI}/api/suggest/accept`, { 
+                ...fetchOptions,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(bookData)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`Failed to accept book: ${errorData.error || response.statusText}`);
+            }
+
+            const response2 = await fetch(`${pythonURI}/api/suggest`, {
+                ...fetchOptions,
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title }) 
+            });
+
+            if (!response2.ok) {
+                const errorData = await response2.json();
+                throw new Error(`Failed to remove suggestion: ${errorData.error || response2.statusText}`);
+            }
+
+            acceptedBooks += (acceptedBooks ? ", " : "") + title;
+            localStorage.setItem("acceptedBooks", acceptedBooks);
+            updateAcceptedBooksList();
+
+            
+            console.log("Book accepted successfully");
+            alert('Book accepted successfully!');
+            console.log("Book removed from suggestions successfully");
+            fetchBooks();
+        } catch (error) {
+            console.error(error);
+            alert(error.message);
+        }
+    }   
+
+    let acceptedBooks = "";
+
+    function updateAcceptedBooksList() {
+        const acceptedBooksListElement = document.getElementById("accepted-books-list");
+        acceptedBooksListElement.textContent = acceptedBooks.trim() ? acceptedBooks : "None yet.";
+    }
+
+async function rejectBook(title) {
+    if (confirm(`Are you sure you want to reject "${title}"?`)) {
+        try {
+            const response = await fetch(`${pythonURI}/api/suggest/reject`, {
+                ...fetchOptions,
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title })
+            });
+
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+
+            console.log("Book rejected successfully");
+            alert('Book rejected successfully!');
+
+            rejectedBooks += (rejectedBooks ? ", " : "") + title;
+            localStorage.setItem("rejectedBooks", rejectedBooks);
+            updateRejectedBooksList();
+
+
+            fetchBooks();
+        } catch (error) {
+            console.error('Error rejecting book:', error);
+            alert('Error rejecting book: ' + error.message);
+        }
+    } else {
+        alert("Rejection canceled");
     }
 }
 
+let rejectedBooks = "";
 
-document.addEventListener('DOMContentLoaded', () => {
-    fetchBooks();
-});
+    function updateRejectedBooksList() {
+        const rejectedBooksListElement = document.getElementById("rejected-books-list");
+        rejectedBooksListElement.textContent = rejectedBooks.trim() ? rejectedBooks : "None yet.";
+    }
 
+async function resetSuggestionStorage() {
+    if (confirm("Are you sure you want to reset suggestion history?")) {
+        localStorage.removeItem("acceptedBooks");
+        localStorage.removeItem("rejectedBooks");
+        acceptedBooks = "";
+        rejectedBooks = "";
+        updateAcceptedBooksList();
+        updateRejectedBooksList();
+        alert("Suggestion history reset.");
+    }
+}
 </script>
