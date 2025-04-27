@@ -202,7 +202,7 @@ permalink: /bookstore/
                 title,
                 price,
                 quantity,
-                _name: user.uid  // ✅ Set _name to "uid" from credentials
+                _name: user.uid  // Set _name to "uid" from credentials
             };
 
             return fetch(`${pythonURI}/api/cart`, {
@@ -225,7 +225,7 @@ permalink: /bookstore/
         })
         .catch(error => {
             console.error("Error adding book to cart:", error);
-            alert("Failed to add book to cart. Please try again.");
+            alert("You are not logged in. Please log in to add books to cart!");
         });
     } else {
         alert("Please select a quantity greater than zero before adding to the cart.");
@@ -268,7 +268,7 @@ window.clearCart = function() {
             ...fetchOptions,
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ _name: user.uid }), // ✅ Send user UID for token validation
+            body: JSON.stringify({ _name: user.uid }), // Send user UID for token validation
             credentials: "include"
         });
     })
