@@ -6,13 +6,6 @@ permalink: /bookstore/
 
 <style>
 .book-tile {
-    /*margin: 10px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    display: inline-block;
-    text-align: center;
-    width: 200px; /* Set a fixed width */
-    /*height: 300px; /* Set a fixed height */
     display: inline-block;
     background-color: #E8C4A4;
     padding: 15px;
@@ -28,7 +21,7 @@ permalink: /bookstore/
     width: 190px; /* Ensure all images have the same width */
     height: 280px; /* Ensure all images have the same height */
     object-fit: cover; /* This ensures images are resized properly without distortion */
-    border-radius: 5px; /* Optional: makes images look nicer */
+    border-radius: 5px; /*Makes images look nicer */
 }
     .quantity-controls { margin-top: 5px; }
     .cart-container {
@@ -252,7 +245,7 @@ permalink: /bookstore/
             ...fetchOptions,
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ _name: user.uid }), // ✅ Send user UID for token validation
+            body: JSON.stringify({ _name: user.uid }), 
             credentials: "include"
         });
     })
